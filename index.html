@@ -731,7 +731,7 @@ async function loadVogueComments() {
     let offset = 0;
 
     while (true) {
-      const url = SUPABASE_URL.replace(/\\/+$/, "") +
+      const url = SUPABASE_URL.replace(/\/+$/, "") +
         "/rest/v1/vogue_comments?select=content&language=eq." +
         encodeURIComponent(vogueLanguage) +
         "&is_active=eq.true&order=id.asc&limit=" + pageSize +
