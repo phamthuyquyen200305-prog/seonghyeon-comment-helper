@@ -607,38 +607,27 @@ refreshCopyCount();
 loadComment();
   
 /* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENT POOL */
-const vogueComments = [
-  "Seonghyeon has such a distinctive presence. Every frame feels effortlessly captivating.",
-  "Seonghyeon and Louis Vuitton are a striking combination of individuality and timeless style.",
-  "His natural charisma makes every shot feel special. Seonghyeon truly knows how to own the camera.",
-  "Seonghyeon's artistic perspective makes this Vogue project even more fascinating.",
-  "Every angle reveals something new about Seonghyeon. His visual presence is truly remarkable.",
-  "Seonghyeon brings his own character to every look, making each frame feel unique.",
-  "A captivating face, a distinctive style, and a presence that stays in your mind. That's Seonghyeon.",
-  "Seonghyeon makes luxury fashion feel fresh with his effortless charm and individuality.",
-  "There is something so compelling about the way Seonghyeon expresses himself through the camera.",
-  "Seonghyeon's visuals and artistic sensibility make this editorial unforgettable.",
-  "He does not simply wear the look; Seonghyeon gives it his own identity.",
-  "Every photograph captures a different side of Seonghyeon's charm.",
-  "Seonghyeon has the kind of presence that makes you stop scrolling and look again.",
-  "The balance between Seonghyeon's youthful energy and refined styling is incredible.",
-  "Seonghyeon makes every frame look like a carefully composed work of art.",
-  "His expressions feel natural yet memorable. Seonghyeon is truly captivating in front of the lens.",
-  "Vogue and Louis Vuitton bring out such an interesting side of Seonghyeon's style.",
-  "Seonghyeon's individuality is what makes these photographs stand out.",
-  "A fresh perspective, effortless confidence, and Seonghyeon's unmistakable charm.",
-  "Seonghyeon has a remarkable ability to turn a simple moment into a beautiful image.",
-  "The camera captures Seonghyeon's beauty, but his individuality is what makes each shot special.",
-  "Seonghyeon's sense of style feels both modern and timeless.",
-  "His visual versatility makes every concept feel natural. Seonghyeon is so captivating.",
-  "Seonghyeon brings a refreshing energy to this fashion editorial.",
-  "Every detail comes together beautifully when Seonghyeon is in front of the camera.",
-  "Seonghyeon's charm is effortless, and his presence makes every look memorable.",
-  "This project shows how naturally Seonghyeon connects fashion, photography, and self-expression.",
-  "Seonghyeon has such an expressive face; every shot tells a different story.",
-  "The more I see Seonghyeon's photographs, the more I appreciate his unique perspective.",
-  "Seonghyeon makes this collaboration feel distinctive with his own artistic identity."
-];
+let vogueComments = [];
+
+async function loadVogueComments() {
+  try {
+    const response = await fetch("./vogue-comments.json");
+
+    if (!response.ok) {
+      throw new Error("Could not load vogue-comments.json");
+    }
+
+    vogueComments = await response.json();
+    showNextVogueComment();
+  } catch (error) {
+    console.error("Error loading Vogue comments:", error);
+
+    if (vogueCommentElement) {
+      vogueCommentElement.textContent =
+        "Unable to load comments. Please refresh the page.";
+    }
+  }
+}
 
 const vogueCommentElement = document.getElementById("vogueComment");
 const vogueCopyButton = document.getElementById("vogueCopyBtn");
