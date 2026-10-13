@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seonghyeon Comment Helper</title>
+<style>
+:root {
+  --blue: #dff2ff;
+  --deep: #477fa7;
+  --ink: #28445b;
+  --white: #ffffff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 24px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(145deg, #e9f7ff, #f8f1ff);
+}
+.card {
+  width: 100%;
+  max-width: 520px;
+  padding: 30px 24px;
+  text-align: center;
+  background: rgba(255,255,255,.9);
+  border: 1px solid #d7eafb;
+  border-radius: 26px;
+  box-shadow: 0 14px 40px #9dbbd52b;
+}
+.eyebrow {
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+h1 { font-size: 29px; margin: 12px 0 8px; }
+.subtitle { line-height: 1.6; color: #668096; }
+.languages {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 24px 0;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 14px;
+}
+.lang {
+  padding: 10px 22px;
+  color: var(--deep);
+  background: #edf7ff;
+  border: 1px solid #d4eaff;
+}
+.lang.active { background: #cbe8ff; font-weight: 700; }
+.comment {
+  min-height: 150px;
+  padding: 24px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  font-size: 17px;
+  background: #f5faff;
+  border: 1px solid #dceeff;
+  border-radius: 18px;
+}
+.primary {
+  width: 100%;
+  padding: 15px 18px;
+  margin-top: 18px;
+  color: white;
+  font-weight: 700;
+  background: var(--deep);
+}
+.primary:disabled { opacity: .6; cursor: wait; }
+.status { min-height: 22px; margin: 14px 0 0; font-size: 13px; color: #668096; }
+.note { font-size: 12px; line-height: 1.6; color: #8094a5; margin-top: 20px; }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+  <h1>Seonghyeon Comment Helper</h1>
+  <p class="subtitle">One click, one comment. Let's support Seonghyeon together!</p>
+
+  <div class="languages">
+    <button class="lang active" id="enBtn" type="button">English</button>
+    <button class="lang" id="koBtn" type="button">한국어</button>
+  </div>
+
+  <div class="comment" id="comment">Loading a comment…</div>
+  <button class="primary" id="copyBtn" type="button">Copy comment</button>
+  <p class="status" id="status" aria-live="polite">Connecting to the database…</p>
+  <p class="note">This tool copies comments only. It does not post or interact with social media automatically.</p>
+</main>
+
+<script>
+/* Replace these two placeholders with your own Supabase details. */
+const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
+
+let language = "en";
+let currentComment = null;
+let loading = false;
+
+const commentBox = document.getElementById("comment");
+const copyBtn = document.getElementById("copyBtn");
+const statusBox = document.getElementById("status");
+const enBtn = document.getElementById("enBtn");
+const koBtn = document.getElementById("koBtn");
+
+function setStatus(message) {
+  statusBox.textContent = message;
+}
+
+function setLanguage(lang) {
+  language = lang;
+  enBtn.classList.toggle("active", lang === "en");
+  koBtn.classList.toggle("active", lang === "ko");
+  commentBox.textContent = "Loading a comment…";
+  loadComment();
+}
+
+async function loadComment() {
+  if (loading) return;
+  loading = true;
+  copyBtn.disabled = true;
+  currentComment = null;
+  setStatus("Finding an available comment…");
+
+  try {
+    if (
+      SUPABASE_URL.includes("YOUR_SUPABASE_URL") ||
+      SUPABASE_KEY.includes("YOUR_SUPABASE_PUBLISHABLE_KEY")
+    ) {
+      throw new Error("Add your Supabase URL and publishable key to index.html first.");
+    }
+
+    const baseUrl = SUPABASE_URL.replace(/\/+$/, "");
+    const response = await fetch(baseUrl + "/rest/v1/rpc/claim_comment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      },
+      body: JSON.stringify({ p_language: language })
+    });
+
+    if (!response.ok) {
+      throw new Error("Database request failed (" + response.status + "). Check Supabase settings.");
+    }
+
+    const rows = await response.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      commentBox.textContent = "No comments left in this language.";
+      setStatus("More comments need to be added to the database.");
+      return;
+    }
+
+    currentComment = rows[0].content;
+    commentBox.textContent = currentComment;
+    setStatus("Ready to copy 💙");
+    copyBtn.disabled = false;
+  } catch (error) {
+    commentBox.textContent = "Couldn't load a comment.";
+    setStatus(error.message || "Connection error. Please try again.");
+  } finally {
+    loading = false;
+  }
+}
+
+copyBtn.addEventListener("click", async () => {
+  if (!currentComment || loading) return;
+
+  const textToCopy = currentComment;
+  try {
+    await navigator.clipboard.writeText(textToCopy);
+    setStatus("Copied! Loading your next comment…");
+    await loadComment();
+  } catch (error) {
+    setStatus("Copy failed. Open the site in a secure browser and try again.");
+  }
+});
+
+enBtn.addEventListener("click", () => {
+  if (language !== "en") setLanguage("en");
+});
+koBtn.addEventListener("click", () => {
+  if (language !== "ko") setLanguage("ko");
+});
+
+loadComment();
+</script>
+</body>
+</html>
