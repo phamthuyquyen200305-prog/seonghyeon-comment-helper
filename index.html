@@ -7,121 +7,43 @@
 <title>Seonghyeon Comment Helper | EomLand</title>
 
 <style>
-/* VOGUE × LOUIS VUITTON × SEONGHYEON */
-.vogue-section {
-  margin: 28px auto;
-  padding: 22px 18px;
-  max-width: 520px;
-  border: 1px solid rgba(210, 150, 180, 0.45);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.75);
-  color: #392b35;
-  text-align: center;
-}
-
-.vogue-section h2 {
-  margin: 0 0 10px;
-  font-size: 20px;
-  line-height: 1.4;
-  letter-spacing: 0.4px;
-}
-
-.vogue-description {
-  margin: 0 0 18px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: #766570;
-}
-
-.vogue-posts {
+/* VOGUE section styled to match the main comment helper */
+.vogue-card .vogue-posts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 9px;
-  margin-bottom: 22px;
+  margin-top: 18px;
 }
-
-.vogue-posts a {
+.vogue-card .vogue-posts a {
   display: block;
-  padding: 11px 6px;
-  border: 1px solid #ead3df;
-  border-radius: 10px;
-  color: #70445c;
-  background: #fff9fc;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.vogue-posts a:hover {
-  background: #f8e8f0;
-}
-
-.vogue-comment-box {
-  padding: 16px;
-  border-radius: 14px;
-  background: #fff8fb;
-  border: 1px solid #f0dce6;
-}
-
-.vogue-label {
-  margin: 0 0 12px;
-  font-size: 11px;
-  letter-spacing: 1.5px;
-  font-weight: 700;
-  color: #95657d;
-}
-
-.vogue-comment {
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 8px;
-  font-size: 15px;
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-}
-
-.vogue-actions {
-  display: flex;
-  gap: 9px;
-  margin-top: 14px;
-}
-
-.vogue-actions button {
-  flex: 1;
   padding: 12px 8px;
-  border: 0;
+  border: 1px solid var(--border);
   border-radius: 10px;
-  background: #e8c5d6;
-  color: #482c3b;
+  color: var(--deep);
+  background: #f5faff;
+  text-decoration: none;
+  text-align: center;
   font-size: 12px;
   font-weight: 700;
-  cursor: pointer;
 }
-
-.vogue-actions button:hover {
-  background: #dfb0c7;
-}
-
-.vogue-status {
-  min-height: 16px;
-  margin: 10px 0 0;
+.vogue-card .vogue-posts a:hover { background: #e9f5ff; }
+.vogue-card .vogue-posts a:last-child { grid-column: 1 / -1; }
+.vogue-card .vogue-counter {
+  margin-top: 20px;
+  padding: 14px;
+  background: #f5faff;
+  border: 1px solid #dceeff;
+  border-radius: 16px;
   font-size: 12px;
-  color: #79536a;
+  color: var(--muted);
 }
-
-.vogue-counter {
-  margin: 8px 0 0;
-  font-size: 11px;
-  color: #8b7782;
+.vogue-card .vogue-counter strong {
+  display: block;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
 }
-
-@media (max-width: 380px) {
-  .vogue-actions {
-    flex-direction: column;
-  }
+@media (max-width: 420px) {
+  .vogue-card .vogue-posts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 :root {
@@ -394,7 +316,7 @@ button {
   </button>
   <button class="menu-choice" type="button" data-open-view="vogueView">
     <strong>02 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
-    <span>7 Instagram posts · Vogue comment collection · Copy / Next</span>
+    <span>7 Instagram posts · English / Korean · Auto-next Copy</span>
   </button>
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </section>
@@ -485,47 +407,40 @@ button {
 <div class="view-shell" id="vogueView" hidden>
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
 <!-- MỤC 2: VOGUE × LOUIS VUITTON × SEONGHYEON -->
-<section class="vogue-section">
-  <h2>VOGUE × LOUIS VUITTON × SEONGHYEON</h2>
-  <p class="vogue-description">
-    Celebrate Seonghyeon's unique charm, artistic vision and effortless style.
-  </p>
+<main class="card vogue-card">
+  <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+  <h1>VOGUE × LOUIS VUITTON × SEONGHYEON</h1>
+  <p class="subtitle">Celebrate Seonghyeon's unique charm, artistic vision and effortless style.</p>
 
-  <div class="vogue-posts">
-    <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
-    <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
-    <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
-    <a href="https://www.instagram.com/p/DeTuvmOpwqA/"
-       target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
-    <a href="https://www.instagram.com/p/DeTujfYpHtD/"
-       target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
-    <a href="https://www.instagram.com/p/DeTuM3GJxRP/"
-       target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
-    <a href="https://www.instagram.com/p/DeTLN7LpHBC/"
-       target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+  <div class="languages">
+    <button class="lang active" id="vogueEnBtn" type="button">English</button>
+    <button class="lang" id="vogueKoBtn" type="button">한국어</button>
   </div>
 
-  <div class="vogue-comment-box">
-    <p class="vogue-label">YOUR COMMENT</p>
-    <div class="languages">
-      <button class="lang active" id="vogueEnBtn" type="button">English</button>
-      <button class="lang" id="vogueKoBtn" type="button">한국어</button>
-    </div>
-    <div id="vogueComment" class="vogue-comment">
-      Loading comment...
-    </div>
-    <div class="vogue-actions">
-      <button id="vogueCopyBtn" type="button" disabled>COPY COMMENT</button>
-    </div>
-    <p id="vogueCopyStatus" class="vogue-status" aria-live="polite"></p>
-    <p class="vogue-counter">
-      Vogue copies this session: <span id="vogueCopyCount">0</span>
-    </p>
+  <div id="vogueComment" class="comment">Loading a comment…</div>
+  <button class="primary" id="vogueCopyBtn" type="button" disabled>Copy comment</button>
+  <p id="vogueCopyStatus" class="status" aria-live="polite">Connecting to the database…</p>
+  <div class="vogue-counter">
+    <strong>VOGUE COMMENTS COPIED THIS SESSION</strong>
+    <span id="vogueCopyCount">0</span>
   </div>
-</section>
+
+  <section class="notice" aria-label="Vogue Instagram posts">
+    <div class="notice-title">VOGUE × LOUIS VUITTON — INSTAGRAM POSTS</div>
+    <p>Open a post below and leave a comment supporting Seonghyeon.</p>
+    <div class="vogue-posts">
+      <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1" target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
+      <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1" target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
+      <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1" target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
+      <a href="https://www.instagram.com/p/DeTuvmOpwqA/" target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
+      <a href="https://www.instagram.com/p/DeTujfYpHtD/" target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
+      <a href="https://www.instagram.com/p/DeTuM3GJxRP/" target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
+      <a href="https://www.instagram.com/p/DeTLN7LpHBC/" target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+    </div>
+  </section>
+  <p class="note">This tool copies comments only. It does not post or interact with Instagram automatically.</p>
+  <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+</main>
 </div>
 
 <script>
@@ -712,6 +627,7 @@ const vogueKoBtn = document.getElementById("vogueKoBtn");
 
 let vogueLanguage = "en";
 let vogueComments = [];
+let vogueDeck = [];
 let vogueCurrentComment = "";
 let vogueCopyCount = 0;
 let vogueLoading = false;
@@ -722,6 +638,7 @@ async function loadVogueComments() {
   vogueCommentElement.textContent = "Loading comments…";
   vogueCopyStatus.textContent = "";
   vogueComments = [];
+  vogueDeck = [];
   vogueCurrentComment = "";
 
   try {
@@ -762,8 +679,9 @@ async function loadVogueComments() {
       return;
     }
 
+    shuffleVogueDeck();
     showNextVogueComment();
-    vogueCopyStatus.textContent = vogueComments.length.toLocaleString() + " comments loaded.";
+    vogueCopyStatus.textContent = vogueComments.length.toLocaleString() + " comments loaded. Shuffled order; no repeats until this round ends.";
   } catch (error) {
     console.error("Error loading Vogue comments:", error);
     vogueCommentElement.textContent = "Unable to load comments.";
@@ -775,16 +693,32 @@ async function loadVogueComments() {
   }
 }
 
+function shuffleVogueDeck() {
+  vogueDeck = [...vogueComments];
+
+  // Fisher-Yates shuffle: every comment appears once in this round.
+  for (let i = vogueDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [vogueDeck[i], vogueDeck[j]] = [vogueDeck[j], vogueDeck[i]];
+  }
+
+  // Avoid showing the same comment at the boundary between two rounds.
+  if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrentComment) {
+    [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
+      [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
+  }
+}
+
 function showNextVogueComment() {
   if (!vogueCommentElement || vogueComments.length === 0) return;
 
-  let nextIndex = Math.floor(Math.random() * vogueComments.length);
-  if (vogueComments.length > 1 && vogueComments[nextIndex] === vogueCurrentComment) {
-    const currentIndex = vogueComments.indexOf(vogueCurrentComment);
-    nextIndex = (currentIndex + 1 + Math.floor(Math.random() * (vogueComments.length - 1))) % vogueComments.length;
+  // When this round is exhausted, shuffle the full collection and begin a new round.
+  if (vogueDeck.length === 0) {
+    shuffleVogueDeck();
+    vogueCopyStatus.textContent = "New shuffled round started.";
   }
 
-  vogueCurrentComment = vogueComments[nextIndex];
+  vogueCurrentComment = vogueDeck.pop();
   vogueCommentElement.textContent = vogueCurrentComment;
   vogueCopyButton.disabled = false;
 }
