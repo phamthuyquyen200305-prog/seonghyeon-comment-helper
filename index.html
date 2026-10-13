@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seonghyeon Comment Helper | EomLand</title>
 
+<style>
 /* VOGUE × LOUIS VUITTON × SEONGHYEON */
 .vogue-section {
   margin: 28px auto;
@@ -123,7 +124,6 @@
   }
 }
 
-<style>
 :root {
   --deep: #477fa7;
   --ink: #28445b;
@@ -348,10 +348,52 @@ button {
   .card { padding: 24px 16px; }
   h1 { font-size: 25px; }
 }
+
+/* Home screen and section navigation */
+.home-menu {
+  width: 100%; max-width: 520px; margin: auto; padding: 30px 24px;
+  text-align: center; background: rgba(255,255,255,.96);
+  border: 1px solid #d7eafb; border-radius: 26px;
+  box-shadow: 0 14px 40px #9dbbd52b;
+}
+.home-menu .menu-intro { color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.menu-choice {
+  display: block; width: 100%; margin-top: 14px; padding: 18px 16px;
+  border: 1px solid #d4eaff; border-radius: 16px; background: #f5faff;
+  color: var(--ink); text-align: left; cursor: pointer;
+}
+.menu-choice strong { display:block; font-size: 15px; line-height: 1.5; }
+.menu-choice span { display:block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height:1.5; }
+.menu-choice:hover { background:#e9f5ff; }
+.view-shell { width:100%; }
+.back-button {
+  display:block; width:100%; max-width:520px; margin:0 auto 14px; padding:11px 14px;
+  border:1px solid var(--border); border-radius:12px; background:#fff;
+  color:var(--deep); font-weight:700; cursor:pointer;
+}
+[hidden] { display:none !important; }
+
 </style>
 </head>
 
 <body>
+<section class="home-menu" id="homeView">
+  <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+  <h1>Seonghyeon Comment Helper</h1>
+  <p class="menu-intro">Choose a project to view its comment collection and related links.</p>
+  <button class="menu-choice" type="button" data-open-view="voteView">
+    <strong>01 · VOTE TOP FACE IN THE WORLD 2026</strong>
+    <span>Vote comments · Copy button · Total copy counter · Related links</span>
+  </button>
+  <button class="menu-choice" type="button" data-open-view="vogueView">
+    <strong>02 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
+    <span>7 Instagram posts · Vogue comment collection · Copy / Next</span>
+  </button>
+  <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+</section>
+
+<div class="view-shell" id="voteView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
 <main class="card">
 
   <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
@@ -431,6 +473,52 @@ button {
   </footer>
 
 </main>
+</div>
+
+<div class="view-shell" id="vogueView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+<!-- MỤC 2: VOGUE × LOUIS VUITTON × SEONGHYEON -->
+<section class="vogue-section">
+  <h2>VOGUE × LOUIS VUITTON × SEONGHYEON</h2>
+  <p class="vogue-description">
+    Celebrate Seonghyeon's unique charm, artistic vision and effortless style.
+  </p>
+
+  <div class="vogue-posts">
+    <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
+    <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
+    <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
+    <a href="https://www.instagram.com/p/DeTuvmOpwqA/"
+       target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
+    <a href="https://www.instagram.com/p/DeTujfYpHtD/"
+       target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
+    <a href="https://www.instagram.com/p/DeTuM3GJxRP/"
+       target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
+    <a href="https://www.instagram.com/p/DeTLN7LpHBC/"
+       target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+  </div>
+
+  <div class="vogue-comment-box">
+    <p class="vogue-label">YOUR COMMENT</p>
+    <div id="vogueComment" class="vogue-comment">
+      Loading comment...
+    </div>
+
+    <div class="vogue-actions">
+      <button id="vogueCopyBtn" type="button">COPY COMMENT</button>
+      <button id="vogueNextBtn" type="button">NEXT COMMENT ↻</button>
+    </div>
+
+    <p id="vogueCopyStatus" class="vogue-status" aria-live="polite"></p>
+    <p class="vogue-counter">
+      Vogue copies this session: <span id="vogueCopyCount">0</span>
+    </p>
+  </div>
+</section>
+</div>
 
 <script>
 const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
@@ -605,6 +693,7 @@ koBtn.addEventListener("click", () => setLanguage("ko"));
 
 refreshCopyCount();
 loadComment();
+loadVogueComments();
   
 /* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENT POOL */
 let vogueComments = [];
@@ -618,7 +707,7 @@ async function loadVogueComments() {
     }
 
     vogueComments = await response.json();
-loadVogueComments();
+    showNextVogueComment();
   } catch (error) {
     console.error("Error loading Vogue comments:", error);
 
@@ -684,52 +773,33 @@ if (vogueCopyButton) {
   });
 }
 
-// Display the first comment when the page loads.
-showNextVogueComment();
+
+// Switch between the home menu and the two separate project pages.
+const homeView = document.getElementById("homeView");
+const voteView = document.getElementById("voteView");
+const vogueView = document.getElementById("vogueView");
+
+document.querySelectorAll("[data-open-view]").forEach((button) => {
+  button.addEventListener("click", () => {
+    homeView.hidden = true;
+    voteView.hidden = button.dataset.openView !== "voteView";
+    vogueView.hidden = button.dataset.openView !== "vogueView";
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
+});
+
+document.querySelectorAll("[data-go-home]").forEach((button) => {
+  button.addEventListener("click", () => {
+    voteView.hidden = true;
+    vogueView.hidden = true;
+    homeView.hidden = false;
+    window.scrollTo({ top: 0, behavior: "auto" });
+  });
+});
 
 </script>
 
-<!-- MỤC 2: VOGUE × LOUIS VUITTON × SEONGHYEON -->
-<section class="vogue-section">
-  <h2>VOGUE × LOUIS VUITTON × SEONGHYEON</h2>
-  <p class="vogue-description">
-    Celebrate Seonghyeon's unique charm, artistic vision and effortless style.
-  </p>
 
-  <div class="vogue-posts">
-    <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
-    <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
-    <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1"
-       target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
-    <a href="https://www.instagram.com/p/DeTuvmOpwqA/"
-       target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
-    <a href="https://www.instagram.com/p/DeTujfYpHtD/"
-       target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
-    <a href="https://www.instagram.com/p/DeTuM3GJxRP/"
-       target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
-    <a href="https://www.instagram.com/p/DeTLN7LpHBC/"
-       target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
-  </div>
-
-  <div class="vogue-comment-box">
-    <p class="vogue-label">YOUR COMMENT</p>
-    <div id="vogueComment" class="vogue-comment">
-      Loading comment...
-    </div>
-
-    <div class="vogue-actions">
-      <button id="vogueCopyBtn" type="button">COPY COMMENT</button>
-      <button id="vogueNextBtn" type="button">NEXT COMMENT ↻</button>
-    </div>
-
-    <p id="vogueCopyStatus" class="vogue-status" aria-live="polite"></p>
-    <p class="vogue-counter">
-      Vogue copies this session: <span id="vogueCopyCount">0</span>
-    </p>
-  </div>
-</section>
 
 </body>
 </html>
