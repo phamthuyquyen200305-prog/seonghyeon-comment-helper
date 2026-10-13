@@ -618,7 +618,7 @@ async function loadVogueComments() {
     }
 
     vogueComments = await response.json();
-    showNextVogueComment();
+loadVogueComments();
   } catch (error) {
     console.error("Error loading Vogue comments:", error);
 
