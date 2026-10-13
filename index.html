@@ -4,15 +4,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Seonghyeon Comment Helper</title>
+<title>Seonghyeon Comment Helper | EomLand</title>
+
 <style>
 :root {
   --blue: #dff2ff;
   --deep: #477fa7;
   --ink: #28445b;
-  --white: #ffffff;
+  --muted: #668096;
+  --border: #d4eaff;
 }
 * { box-sizing: border-box; }
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -24,54 +27,72 @@ body {
   color: var(--ink);
   background: linear-gradient(145deg, #e9f7ff, #f8f1ff);
 }
+
 .card {
   width: 100%;
   max-width: 520px;
   padding: 30px 24px;
   text-align: center;
-  background: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.94);
   border: 1px solid #d7eafb;
   border-radius: 26px;
   box-shadow: 0 14px 40px #9dbbd52b;
 }
+
 .eyebrow {
   color: var(--deep);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 2px;
 }
-h1 { font-size: 29px; margin: 12px 0 8px; }
-.subtitle { line-height: 1.6; color: #668096; }
+
+h1 {
+  font-size: 29px;
+  margin: 12px 0 8px;
+}
+
+.subtitle {
+  line-height: 1.6;
+  color: var(--muted);
+}
+
 .languages {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin: 24px 0;
 }
+
 button {
   font: inherit;
   cursor: pointer;
   border: 0;
   border-radius: 14px;
 }
+
 .lang {
   padding: 10px 22px;
   color: var(--deep);
   background: #edf7ff;
-  border: 1px solid #d4eaff;
+  border: 1px solid var(--border);
 }
-.lang.active { background: #cbe8ff; font-weight: 700; }
+
+.lang.active {
+  background: #cbe8ff;
+  font-weight: 700;
+}
 
 .notice {
   margin: 0 0 20px;
   padding: 18px 16px;
   background: #f0f8ff;
-  border: 1px solid #d4eaff;
+  border: 1px solid var(--border);
   border-radius: 18px;
   text-align: left;
   line-height: 1.65;
   overflow-wrap: anywhere;
 }
+
 .notice-title {
   color: var(--deep);
   font-size: 12px;
@@ -79,19 +100,54 @@ button {
   letter-spacing: 1px;
   margin-bottom: 7px;
 }
+
 .notice a {
   color: var(--deep);
   font-weight: 700;
   text-decoration: none;
 }
+
 .notice a:hover { text-decoration: underline; }
-.notice p { margin: 5px 0; font-size: 13px; }
-.notice .ownership {
-  padding-top: 10px;
+
+.notice p {
+  margin: 7px 0;
+  font-size: 13px;
+}
+
+.target-post {
+  margin-top: 14px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.target-title {
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.post-button {
+  display: block;
   margin-top: 10px;
-  border-top: 1px solid #d4eaff;
-  color: #668096;
+  padding: 12px;
+  background: var(--deep);
+  color: white !important;
+  text-align: center;
+  text-decoration: none !important;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.ownership {
+  padding-top: 12px;
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
   font-size: 11px;
+  line-height: 1.7;
 }
 
 .comment {
@@ -108,6 +164,7 @@ button {
   border: 1px solid #dceeff;
   border-radius: 18px;
 }
+
 .primary {
   width: 100%;
   padding: 15px 18px;
@@ -116,13 +173,20 @@ button {
   font-weight: 700;
   background: var(--deep);
 }
-.primary:disabled { opacity: .6; cursor: wait; }
+
+.primary:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
 .status {
   min-height: 22px;
   margin: 14px 0 0;
   font-size: 13px;
-  color: #668096;
+  color: var(--muted);
+  overflow-wrap: anywhere;
 }
+
 .counter {
   margin-top: 20px;
   padding: 14px;
@@ -130,24 +194,28 @@ button {
   border: 1px solid #dceeff;
   border-radius: 16px;
 }
+
 .counter-label {
   font-size: 12px;
   letter-spacing: 1.5px;
-  color: #668096;
+  color: var(--muted);
   font-weight: 700;
 }
+
 .counter-number {
   font-size: 28px;
   font-weight: 700;
   color: var(--deep);
   margin-top: 6px;
 }
+
 .note {
   font-size: 12px;
   line-height: 1.6;
   color: #8094a5;
   margin-top: 20px;
 }
+
 .footer {
   margin-top: 18px;
   padding-top: 14px;
@@ -156,17 +224,22 @@ button {
   font-size: 11px;
   line-height: 1.7;
 }
+
 @media (max-width: 420px) {
   .card { padding: 24px 16px; }
   h1 { font-size: 25px; }
 }
 </style>
 </head>
+
 <body>
 <main class="card">
+
   <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
   <h1>Seonghyeon Comment Helper</h1>
-  <p class="subtitle">One click, one comment. Let's support Seonghyeon together!</p>
+  <p class="subtitle">
+    One click, one comment. Let's support Seonghyeon together!
+  </p>
 
   <div class="languages">
     <button class="lang active" id="enBtn" type="button">English</button>
@@ -174,28 +247,51 @@ button {
   </div>
 
   <section class="notice" aria-label="Instagram and ownership notice">
+
     <div class="notice-title">IMPORTANT — MUST FOLLOW</div>
+
     <p>
-      MUST FOLLOW INSTAGRAM ACCOUNT
+      MUST FOLLOW INSTAGRAM ACCOUNT:
       <a href="https://www.instagram.com/special.awards/"
          target="_blank" rel="noopener noreferrer">@special.awards</a>
     </p>
+
     <p>
       Follow EomLand:
       <a href="https://www.instagram.com/eomland.seonghyeoniverse/"
          target="_blank" rel="noopener noreferrer">@eomland.seonghyeoniverse</a>
     </p>
+
+    <div class="target-post">
+      <div class="target-title">TARGET POST — COMMENT HERE</div>
+      <p>
+        Support Seonghyeon by leaving comments on this Instagram post.
+      </p>
+      <a class="post-button"
+         href="https://www.instagram.com/p/DeJSyyECYya/"
+         target="_blank" rel="noopener noreferrer">
+        OPEN INSTAGRAM POST ↗
+      </a>
+    </div>
+
     <div class="ownership">
-      © EomLand. All rights reserved.<br>
+      <strong>© EomLand. All rights reserved.</strong><br>
       This comment collection is owned and managed by EomLand.
       Please do not copy, redistribute, or reuse this collection
       without permission.
     </div>
+
   </section>
 
   <div class="comment" id="comment">Loading a comment…</div>
-  <button class="primary" id="copyBtn" type="button">Copy comment</button>
-  <p class="status" id="status" aria-live="polite">Connecting to the database…</p>
+
+  <button class="primary" id="copyBtn" type="button" disabled>
+    Copy comment
+  </button>
+
+  <p class="status" id="status" aria-live="polite">
+    Connecting to the database…
+  </p>
 
   <div class="counter">
     <div class="counter-label">TOTAL COMMENTS COPIED</div>
@@ -210,6 +306,7 @@ button {
   <footer class="footer">
     Created &amp; managed by EomLand · All rights reserved.
   </footer>
+
 </main>
 
 <script>
@@ -264,9 +361,12 @@ async function refreshCopyCount() {
 }
 
 function setLanguage(lang) {
+  if (language === lang) return;
+
   language = lang;
   enBtn.classList.toggle("active", lang === "en");
   koBtn.classList.toggle("active", lang === "ko");
+
   commentBox.textContent = "Loading a comment…";
   loadComment();
 }
@@ -281,11 +381,14 @@ async function loadComment() {
 
   try {
     const baseUrl = SUPABASE_URL.replace(/\/+$/, "");
-    const response = await fetch(baseUrl + "/rest/v1/rpc/claim_comment", {
-      method: "POST",
-      headers: supabaseHeaders(),
-      body: JSON.stringify({ p_language: language })
-    });
+    const response = await fetch(
+      baseUrl + "/rest/v1/rpc/claim_comment",
+      {
+        method: "POST",
+        headers: supabaseHeaders(),
+        body: JSON.stringify({ p_language: language })
+      }
+    );
 
     if (!response.ok) {
       throw new Error(
@@ -306,6 +409,7 @@ async function loadComment() {
     commentBox.textContent = currentComment;
     setStatus("Ready to copy 💙");
     copyBtn.disabled = false;
+
   } catch (error) {
     commentBox.textContent = "Couldn't load a comment.";
     setStatus(error.message || "Connection error. Please try again.");
@@ -343,6 +447,7 @@ copyBtn.addEventListener("click", async () => {
       const total = await response.json();
       copyCountBox.textContent = Number(total).toLocaleString("en-US");
       setStatus("Copied successfully! 💙");
+
     } catch (counterError) {
       setStatus(
         "Comment copied, but the counter could not update. Please refresh later."
@@ -351,24 +456,23 @@ copyBtn.addEventListener("click", async () => {
     }
 
     await loadComment();
+
   } catch (error) {
     setStatus("Copy failed. Open the site in a secure browser and try again.");
   } finally {
     copying = false;
-    if (currentComment && !loading) copyBtn.disabled = false;
+    if (currentComment && !loading) {
+      copyBtn.disabled = false;
+    }
   }
 });
 
-enBtn.addEventListener("click", () => {
-  if (language !== "en") setLanguage("en");
-});
-
-koBtn.addEventListener("click", () => {
-  if (language !== "ko") setLanguage("ko");
-});
+enBtn.addEventListener("click", () => setLanguage("en"));
+koBtn.addEventListener("click", () => setLanguage("ko"));
 
 refreshCopyCount();
 loadComment();
 </script>
+
 </body>
 </html>
