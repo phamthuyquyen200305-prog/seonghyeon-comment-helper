@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +61,39 @@ button {
   border: 1px solid #d4eaff;
 }
 .lang.active { background: #cbe8ff; font-weight: 700; }
+
+.notice {
+  margin: 0 0 20px;
+  padding: 18px 16px;
+  background: #f0f8ff;
+  border: 1px solid #d4eaff;
+  border-radius: 18px;
+  text-align: left;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.notice-title {
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 7px;
+}
+.notice a {
+  color: var(--deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+.notice a:hover { text-decoration: underline; }
+.notice p { margin: 5px 0; font-size: 13px; }
+.notice .ownership {
+  padding-top: 10px;
+  margin-top: 10px;
+  border-top: 1px solid #d4eaff;
+  color: #668096;
+  font-size: 11px;
+}
+
 .comment {
   min-height: 150px;
   padding: 24px 18px;
@@ -67,6 +101,7 @@ button {
   align-items: center;
   justify-content: center;
   overflow-wrap: anywhere;
+  white-space: pre-wrap;
   line-height: 1.8;
   font-size: 17px;
   background: #f5faff;
@@ -82,7 +117,12 @@ button {
   background: var(--deep);
 }
 .primary:disabled { opacity: .6; cursor: wait; }
-.status { min-height: 22px; margin: 14px 0 0; font-size: 13px; color: #668096; }
+.status {
+  min-height: 22px;
+  margin: 14px 0 0;
+  font-size: 13px;
+  color: #668096;
+}
 .counter {
   margin-top: 20px;
   padding: 14px;
@@ -102,7 +142,24 @@ button {
   color: var(--deep);
   margin-top: 6px;
 }
-.note { font-size: 12px; line-height: 1.6; color: #8094a5; margin-top: 20px; }
+.note {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8094a5;
+  margin-top: 20px;
+}
+.footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e1edf7;
+  color: #8094a5;
+  font-size: 11px;
+  line-height: 1.7;
+}
+@media (max-width: 420px) {
+  .card { padding: 24px 16px; }
+  h1 { font-size: 25px; }
+}
 </style>
 </head>
 <body>
@@ -116,6 +173,26 @@ button {
     <button class="lang" id="koBtn" type="button">한국어</button>
   </div>
 
+  <section class="notice" aria-label="Instagram and ownership notice">
+    <div class="notice-title">IMPORTANT — MUST FOLLOW</div>
+    <p>
+      MUST FOLLOW INSTAGRAM ACCOUNT
+      <a href="https://www.instagram.com/special.awards/"
+         target="_blank" rel="noopener noreferrer">@special.awards</a>
+    </p>
+    <p>
+      Follow EomLand:
+      <a href="https://www.instagram.com/eomland.seonghyeoniverse/"
+         target="_blank" rel="noopener noreferrer">@eomland.seonghyeoniverse</a>
+    </p>
+    <div class="ownership">
+      © EomLand. All rights reserved.<br>
+      This comment collection is owned and managed by EomLand.
+      Please do not copy, redistribute, or reuse this collection
+      without permission.
+    </div>
+  </section>
+
   <div class="comment" id="comment">Loading a comment…</div>
   <button class="primary" id="copyBtn" type="button">Copy comment</button>
   <p class="status" id="status" aria-live="polite">Connecting to the database…</p>
@@ -125,7 +202,14 @@ button {
     <div class="counter-number" id="copyCount">Loading…</div>
   </div>
 
-  <p class="note">This tool copies comments only. It does not post or interact with social media automatically.</p>
+  <p class="note">
+    This tool copies comments only. It does not post or interact with
+    social media automatically.
+  </p>
+
+  <footer class="footer">
+    Created &amp; managed by EomLand · All rights reserved.
+  </footer>
 </main>
 
 <script>
@@ -204,14 +288,17 @@ async function loadComment() {
     });
 
     if (!response.ok) {
-      throw new Error("Database request failed (" + response.status + "). Check Supabase settings.");
+      throw new Error(
+        "Database request failed (" + response.status +
+        "). Check Supabase settings."
+      );
     }
 
     const rows = await response.json();
 
     if (!Array.isArray(rows) || rows.length === 0) {
-      commentBox.textContent = "No comments left in this language.";
-      setStatus("More comments need to be added to the database.");
+      commentBox.textContent = "No comments available right now.";
+      setStatus("Please check the comment database settings.");
       return;
     }
 
@@ -236,12 +323,12 @@ copyBtn.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(textToCopy);
-
     setStatus("Copied! Updating the total…");
 
     try {
       const response = await fetch(
-        SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_copy_count",
+        SUPABASE_URL.replace(/\/+$/, "") +
+        "/rest/v1/rpc/increment_copy_count",
         {
           method: "POST",
           headers: supabaseHeaders(),
@@ -257,7 +344,9 @@ copyBtn.addEventListener("click", async () => {
       copyCountBox.textContent = Number(total).toLocaleString("en-US");
       setStatus("Copied successfully! 💙");
     } catch (counterError) {
-      setStatus("Comment copied, but the counter could not update. Please refresh later.");
+      setStatus(
+        "Comment copied, but the counter could not update. Please refresh later."
+      );
       await refreshCopyCount();
     }
 
@@ -283,4 +372,3 @@ loadComment();
 </script>
 </body>
 </html>
-
