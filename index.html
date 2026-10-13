@@ -6,6 +6,123 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seonghyeon Comment Helper | EomLand</title>
 
+/* VOGUE × LOUIS VUITTON × SEONGHYEON */
+.vogue-section {
+  margin: 28px auto;
+  padding: 22px 18px;
+  max-width: 520px;
+  border: 1px solid rgba(210, 150, 180, 0.45);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #392b35;
+  text-align: center;
+}
+
+.vogue-section h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: 0.4px;
+}
+
+.vogue-description {
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #766570;
+}
+
+.vogue-posts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.vogue-posts a {
+  display: block;
+  padding: 11px 6px;
+  border: 1px solid #ead3df;
+  border-radius: 10px;
+  color: #70445c;
+  background: #fff9fc;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.vogue-posts a:hover {
+  background: #f8e8f0;
+}
+
+.vogue-comment-box {
+  padding: 16px;
+  border-radius: 14px;
+  background: #fff8fb;
+  border: 1px solid #f0dce6;
+}
+
+.vogue-label {
+  margin: 0 0 12px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: #95657d;
+}
+
+.vogue-comment {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 8px;
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.vogue-actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.vogue-actions button {
+  flex: 1;
+  padding: 12px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: #e8c5d6;
+  color: #482c3b;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.vogue-actions button:hover {
+  background: #dfb0c7;
+}
+
+.vogue-status {
+  min-height: 16px;
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #79536a;
+}
+
+.vogue-counter {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #8b7782;
+}
+
+@media (max-width: 380px) {
+  .vogue-actions {
+    flex-direction: column;
+  }
+}
+
 <style>
 :root {
   --deep: #477fa7;
@@ -488,7 +605,142 @@ koBtn.addEventListener("click", () => setLanguage("ko"));
 
 refreshCopyCount();
 loadComment();
+  
+/* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENT POOL */
+const vogueComments = [
+  "Seonghyeon has such a distinctive presence. Every frame feels effortlessly captivating.",
+  "Seonghyeon and Louis Vuitton are a striking combination of individuality and timeless style.",
+  "His natural charisma makes every shot feel special. Seonghyeon truly knows how to own the camera.",
+  "Seonghyeon's artistic perspective makes this Vogue project even more fascinating.",
+  "Every angle reveals something new about Seonghyeon. His visual presence is truly remarkable.",
+  "Seonghyeon brings his own character to every look, making each frame feel unique.",
+  "A captivating face, a distinctive style, and a presence that stays in your mind. That's Seonghyeon.",
+  "Seonghyeon makes luxury fashion feel fresh with his effortless charm and individuality.",
+  "There is something so compelling about the way Seonghyeon expresses himself through the camera.",
+  "Seonghyeon's visuals and artistic sensibility make this editorial unforgettable.",
+  "He does not simply wear the look; Seonghyeon gives it his own identity.",
+  "Every photograph captures a different side of Seonghyeon's charm.",
+  "Seonghyeon has the kind of presence that makes you stop scrolling and look again.",
+  "The balance between Seonghyeon's youthful energy and refined styling is incredible.",
+  "Seonghyeon makes every frame look like a carefully composed work of art.",
+  "His expressions feel natural yet memorable. Seonghyeon is truly captivating in front of the lens.",
+  "Vogue and Louis Vuitton bring out such an interesting side of Seonghyeon's style.",
+  "Seonghyeon's individuality is what makes these photographs stand out.",
+  "A fresh perspective, effortless confidence, and Seonghyeon's unmistakable charm.",
+  "Seonghyeon has a remarkable ability to turn a simple moment into a beautiful image.",
+  "The camera captures Seonghyeon's beauty, but his individuality is what makes each shot special.",
+  "Seonghyeon's sense of style feels both modern and timeless.",
+  "His visual versatility makes every concept feel natural. Seonghyeon is so captivating.",
+  "Seonghyeon brings a refreshing energy to this fashion editorial.",
+  "Every detail comes together beautifully when Seonghyeon is in front of the camera.",
+  "Seonghyeon's charm is effortless, and his presence makes every look memorable.",
+  "This project shows how naturally Seonghyeon connects fashion, photography, and self-expression.",
+  "Seonghyeon has such an expressive face; every shot tells a different story.",
+  "The more I see Seonghyeon's photographs, the more I appreciate his unique perspective.",
+  "Seonghyeon makes this collaboration feel distinctive with his own artistic identity."
+];
+
+const vogueCommentElement = document.getElementById("vogueComment");
+const vogueCopyButton = document.getElementById("vogueCopyBtn");
+const vogueNextButton = document.getElementById("vogueNextBtn");
+const vogueCopyStatus = document.getElementById("vogueCopyStatus");
+const vogueCopyCountElement = document.getElementById("vogueCopyCount");
+
+let vogueCurrentComment = "";
+let vogueCopyCount = 0;
+
+function showNextVogueComment() {
+  if (!vogueCommentElement || vogueComments.length === 0) return;
+
+  let nextComment = vogueComments[
+    Math.floor(Math.random() * vogueComments.length)
+  ];
+
+  // Avoid showing the same comment twice in a row.
+  if (vogueComments.length > 1) {
+    while (nextComment === vogueCurrentComment) {
+      nextComment = vogueComments[
+        Math.floor(Math.random() * vogueComments.length)
+      ];
+    }
+  }
+
+  vogueCurrentComment = nextComment;
+  vogueCommentElement.textContent = nextComment;
+
+  if (vogueCopyStatus) vogueCopyStatus.textContent = "";
+}
+
+if (vogueNextButton) {
+  vogueNextButton.addEventListener("click", showNextVogueComment);
+}
+
+if (vogueCopyButton) {
+  vogueCopyButton.addEventListener("click", async () => {
+    if (!vogueCurrentComment) return;
+
+    try {
+      await navigator.clipboard.writeText(vogueCurrentComment);
+
+      vogueCopyCount++;
+      vogueCopyCountElement.textContent = vogueCopyCount;
+      vogueCopyStatus.textContent = "Copied!";
+
+      // Automatically display another random comment after copying.
+      showNextVogueComment();
+    } catch (error) {
+      vogueCopyStatus.textContent =
+        "Copy failed. Please open this website over HTTPS and try again.";
+    }
+  });
+}
+
+// Display the first comment when the page loads.
+showNextVogueComment();
+
 </script>
+
+<!-- MỤC 2: VOGUE × LOUIS VUITTON × SEONGHYEON -->
+<section class="vogue-section">
+  <h2>VOGUE × LOUIS VUITTON × SEONGHYEON</h2>
+  <p class="vogue-description">
+    Celebrate Seonghyeon's unique charm, artistic vision and effortless style.
+  </p>
+
+  <div class="vogue-posts">
+    <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
+    <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
+    <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1"
+       target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
+    <a href="https://www.instagram.com/p/DeTuvmOpwqA/"
+       target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
+    <a href="https://www.instagram.com/p/DeTujfYpHtD/"
+       target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
+    <a href="https://www.instagram.com/p/DeTuM3GJxRP/"
+       target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
+    <a href="https://www.instagram.com/p/DeTLN7LpHBC/"
+       target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+  </div>
+
+  <div class="vogue-comment-box">
+    <p class="vogue-label">YOUR COMMENT</p>
+    <div id="vogueComment" class="vogue-comment">
+      Loading comment...
+    </div>
+
+    <div class="vogue-actions">
+      <button id="vogueCopyBtn" type="button">COPY COMMENT</button>
+      <button id="vogueNextBtn" type="button">NEXT COMMENT ↻</button>
+    </div>
+
+    <p id="vogueCopyStatus" class="vogue-status" aria-live="polite"></p>
+    <p class="vogue-counter">
+      Vogue copies this session: <span id="vogueCopyCount">0</span>
+    </p>
+  </div>
+</section>
 
 </body>
 </html>
