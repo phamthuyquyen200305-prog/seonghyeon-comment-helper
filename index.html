@@ -8,7 +8,6 @@
 
 <style>
 :root {
-  --blue: #dff2ff;
   --deep: #477fa7;
   --ink: #28445b;
   --muted: #668096;
@@ -60,7 +59,7 @@ h1 {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin: 24px 0;
+  margin: 20px 0 10px;
 }
 
 button {
@@ -80,74 +79,6 @@ button {
 .lang.active {
   background: #cbe8ff;
   font-weight: 700;
-}
-
-.notice {
-  margin: 0 0 20px;
-  padding: 18px 16px;
-  background: #f0f8ff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  text-align: left;
-  line-height: 1.65;
-  overflow-wrap: anywhere;
-}
-
-.notice-title {
-  color: var(--deep);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 7px;
-}
-
-.notice a {
-  color: var(--deep);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.notice a:hover { text-decoration: underline; }
-
-.notice p {
-  margin: 7px 0;
-  font-size: 13px;
-}
-
-.target-post {
-  margin-top: 14px;
-  padding: 14px;
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-}
-
-.target-title {
-  color: var(--deep);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .5px;
-}
-
-.post-button {
-  display: block;
-  margin-top: 10px;
-  padding: 12px;
-  background: var(--deep);
-  color: white !important;
-  text-align: center;
-  text-decoration: none !important;
-  border-radius: 10px;
-  font-size: 13px;
-}
-
-.ownership {
-  padding-top: 12px;
-  margin-top: 14px;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.7;
 }
 
 .comment {
@@ -209,6 +140,77 @@ button {
   margin-top: 6px;
 }
 
+/* Instagram notice */
+.notice {
+  margin-top: 24px;
+  padding: 18px 16px;
+  background: #f0f8ff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  text-align: left;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.notice-title {
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.notice p {
+  margin: 7px 0;
+  font-size: 13px;
+}
+
+.notice a {
+  color: var(--deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.notice a:hover {
+  text-decoration: underline;
+}
+
+.target-post {
+  margin-top: 14px;
+  padding: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.target-title {
+  color: var(--deep);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+.post-button {
+  display: block;
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--deep);
+  color: white !important;
+  text-align: center;
+  text-decoration: none !important;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.ownership {
+  padding-top: 12px;
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
 .note {
   font-size: 12px;
   line-height: 1.6;
@@ -241,11 +243,30 @@ button {
     One click, one comment. Let's support Seonghyeon together!
   </p>
 
+  <!-- Language buttons are directly above the comment -->
   <div class="languages">
     <button class="lang active" id="enBtn" type="button">English</button>
     <button class="lang" id="koBtn" type="button">한국어</button>
   </div>
 
+  <!-- Comment -->
+  <div class="comment" id="comment">Loading a comment…</div>
+
+  <button class="primary" id="copyBtn" type="button" disabled>
+    Copy comment
+  </button>
+
+  <p class="status" id="status" aria-live="polite">
+    Connecting to the database…
+  </p>
+
+  <!-- Global copy counter -->
+  <div class="counter">
+    <div class="counter-label">TOTAL COMMENTS COPIED</div>
+    <div class="counter-number" id="copyCount">Loading…</div>
+  </div>
+
+  <!-- Instagram links and EomLand ownership notice -->
   <section class="notice" aria-label="Instagram and ownership notice">
 
     <div class="notice-title">IMPORTANT — MUST FOLLOW</div>
@@ -283,21 +304,6 @@ button {
 
   </section>
 
-  <div class="comment" id="comment">Loading a comment…</div>
-
-  <button class="primary" id="copyBtn" type="button" disabled>
-    Copy comment
-  </button>
-
-  <p class="status" id="status" aria-live="polite">
-    Connecting to the database…
-  </p>
-
-  <div class="counter">
-    <div class="counter-label">TOTAL COMMENTS COPIED</div>
-    <div class="counter-number" id="copyCount">Loading…</div>
-  </div>
-
   <p class="note">
     This tool copies comments only. It does not post or interact with
     social media automatically.
@@ -317,6 +323,7 @@ let language = "en";
 let currentComment = null;
 let loading = false;
 let copying = false;
+let languageRequest = 0;
 
 const commentBox = document.getElementById("comment");
 const copyBtn = document.getElementById("copyBtn");
@@ -360,33 +367,25 @@ async function refreshCopyCount() {
   }
 }
 
-function setLanguage(lang) {
-  if (language === lang) return;
-
-  language = lang;
-  enBtn.classList.toggle("active", lang === "en");
-  koBtn.classList.toggle("active", lang === "ko");
-
-  commentBox.textContent = "Loading a comment…";
-  loadComment();
-}
-
 async function loadComment() {
   if (loading) return;
 
   loading = true;
   copyBtn.disabled = true;
   currentComment = null;
+
+  const requestLanguage = language;
+  const requestId = ++languageRequest;
+
   setStatus("Finding an available comment…");
 
   try {
-    const baseUrl = SUPABASE_URL.replace(/\/+$/, "");
     const response = await fetch(
-      baseUrl + "/rest/v1/rpc/claim_comment",
+      SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/claim_comment",
       {
         method: "POST",
         headers: supabaseHeaders(),
-        body: JSON.stringify({ p_language: language })
+        body: JSON.stringify({ p_language: requestLanguage })
       }
     );
 
@@ -398,6 +397,8 @@ async function loadComment() {
     }
 
     const rows = await response.json();
+
+    if (requestId !== languageRequest) return;
 
     if (!Array.isArray(rows) || rows.length === 0) {
       commentBox.textContent = "No comments available right now.";
@@ -411,11 +412,26 @@ async function loadComment() {
     copyBtn.disabled = false;
 
   } catch (error) {
-    commentBox.textContent = "Couldn't load a comment.";
-    setStatus(error.message || "Connection error. Please try again.");
+    if (requestId === languageRequest) {
+      commentBox.textContent = "Couldn't load a comment.";
+      setStatus(error.message || "Connection error. Please try again.");
+    }
   } finally {
     loading = false;
+    if (!currentComment) copyBtn.disabled = true;
   }
+}
+
+function setLanguage(lang) {
+  if (language === lang) return;
+
+  language = lang;
+  enBtn.classList.toggle("active", lang === "en");
+  koBtn.classList.toggle("active", lang === "ko");
+
+  commentBox.textContent = "Loading a comment…";
+  currentComment = null;
+  loadComment();
 }
 
 copyBtn.addEventListener("click", async () => {
@@ -455,15 +471,15 @@ copyBtn.addEventListener("click", async () => {
       await refreshCopyCount();
     }
 
+    currentComment = null;
     await loadComment();
 
   } catch (error) {
     setStatus("Copy failed. Open the site in a secure browser and try again.");
+    copyBtn.disabled = !currentComment;
   } finally {
     copying = false;
-    if (currentComment && !loading) {
-      copyBtn.disabled = false;
-    }
+    if (currentComment && !loading) copyBtn.disabled = false;
   }
 });
 
