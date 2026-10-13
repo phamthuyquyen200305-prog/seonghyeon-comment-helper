@@ -510,15 +510,16 @@ button {
 
   <div class="vogue-comment-box">
     <p class="vogue-label">YOUR COMMENT</p>
+    <div class="languages">
+      <button class="lang active" id="vogueEnBtn" type="button">English</button>
+      <button class="lang" id="vogueKoBtn" type="button">한국어</button>
+    </div>
     <div id="vogueComment" class="vogue-comment">
       Loading comment...
     </div>
-
     <div class="vogue-actions">
-      <button id="vogueCopyBtn" type="button">COPY COMMENT</button>
-      <button id="vogueNextBtn" type="button">NEXT COMMENT ↻</button>
+      <button id="vogueCopyBtn" type="button" disabled>COPY COMMENT</button>
     </div>
-
     <p id="vogueCopyStatus" class="vogue-status" aria-live="polite"></p>
     <p class="vogue-counter">
       Vogue copies this session: <span id="vogueCopyCount">0</span>
@@ -702,84 +703,121 @@ refreshCopyCount();
 loadComment();
 loadVogueComments();
   
-/* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENT POOL */
-let vogueComments = [];
-
-async function loadVogueComments() {
-  try {
-    const response = await fetch("./vogue-comments.json");
-
-    if (!response.ok) {
-      throw new Error("Could not load vogue-comments.json");
-    }
-
-    vogueComments = await response.json();
-    showNextVogueComment();
-  } catch (error) {
-    console.error("Error loading Vogue comments:", error);
-
-    if (vogueCommentElement) {
-      vogueCommentElement.textContent =
-        "Unable to load comments. Please refresh the page.";
-    }
-  }
-}
-
+/* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENTS — stored in Supabase */
 const vogueCommentElement = document.getElementById("vogueComment");
 const vogueCopyButton = document.getElementById("vogueCopyBtn");
-const vogueNextButton = document.getElementById("vogueNextBtn");
 const vogueCopyStatus = document.getElementById("vogueCopyStatus");
 const vogueCopyCountElement = document.getElementById("vogueCopyCount");
+const vogueEnBtn = document.getElementById("vogueEnBtn");
+const vogueKoBtn = document.getElementById("vogueKoBtn");
 
+let vogueLanguage = "en";
+let vogueComments = [];
 let vogueCurrentComment = "";
 let vogueCopyCount = 0;
+let vogueLoading = false;
+
+async function loadVogueComments() {
+  vogueLoading = true;
+  vogueCopyButton.disabled = true;
+  vogueCommentElement.textContent = "Loading comments…";
+  vogueCopyStatus.textContent = "";
+  vogueComments = [];
+  vogueCurrentComment = "";
+
+  try {
+    const allRows = [];
+    const pageSize = 1000;
+    let offset = 0;
+
+    while (true) {
+      const url = SUPABASE_URL.replace(/\\/+$/, "") +
+        "/rest/v1/vogue_comments?select=content&language=eq." +
+        encodeURIComponent(vogueLanguage) +
+        "&is_active=eq.true&order=id.asc&limit=" + pageSize +
+        "&offset=" + offset;
+
+      const response = await fetch(url, {
+        method: "GET",
+        headers: supabaseHeaders(),
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        throw new Error("Supabase request failed (" + response.status + ").");
+      }
+
+      const rows = await response.json();
+      allRows.push(...rows);
+      if (rows.length < pageSize) break;
+      offset += pageSize;
+    }
+
+    vogueComments = allRows
+      .map(row => row.content)
+      .filter(content => typeof content === "string" && content.trim());
+
+    if (vogueComments.length === 0) {
+      vogueCommentElement.textContent = "No comments found for this language.";
+      vogueCopyStatus.textContent = "Check that comments were imported and is_active is true.";
+      return;
+    }
+
+    showNextVogueComment();
+    vogueCopyStatus.textContent = vogueComments.length.toLocaleString() + " comments loaded.";
+  } catch (error) {
+    console.error("Error loading Vogue comments:", error);
+    vogueCommentElement.textContent = "Unable to load comments.";
+    vogueCopyStatus.textContent = (error.message || "Connection error") +
+      " Check the Supabase table and read policy.";
+  } finally {
+    vogueLoading = false;
+    vogueCopyButton.disabled = !vogueCurrentComment;
+  }
+}
 
 function showNextVogueComment() {
   if (!vogueCommentElement || vogueComments.length === 0) return;
 
-  let nextComment = vogueComments[
-    Math.floor(Math.random() * vogueComments.length)
-  ];
-
-  // Avoid showing the same comment twice in a row.
-  if (vogueComments.length > 1) {
-    while (nextComment === vogueCurrentComment) {
-      nextComment = vogueComments[
-        Math.floor(Math.random() * vogueComments.length)
-      ];
-    }
+  let nextIndex = Math.floor(Math.random() * vogueComments.length);
+  if (vogueComments.length > 1 && vogueComments[nextIndex] === vogueCurrentComment) {
+    const currentIndex = vogueComments.indexOf(vogueCurrentComment);
+    nextIndex = (currentIndex + 1 + Math.floor(Math.random() * (vogueComments.length - 1))) % vogueComments.length;
   }
 
-  vogueCurrentComment = nextComment;
-  vogueCommentElement.textContent = nextComment;
-
-  if (vogueCopyStatus) vogueCopyStatus.textContent = "";
+  vogueCurrentComment = vogueComments[nextIndex];
+  vogueCommentElement.textContent = vogueCurrentComment;
+  vogueCopyButton.disabled = false;
 }
 
-if (vogueNextButton) {
-  vogueNextButton.addEventListener("click", showNextVogueComment);
+function setVogueLanguage(lang) {
+  if (vogueLanguage === lang || vogueLoading) return;
+  vogueLanguage = lang;
+  vogueEnBtn.classList.toggle("active", lang === "en");
+  vogueKoBtn.classList.toggle("active", lang === "ko");
+  loadVogueComments();
 }
 
-if (vogueCopyButton) {
-  vogueCopyButton.addEventListener("click", async () => {
-    if (!vogueCurrentComment) return;
+vogueEnBtn.addEventListener("click", () => setVogueLanguage("en"));
+vogueKoBtn.addEventListener("click", () => setVogueLanguage("ko"));
 
-    try {
-      await navigator.clipboard.writeText(vogueCurrentComment);
+vogueCopyButton.addEventListener("click", async () => {
+  if (!vogueCurrentComment || vogueLoading) return;
 
-      vogueCopyCount++;
-      vogueCopyCountElement.textContent = vogueCopyCount;
-      vogueCopyStatus.textContent = "Copied!";
+  vogueCopyButton.disabled = true;
+  try {
+    await navigator.clipboard.writeText(vogueCurrentComment);
+    vogueCopyCount++;
+    vogueCopyCountElement.textContent = vogueCopyCount.toLocaleString();
+    showNextVogueComment();
+    vogueCopyStatus.textContent = "Copied! Another comment is ready.";
+  } catch (error) {
+    vogueCopyStatus.textContent = "Copy failed. Open this website over HTTPS and try again.";
+    vogueCopyButton.disabled = false;
+  }
+});
 
-      // Automatically display another random comment after copying.
-      showNextVogueComment();
-    } catch (error) {
-      vogueCopyStatus.textContent =
-        "Copy failed. Please open this website over HTTPS and try again.";
-    }
-  });
-}
-
+loadVogueComments();
 
 // Switch between the home menu and the two separate project pages.
 const homeView = document.getElementById("homeView");
