@@ -137,7 +137,8 @@ body {
   min-height: 100vh;
   padding: 24px 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   font-family: Arial, sans-serif;
   color: var(--ink);
@@ -147,6 +148,7 @@ body {
 .card {
   width: 100%;
   max-width: 520px;
+  margin: 0 auto;
   padding: 30px 24px;
   text-align: center;
   background: rgba(255,255,255,.94);
@@ -365,7 +367,12 @@ button {
 .menu-choice strong { display:block; font-size: 15px; line-height: 1.5; }
 .menu-choice span { display:block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height:1.5; }
 .menu-choice:hover { background:#e9f5ff; }
-.view-shell { width:100%; }
+.view-shell {
+  display: block;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
 .back-button {
   display:block; width:100%; max-width:520px; margin:0 auto 14px; padding:11px 14px;
   border:1px solid var(--border); border-radius:12px; background:#fff;
