@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +84,25 @@ button {
 }
 .primary:disabled { opacity: .6; cursor: wait; }
 .status { min-height: 22px; margin: 14px 0 0; font-size: 13px; color: #668096; }
+.counter {
+  margin-top: 20px;
+  padding: 14px;
+  background: #f5faff;
+  border: 1px solid #dceeff;
+  border-radius: 16px;
+}
+.counter-label {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #668096;
+  font-weight: 700;
+}
+.counter-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--deep);
+  margin-top: 6px;
+}
 .note { font-size: 12px; line-height: 1.6; color: #8094a5; margin-top: 20px; }
 </style>
 </head>
@@ -101,26 +120,64 @@ button {
   <div class="comment" id="comment">Loading a comment…</div>
   <button class="primary" id="copyBtn" type="button">Copy comment</button>
   <p class="status" id="status" aria-live="polite">Connecting to the database…</p>
+
+  <div class="counter">
+    <div class="counter-label">TOTAL COMMENTS COPIED</div>
+    <div class="counter-number" id="copyCount">Loading…</div>
+  </div>
+
   <p class="note">This tool copies comments only. It does not post or interact with social media automatically.</p>
 </main>
 
 <script>
-/* Replace these two placeholders with your own Supabase details. */
 const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
 
 let language = "en";
 let currentComment = null;
 let loading = false;
+let copying = false;
 
 const commentBox = document.getElementById("comment");
 const copyBtn = document.getElementById("copyBtn");
 const statusBox = document.getElementById("status");
 const enBtn = document.getElementById("enBtn");
 const koBtn = document.getElementById("koBtn");
+const copyCountBox = document.getElementById("copyCount");
 
 function setStatus(message) {
   statusBox.textContent = message;
+}
+
+function supabaseHeaders() {
+  return {
+    "Content-Type": "application/json",
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + SUPABASE_KEY
+  };
+}
+
+async function refreshCopyCount() {
+  try {
+    const response = await fetch(
+      SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/get_copy_count",
+      {
+        method: "POST",
+        headers: supabaseHeaders(),
+        body: "{}",
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Could not load counter");
+    }
+
+    const total = await response.json();
+    copyCountBox.textContent = Number(total).toLocaleString("en-US");
+  } catch (error) {
+    copyCountBox.textContent = "Unavailable";
+  }
 }
 
 function setLanguage(lang) {
@@ -133,27 +190,17 @@ function setLanguage(lang) {
 
 async function loadComment() {
   if (loading) return;
+
   loading = true;
   copyBtn.disabled = true;
   currentComment = null;
   setStatus("Finding an available comment…");
 
   try {
-    if (
-      SUPABASE_URL.includes("YOUR_SUPABASE_URL") ||
-      SUPABASE_KEY.includes("YOUR_SUPABASE_PUBLISHABLE_KEY")
-    ) {
-      throw new Error("Add your Supabase URL and publishable key to index.html first.");
-    }
-
     const baseUrl = SUPABASE_URL.replace(/\/+$/, "");
     const response = await fetch(baseUrl + "/rest/v1/rpc/claim_comment", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY
-      },
+      headers: supabaseHeaders(),
       body: JSON.stringify({ p_language: language })
     });
 
@@ -162,6 +209,7 @@ async function loadComment() {
     }
 
     const rows = await response.json();
+
     if (!Array.isArray(rows) || rows.length === 0) {
       commentBox.textContent = "No comments left in this language.";
       setStatus("More comments need to be added to the database.");
@@ -181,26 +229,59 @@ async function loadComment() {
 }
 
 copyBtn.addEventListener("click", async () => {
-  if (!currentComment || loading) return;
+  if (!currentComment || loading || copying) return;
 
+  copying = true;
+  copyBtn.disabled = true;
   const textToCopy = currentComment;
+
   try {
     await navigator.clipboard.writeText(textToCopy);
-    setStatus("Copied! Loading your next comment…");
+
+    setStatus("Copied! Updating the total…");
+
+    try {
+      const response = await fetch(
+        SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_copy_count",
+        {
+          method: "POST",
+          headers: supabaseHeaders(),
+          body: "{}"
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Counter update failed");
+      }
+
+      const total = await response.json();
+      copyCountBox.textContent = Number(total).toLocaleString("en-US");
+      setStatus("Copied successfully! 💙");
+    } catch (counterError) {
+      setStatus("Comment copied, but the counter could not update. Please refresh later.");
+      await refreshCopyCount();
+    }
+
     await loadComment();
   } catch (error) {
     setStatus("Copy failed. Open the site in a secure browser and try again.");
+  } finally {
+    copying = false;
+    if (currentComment && !loading) copyBtn.disabled = false;
   }
 });
 
 enBtn.addEventListener("click", () => {
   if (language !== "en") setLanguage("en");
 });
+
 koBtn.addEventListener("click", () => {
   if (language !== "ko") setLanguage("ko");
 });
 
+refreshCopyCount();
 loadComment();
 </script>
 </body>
 </html>
+```
