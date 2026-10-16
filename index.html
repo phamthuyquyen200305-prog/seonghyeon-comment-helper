@@ -20,19 +20,19 @@
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--deep);
-  background: #f5faff;
+  background: #fff6fa;
   text-decoration: none;
   text-align: center;
   font-size: 12px;
   font-weight: 700;
 }
-.vogue-card .vogue-posts a:hover { background: #e9f5ff; }
+.vogue-card .vogue-posts a:hover { background: #ffe4f0; }
 .vogue-card .vogue-posts a:last-child { grid-column: 1 / -1; }
 .vogue-card .vogue-counter {
   margin-top: 20px;
   padding: 14px;
-  background: #f5faff;
-  border: 1px solid #dceeff;
+  background: #fff6fa;
+  border: 1px solid #f6d6e6;
   border-radius: 16px;
   font-size: 12px;
   color: var(--muted);
@@ -47,10 +47,10 @@
 }
 
 :root {
-  --deep: #477fa7;
-  --ink: #28445b;
-  --muted: #668096;
-  --border: #d4eaff;
+  --deep: #c34d86;
+  --ink: #54243f;
+  --muted: #96677f;
+  --border: #f1bfd8;
 }
 * { box-sizing: border-box; }
 
@@ -64,7 +64,7 @@ body {
   align-items: center;
   font-family: Arial, sans-serif;
   color: var(--ink);
-  background: linear-gradient(145deg, #e9f7ff, #f8f1ff);
+  background: linear-gradient(145deg, #ffe6f1, #fff1f7);
 }
 
 .card {
@@ -74,9 +74,9 @@ body {
   padding: 30px 24px;
   text-align: center;
   background: rgba(255,255,255,.94);
-  border: 1px solid #d7eafb;
+  border: 1px solid #f4c8dd;
   border-radius: 26px;
-  box-shadow: 0 14px 40px #9dbbd52b;
+  box-shadow: 0 14px 40px #d78bb52b;
 }
 
 .eyebrow {
@@ -108,21 +108,35 @@ button {
   cursor: pointer;
   border: 0;
   border-radius: 14px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .22s ease, color .22s ease, border-color .22s ease,
+              box-shadow .22s ease, transform .16s ease, opacity .22s ease;
+}
+button:not(:disabled):active {
+  transform: translateY(1px) scale(.985);
+}
+button:focus-visible, a:focus-visible {
+  outline: 3px solid #f2a6cb;
+  outline-offset: 3px;
+}
+button:disabled {
+  cursor: not-allowed;
 }
 
 .lang {
   padding: 10px 22px;
   color: var(--deep);
-  background: #edf7ff;
+  background: #fff0f7;
   border: 1px solid var(--border);
 }
 
 .lang.active {
-  background: #cbe8ff;
+  background: #f6c5df;
   font-weight: 700;
 }
 
 .comment {
+  transition: background-color .22s ease, border-color .22s ease, opacity .22s ease;
   min-height: 150px;
   padding: 24px 18px;
   display: flex;
@@ -132,8 +146,8 @@ button {
   white-space: pre-wrap;
   line-height: 1.8;
   font-size: 17px;
-  background: #f5faff;
-  border: 1px solid #dceeff;
+  background: #fff6fa;
+  border: 1px solid #f6d6e6;
   border-radius: 18px;
 }
 
@@ -144,26 +158,6 @@ button {
   color: white;
   font-weight: 700;
   background: var(--deep);
-  box-shadow: 0 5px 0 #2f6287, 0 8px 16px #477fa729;
-  transform: translateY(0) scale(1);
-  transition: transform .14s cubic-bezier(.2,.8,.2,1), box-shadow .14s ease,
-              background-color .18s ease, opacity .18s ease;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-.primary:not(:disabled):hover {
-  background: #3c739a;
-  transform: translateY(-2px);
-  box-shadow: 0 7px 0 #2f6287, 0 11px 18px #477fa72b;
-}
-.primary:not(:disabled):active {
-  transform: translateY(3px) scale(.985);
-  box-shadow: 0 2px 0 #2f6287, 0 3px 8px #477fa71c;
-  transition-duration: .07s;
-}
-.primary:focus-visible { outline: 3px solid #a8d9ff; outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) {
-  .primary { transition: none; }
 }
 
 .primary:disabled {
@@ -182,8 +176,8 @@ button {
 .counter {
   margin-top: 20px;
   padding: 14px;
-  background: #f5faff;
-  border: 1px solid #dceeff;
+  background: #fff6fa;
+  border: 1px solid #f6d6e6;
   border-radius: 16px;
 }
 
@@ -205,7 +199,7 @@ button {
 .notice {
   margin-top: 24px;
   padding: 18px 16px;
-  background: #f0f8ff;
+  background: #fff0f7;
   border: 1px solid var(--border);
   border-radius: 18px;
   text-align: left;
@@ -275,15 +269,15 @@ button {
 .note {
   font-size: 12px;
   line-height: 1.6;
-  color: #8094a5;
+  color: #ad8499;
   margin-top: 20px;
 }
 
 .footer {
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid #e1edf7;
-  color: #8094a5;
+  border-top: 1px solid #f1d7e4;
+  color: #ad8499;
   font-size: 11px;
   line-height: 1.7;
 }
@@ -297,18 +291,18 @@ button {
 .home-menu {
   width: 100%; max-width: 520px; margin: auto; padding: 30px 24px;
   text-align: center; background: rgba(255,255,255,.96);
-  border: 1px solid #d7eafb; border-radius: 26px;
-  box-shadow: 0 14px 40px #9dbbd52b;
+  border: 1px solid #f4c8dd; border-radius: 26px;
+  box-shadow: 0 14px 40px #d78bb52b;
 }
 .home-menu .menu-intro { color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
 .menu-choice {
   display: block; width: 100%; margin-top: 14px; padding: 18px 16px;
-  border: 1px solid #d4eaff; border-radius: 16px; background: #f5faff;
+  border: 1px solid #f1bfd8; border-radius: 16px; background: #fff6fa;
   color: var(--ink); text-align: left; cursor: pointer;
 }
 .menu-choice strong { display:block; font-size: 15px; line-height: 1.5; }
 .menu-choice span { display:block; margin-top: 5px; color: var(--muted); font-size: 12px; line-height:1.5; }
-.menu-choice:hover { background:#e9f5ff; }
+.menu-choice:hover { background:#ffe4f0; }
 .view-shell {
   display: block;
   width: 100%;
@@ -558,7 +552,7 @@ async function loadComment() {
 
     currentComment = rows[0].content;
     commentBox.textContent = currentComment;
-    setStatus("Ready to copy 💙");
+    setStatus("Ready to copy 💗");
     copyBtn.disabled = false;
 
   } catch (error) {
@@ -593,10 +587,7 @@ copyBtn.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(textToCopy);
-    setStatus("Copied! Loading your next comment…");
-    // Start fetching the next comment immediately while the counter updates.
-    currentComment = null;
-    const nextCommentPromise = loadComment();
+    setStatus("Copied! Updating the total…");
 
     try {
       const response = await fetch(
@@ -615,7 +606,7 @@ copyBtn.addEventListener("click", async () => {
 
       const total = await response.json();
       copyCountBox.textContent = Number(total).toLocaleString("en-US");
-      setStatus("Copied successfully! 💙");
+      setStatus("Copied successfully! 💗");
 
     } catch (counterError) {
       setStatus(
@@ -624,7 +615,8 @@ copyBtn.addEventListener("click", async () => {
       await refreshCopyCount();
     }
 
-    await nextCommentPromise;
+    currentComment = null;
+    await loadComment();
 
   } catch (error) {
     setStatus("Copy failed. Open the site in a secure browser and try again.");
@@ -718,15 +710,47 @@ async function loadVogueComments() {
 }
 
 function shuffleVogueDeck() {
-  vogueDeck = [...vogueComments];
-
-  // Fisher-Yates shuffle: every comment appears once in this round.
-  for (let i = vogueDeck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [vogueDeck[i], vogueDeck[j]] = [vogueDeck[j], vogueDeck[i]];
+  // Group comments by the idea of their opening sentence, then deal from
+  // different groups in turn so similar topics are less likely to appear back-to-back.
+  const topicOf = (comment) => {
+    const first = String(comment).split(/[.!?。！？]/)[0].toLowerCase();
+    if (/louis vuitton|styling|outfit|fashion|룩|스타일링|아이템|패션|옷의/.test(first)) return "fashion";
+    if (/camera|lens|expression|gaze|카메라|렌즈|시선|표정/.test(first)) return "camera";
+    if (/composition|framing|pose|photography|구도|포즈|사진이|비주얼 디렉팅/.test(first)) return "composition";
+    if (/mood|atmosphere|cinematic|분위기|무드/.test(first)) return "mood";
+    if (/lighting|light and shadow|details|art direction|조명|디테일|빛과 그림자|아트 디렉팅/.test(first)) return "craft";
+    if (/identity|personality|individuality|character|개성|성현이답|자기만의 색|성격/.test(first)) return "identity";
+    if (/collaboration|collection|storytelling|컬렉션|스토리텔링|작업은 패션/.test(first)) return "brand";
+    if (/photo|set feels|sequence|revisit|화보예요|사진마다|사진들이|다시 볼|사진이 이어지는/.test(first)) return "variety";
+    if (/look forward|hope we|future|next chapter|기대돼요|만나고 싶어요|다음 활동|앞으로/.test(first)) return "future";
+    return "presence";
+  };
+  const groups = new Map();
+  for (const comment of vogueComments) {
+    const topic = topicOf(comment);
+    if (!groups.has(topic)) groups.set(topic, []);
+    groups.get(topic).push(comment);
   }
-
-  // Avoid showing the same comment at the boundary between two rounds.
+  for (const group of groups.values()) {
+    for (let i = group.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [group[i], group[j]] = [group[j], group[i]];
+    }
+  }
+  const topicNames = [...groups.keys()];
+  for (let i = topicNames.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [topicNames[i], topicNames[j]] = [topicNames[j], topicNames[i]];
+  }
+  vogueDeck = [];
+  while (topicNames.some(topic => groups.get(topic).length)) {
+    for (const topic of topicNames) {
+      const group = groups.get(topic);
+      if (group.length) vogueDeck.push(group.pop());
+    }
+  }
+  // showNextVogueComment() pops from the end, so reverse to keep the interleaving.
+  vogueDeck.reverse();
   if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrentComment) {
     [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
       [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
@@ -804,16 +828,15 @@ vogueCopyButton.addEventListener("click", async () => {
   vogueCopyButton.disabled = true;
   try {
     await navigator.clipboard.writeText(vogueCurrentComment);
-    // The next Vogue comment is already in memory, so show it instantly.
-    showNextVogueComment();
-    vogueCopyStatus.textContent = "Copied! Next comment ready — updating total…";
+    vogueCopyStatus.textContent = "Copied! Updating the total…";
     try {
       await incrementVogueCopyCount();
       vogueCopyStatus.textContent = "Copied successfully! Another comment is ready.";
     } catch (counterError) {
-      vogueCopyStatus.textContent = "Comment copied and next comment ready, but the global counter could not update.";
+      vogueCopyStatus.textContent = "Comment copied, but the global counter could not update. Check the Supabase counter setup.";
       await refreshVogueCopyCount();
     }
+    showNextVogueComment();
   } catch (error) {
     vogueCopyStatus.textContent = "Copy failed. Open this website over HTTPS and try again.";
     vogueCopyButton.disabled = false;
@@ -849,106 +872,6 @@ document.querySelectorAll("[data-go-home]").forEach((button) => {
 </script>
 
 
-
-
-<style>
-/* Public Instagram engagement panel: isolated from existing TOP FACE/VOGUE logic */
-.ig-metrics-panel{margin:12px 0 18px;padding:14px;border:1px solid #ead3df;border-radius:12px;background:#fffafd;text-align:left;color:#392b35}
-.ig-metrics-panel h3{margin:0 0 8px;font-size:14px}
-.ig-metrics-panel .ig-metrics-row{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;font-size:13px}
-.ig-metrics-panel .ig-metrics-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.ig-metrics-panel button{border:0;border-radius:8px;padding:8px 11px;background:#70445c;color:white;cursor:pointer;font-size:12px}
-.ig-metrics-panel .ig-metrics-time,.ig-metrics-panel .ig-metrics-status{font-size:11px;color:#766570;margin:7px 0 0;overflow-wrap:anywhere}
-.ig-metrics-panel .ig-metrics-number{font-weight:700}
-</style>
-<script>
-(() => {
-  // Uses FetchLayer's public Instagram post-detail API. The key is entered by the site owner
-  // in this browser and stored locally; it is NOT written into the public GitHub Pages source.
-  const API_URL = 'https://api.fetchlayer.dev/instagram/post-detail';
-  const KEY_NAME = 'eomland_fetchlayer_api_key_session';
-
-const postUrls = [
-  {
-    label: 'VOGUE POST 08',
-    url: 'https://www.instagram.com/p/DejJ1W7pFfq/',
-    target: '#vogueView .vogue-posts a[href*="DejJ1W7pFfq"]'
-  },
-  {
-    label: 'VOGUE POST 09',
-    url: 'https://www.instagram.com/p/DejGUn9p8M2/',
-    target: '#vogueView .vogue-posts a[href*="DejGUn9p8M2"]'
-  }
-];
-
-  const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : '—';
-  function extract(data) {
-    const candidates = [data, data?.data, data?.post, data?.media, data?.result, data?.data?.post, data?.result?.post].filter(Boolean);
-    let like = null, comments = null;
-    for (const x of candidates) {
-      like ??= x.likeCount ?? x.like_count ?? x.likesCount ?? x.likes;
-      comments ??= x.commentCount ?? x.comment_count ?? x.commentsCount ?? x.comments_count;
-    }
-    if (typeof comments === 'object' && comments !== null) comments = comments.count ?? comments.totalCount ?? comments.total_count;
-    if (typeof like === 'object' && like !== null) like = like.count ?? like.totalCount;
-    return {like, comments};
-  }
-  function createPanel(post) {
-    const panel = document.createElement('div');
-    panel.className = 'ig-metrics-panel';
-    panel.innerHTML = `<h3>PUBLIC POST METRICS</h3><div class="ig-metrics-row"><span>❤️ Likes: <b class="ig-metrics-number" data-like>—</b></span><span>💬 Comments: <b class="ig-metrics-number" data-comments>—</b></span></div><div class="ig-metrics-actions"><button type="button" data-refresh>UPDATE COUNTS</button><button type="button" data-key>SET API KEY</button></div><p class="ig-metrics-time" data-time>Last updated: not yet</p><p class="ig-metrics-status" data-status>Not connected. Public counts may be hidden or delayed. API key entered in the browser is not secret from the browser user.</p>`;
-    panel.querySelector('[data-key]').addEventListener('click', () => {
-      const current = sessionStorage.getItem(KEY_NAME) || '';
-      const key = prompt('Paste your FetchLayer API key. It is kept in this tab session only; do not use a key you cannot afford to expose in browser tools.', current);
-      if (key === null) return;
-      if (!key.trim()) { sessionStorage.removeItem(KEY_NAME); panel.querySelector('[data-status]').textContent = 'API key removed from this browser.'; return; }
-      sessionStorage.setItem(KEY_NAME, key.trim());
-      panel.querySelector('[data-status]').textContent = 'API key saved in this browser. Click UPDATE COUNTS.';
-    });
-    panel.querySelector('[data-refresh]').addEventListener('click', async () => {
-      let key = sessionStorage.getItem(KEY_NAME);
-      if (!key) {
-        key = prompt('Paste your FetchLayer API key. It is kept in this tab session only; do not use a key you cannot afford to expose in browser tools.');
-        if (!key?.trim()) { panel.querySelector('[data-status]').textContent = 'No API key entered. Counts were not changed.'; return; }
-        key = key.trim(); sessionStorage.setItem(KEY_NAME, key);
-      }
-      const button = panel.querySelector('[data-refresh]');
-      const status = panel.querySelector('[data-status]');
-      button.disabled = true; button.textContent = 'UPDATING…'; status.textContent = 'Requesting latest public counts…';
-      try {
-        const response = await fetch(API_URL, {method:'POST', headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'}, body:JSON.stringify({post:post.url})});
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(payload.message || payload.error || `API request failed (${response.status})`);
-        const counts = extract(payload);
-        if (counts.like == null && counts.comments == null) throw new Error('API response did not include like/comment counts. Check API endpoint access or response format.');
-        panel.querySelector('[data-like]').textContent = counts.like == null ? 'Not provided' : fmt(counts.like);
-        panel.querySelector('[data-comments]').textContent = counts.comments == null ? 'Not provided' : fmt(counts.comments);
-        panel.querySelector('[data-time]').textContent = 'Last updated: ' + new Date().toLocaleString();
-        status.textContent = payload.countsHidden ? 'API responded, but Instagram has hidden one or more counts.' : 'API returned counts. Compare with Instagram once to confirm; public data can lag or be unavailable.';
-      } catch (err) {
-        status.textContent = 'Could not update: ' + (err.message || 'unknown error') + '. Previous counts, if any, were kept.';
-      } finally { button.disabled = false; button.textContent = 'UPDATE COUNTS'; }
-    });
-    return panel;
-  }
-  function mount() {
-    for (const post of postUrls) {
-      const anchor = document.querySelector(post.target);
-      if (!anchor) continue;
-      if (post.target.includes('.vogue-posts a')) {
-        const card = document.createElement('div');
-        card.style.minWidth = '0';
-        anchor.parentNode.insertBefore(card, anchor);
-        card.appendChild(anchor);
-        card.appendChild(createPanel(post));
-      } else {
-        anchor.insertAdjacentElement('afterend', createPanel(post));
-      }
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
-})();
-</script>
 
 </body>
 </html>
