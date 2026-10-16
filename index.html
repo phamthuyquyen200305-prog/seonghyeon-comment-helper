@@ -109,11 +109,13 @@ button {
   border: 0;
   border-radius: 14px;
   -webkit-tap-highlight-color: transparent;
-  transition: background-color .22s ease, color .22s ease, border-color .22s ease,
-              box-shadow .22s ease, transform .16s ease, opacity .22s ease;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease,
+              box-shadow .18s ease, transform .24s cubic-bezier(.34,1.56,.64,1), opacity .18s ease;
+  will-change: transform;
 }
 button:not(:disabled):active {
-  transform: translateY(1px) scale(.985);
+  transform: translateY(2px) scale(.94);
+  transition-duration: .08s;
 }
 button:focus-visible, a:focus-visible {
   outline: 3px solid #f2a6cb;
@@ -647,6 +649,7 @@ let vogueDeck = [];
 let vogueCurrentComment = "";
 let vogueCopyCount = 0;
 let vogueLoading = false;
+let vogueInitialized = false;
 
 async function loadVogueComments() {
   vogueLoading = true;
@@ -843,8 +846,13 @@ vogueCopyButton.addEventListener("click", async () => {
   }
 });
 
-refreshVogueCopyCount();
-loadVogueComments();
+function initializeVogueView() {
+  if (vogueInitialized) return;
+  vogueInitialized = true;
+  // Load the Vogue database only when the user opens that page, not during initial page load.
+  refreshVogueCopyCount();
+  loadVogueComments();
+}
 
 // Switch between the home menu and the two separate project pages.
 const homeView = document.getElementById("homeView");
@@ -856,6 +864,7 @@ document.querySelectorAll("[data-open-view]").forEach((button) => {
     homeView.hidden = true;
     voteView.hidden = button.dataset.openView !== "voteView";
     vogueView.hidden = button.dataset.openView !== "vogueView";
+    if (button.dataset.openView === "vogueView") initializeVogueView();
     window.scrollTo({ top: 0, behavior: "auto" });
   });
 });
