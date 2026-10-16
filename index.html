@@ -867,18 +867,20 @@ document.querySelectorAll("[data-go-home]").forEach((button) => {
   // in this browser and stored locally; it is NOT written into the public GitHub Pages source.
   const API_URL = 'https://api.fetchlayer.dev/instagram/post-detail';
   const KEY_NAME = 'eomland_fetchlayer_api_key_session';
-  const postUrls = [
-    {label:'TOP FACE target post', url:'https://www.instagram.com/p/DeJSyyECYya/', target:'#voteView .target-post'},
-    {label:'VOGUE POST 01', url:'https://www.instagram.com/p/DeTzYFQCae5/', target:'#vogueView .vogue-posts a[href*="DeTzYFQCae5"]'},
-    {label:'VOGUE POST 02', url:'https://www.instagram.com/p/DeTtyNcCZV7/', target:'#vogueView .vogue-posts a[href*="DeTtyNcCZV7"]'},
-    {label:'VOGUE POST 03', url:'https://www.instagram.com/p/DeTtpdUidzW/', target:'#vogueView .vogue-posts a[href*="DeTtpdUidzW"]'},
-    {label:'VOGUE POST 04', url:'https://www.instagram.com/p/DeTuvmOpwqA/', target:'#vogueView .vogue-posts a[href*="DeTuvmOpwqA"]'},
-    {label:'VOGUE POST 05', url:'https://www.instagram.com/p/DeTujfYpHtD/', target:'#vogueView .vogue-posts a[href*="DeTujfYpHtD"]'},
-    {label:'VOGUE POST 06', url:'https://www.instagram.com/p/DeTuM3GJxRP/', target:'#vogueView .vogue-posts a[href*="DeTuM3GJxRP"]'},
-    {label:'VOGUE POST 07', url:'https://www.instagram.com/p/DeTLN7LpHBC/', target:'#vogueView .vogue-posts a[href*="DeTLN7LpHBC"]'},
-    {label:'VOGUE POST 08', url:'https://www.instagram.com/p/DejJ1W7pFfq/', target:'#vogueView .vogue-posts a[href*="DejJ1W7pFfq"]'},
-    {label:'VOGUE POST 09', url:'https://www.instagram.com/p/DejGUn9p8M2/', target:'#vogueView .vogue-posts a[href*="DejGUn9p8M2"]'}
-  ];
+
+const postUrls = [
+  {
+    label: 'VOGUE POST 08',
+    url: 'https://www.instagram.com/p/DejJ1W7pFfq/',
+    target: '#vogueView .vogue-posts a[href*="DejJ1W7pFfq"]'
+  },
+  {
+    label: 'VOGUE POST 09',
+    url: 'https://www.instagram.com/p/DejGUn9p8M2/',
+    target: '#vogueView .vogue-posts a[href*="DejGUn9p8M2"]'
+  }
+];
+
   const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : '—';
   function extract(data) {
     const candidates = [data, data?.data, data?.post, data?.media, data?.result, data?.data?.post, data?.result?.post].filter(Boolean);
