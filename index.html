@@ -316,7 +316,7 @@ button {
   </button>
   <button class="menu-choice" type="button" data-open-view="vogueView">
     <strong>02 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
-    <span>7 Instagram posts · English / Korean · Auto-next Copy</span>
+    <span>9 Instagram posts · English / Korean · Auto-next Copy</span>
   </button>
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </section>
@@ -421,8 +421,8 @@ button {
   <button class="primary" id="vogueCopyBtn" type="button" disabled>Copy comment</button>
   <p id="vogueCopyStatus" class="status" aria-live="polite">Connecting to the database…</p>
   <div class="vogue-counter">
-    <strong>VOGUE COMMENTS COPIED THIS SESSION</strong>
-    <span id="vogueCopyCount">0</span>
+    <strong>TOTAL VOGUE COMMENTS COPIED</strong>
+    <span id="vogueCopyCount">Loading…</span>
   </div>
 
   <section class="notice" aria-label="Vogue Instagram posts">
@@ -436,6 +436,8 @@ button {
       <a href="https://www.instagram.com/p/DeTujfYpHtD/" target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
       <a href="https://www.instagram.com/p/DeTuM3GJxRP/" target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
       <a href="https://www.instagram.com/p/DeTLN7LpHBC/" target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+      <a href="https://www.instagram.com/p/DejJ1W7pFfq/" target="_blank" rel="noopener noreferrer">POST 08 ↗</a>
+      <a href="https://www.instagram.com/p/DejGUn9p8M2/" target="_blank" rel="noopener noreferrer">POST 09 ↗</a>
     </div>
   </section>
   <p class="note">This tool copies comments only. It does not post or interact with Instagram automatically.</p>
@@ -734,22 +736,68 @@ function setVogueLanguage(lang) {
 vogueEnBtn.addEventListener("click", () => setVogueLanguage("en"));
 vogueKoBtn.addEventListener("click", () => setVogueLanguage("ko"));
 
+async function refreshVogueCopyCount() {
+  try {
+    const response = await fetch(
+      SUPABASE_URL.replace(/\\/+$/, "") +
+      "/rest/v1/vogue_copy_stats?select=copy_count&id=eq.1",
+      {
+        method: "GET",
+        headers: supabaseHeaders(),
+        cache: "no-store"
+      }
+    );
+    if (!response.ok) throw new Error("Could not load Vogue counter");
+    const rows = await response.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      throw new Error("Vogue counter row not found");
+    }
+    vogueCopyCount = Number(rows[0].copy_count) || 0;
+    vogueCopyCountElement.textContent = vogueCopyCount.toLocaleString("en-US");
+  } catch (error) {
+    vogueCopyCountElement.textContent = "Unavailable";
+    console.error("Error loading Vogue copy counter:", error);
+  }
+}
+
+async function incrementVogueCopyCount() {
+  const response = await fetch(
+    SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/rpc/increment_vogue_copy_count",
+    {
+      method: "POST",
+      headers: supabaseHeaders(),
+      body: "{}",
+      cache: "no-store"
+    }
+  );
+  if (!response.ok) throw new Error("Vogue counter update failed");
+  const total = await response.json();
+  vogueCopyCount = Number(total) || 0;
+  vogueCopyCountElement.textContent = vogueCopyCount.toLocaleString("en-US");
+}
+
 vogueCopyButton.addEventListener("click", async () => {
   if (!vogueCurrentComment || vogueLoading) return;
 
   vogueCopyButton.disabled = true;
   try {
     await navigator.clipboard.writeText(vogueCurrentComment);
-    vogueCopyCount++;
-    vogueCopyCountElement.textContent = vogueCopyCount.toLocaleString();
+    vogueCopyStatus.textContent = "Copied! Updating the total…";
+    try {
+      await incrementVogueCopyCount();
+      vogueCopyStatus.textContent = "Copied successfully! Another comment is ready.";
+    } catch (counterError) {
+      vogueCopyStatus.textContent = "Comment copied, but the global counter could not update. Check the Supabase counter setup.";
+      await refreshVogueCopyCount();
+    }
     showNextVogueComment();
-    vogueCopyStatus.textContent = "Copied! Another comment is ready.";
   } catch (error) {
     vogueCopyStatus.textContent = "Copy failed. Open this website over HTTPS and try again.";
     vogueCopyButton.disabled = false;
   }
 });
 
+refreshVogueCopyCount();
 loadVogueComments();
 
 // Switch between the home menu and the two separate project pages.
