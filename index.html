@@ -696,47 +696,15 @@ async function loadVogueComments() {
 }
 
 function shuffleVogueDeck() {
-  // Group comments by the idea of their opening sentence, then deal from
-  // different groups in turn so similar topics are less likely to appear back-to-back.
-  const topicOf = (comment) => {
-    const first = String(comment).split(/[.!?。！？]/)[0].toLowerCase();
-    if (/louis vuitton|styling|outfit|fashion|룩|스타일링|아이템|패션|옷의/.test(first)) return "fashion";
-    if (/camera|lens|expression|gaze|카메라|렌즈|시선|표정/.test(first)) return "camera";
-    if (/composition|framing|pose|photography|구도|포즈|사진이|비주얼 디렉팅/.test(first)) return "composition";
-    if (/mood|atmosphere|cinematic|분위기|무드/.test(first)) return "mood";
-    if (/lighting|light and shadow|details|art direction|조명|디테일|빛과 그림자|아트 디렉팅/.test(first)) return "craft";
-    if (/identity|personality|individuality|character|개성|성현이답|자기만의 색|성격/.test(first)) return "identity";
-    if (/collaboration|collection|storytelling|컬렉션|스토리텔링|작업은 패션/.test(first)) return "brand";
-    if (/photo|set feels|sequence|revisit|화보예요|사진마다|사진들이|다시 볼|사진이 이어지는/.test(first)) return "variety";
-    if (/look forward|hope we|future|next chapter|기대돼요|만나고 싶어요|다음 활동|앞으로/.test(first)) return "future";
-    return "presence";
-  };
-  const groups = new Map();
-  for (const comment of vogueComments) {
-    const topic = topicOf(comment);
-    if (!groups.has(topic)) groups.set(topic, []);
-    groups.get(topic).push(comment);
-  }
-  for (const group of groups.values()) {
-    for (let i = group.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [group[i], group[j]] = [group[j], group[i]];
-    }
-  }
-  const topicNames = [...groups.keys()];
-  for (let i = topicNames.length - 1; i > 0; i--) {
+  vogueDeck = [...vogueComments];
+
+  // Fisher-Yates shuffle: every comment appears once in this round.
+  for (let i = vogueDeck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [topicNames[i], topicNames[j]] = [topicNames[j], topicNames[i]];
+    [vogueDeck[i], vogueDeck[j]] = [vogueDeck[j], vogueDeck[i]];
   }
-  vogueDeck = [];
-  while (topicNames.some(topic => groups.get(topic).length)) {
-    for (const topic of topicNames) {
-      const group = groups.get(topic);
-      if (group.length) vogueDeck.push(group.pop());
-    }
-  }
-  // showNextVogueComment() pops from the end, so reverse to keep the interleaving.
-  vogueDeck.reverse();
+
+  // Avoid showing the same comment at the boundary between two rounds.
   if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrentComment) {
     [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
       [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
@@ -858,6 +826,104 @@ document.querySelectorAll("[data-go-home]").forEach((button) => {
 </script>
 
 
+
+
+<style>
+/* Public Instagram engagement panel: isolated from existing TOP FACE/VOGUE logic */
+.ig-metrics-panel{margin:12px 0 18px;padding:14px;border:1px solid #ead3df;border-radius:12px;background:#fffafd;text-align:left;color:#392b35}
+.ig-metrics-panel h3{margin:0 0 8px;font-size:14px}
+.ig-metrics-panel .ig-metrics-row{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;font-size:13px}
+.ig-metrics-panel .ig-metrics-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ig-metrics-panel button{border:0;border-radius:8px;padding:8px 11px;background:#70445c;color:white;cursor:pointer;font-size:12px}
+.ig-metrics-panel .ig-metrics-time,.ig-metrics-panel .ig-metrics-status{font-size:11px;color:#766570;margin:7px 0 0;overflow-wrap:anywhere}
+.ig-metrics-panel .ig-metrics-number{font-weight:700}
+</style>
+<script>
+(() => {
+  // Uses FetchLayer's public Instagram post-detail API. The key is entered by the site owner
+  // in this browser and stored locally; it is NOT written into the public GitHub Pages source.
+  const API_URL = 'https://api.fetchlayer.dev/instagram/post-detail';
+  const KEY_NAME = 'eomland_fetchlayer_api_key_session';
+  const postUrls = [
+    {label:'TOP FACE target post', url:'https://www.instagram.com/p/DeJSyyECYya/', target:'#voteView .target-post'},
+    {label:'VOGUE POST 01', url:'https://www.instagram.com/p/DeTzYFQCae5/', target:'#vogueView .vogue-posts a[href*="DeTzYFQCae5"]'},
+    {label:'VOGUE POST 02', url:'https://www.instagram.com/p/DeTtyNcCZV7/', target:'#vogueView .vogue-posts a[href*="DeTtyNcCZV7"]'},
+    {label:'VOGUE POST 03', url:'https://www.instagram.com/p/DeTtpdUidzW/', target:'#vogueView .vogue-posts a[href*="DeTtpdUidzW"]'},
+    {label:'VOGUE POST 04', url:'https://www.instagram.com/p/DeTuvmOpwqA/', target:'#vogueView .vogue-posts a[href*="DeTuvmOpwqA"]'},
+    {label:'VOGUE POST 05', url:'https://www.instagram.com/p/DeTujfYpHtD/', target:'#vogueView .vogue-posts a[href*="DeTujfYpHtD"]'},
+    {label:'VOGUE POST 06', url:'https://www.instagram.com/p/DeTuM3GJxRP/', target:'#vogueView .vogue-posts a[href*="DeTuM3GJxRP"]'},
+    {label:'VOGUE POST 07', url:'https://www.instagram.com/p/DeTLN7LpHBC/', target:'#vogueView .vogue-posts a[href*="DeTLN7LpHBC"]'},
+    {label:'VOGUE POST 08', url:'https://www.instagram.com/p/DejJ1W7pFfq/', target:'#vogueView .vogue-posts a[href*="DejJ1W7pFfq"]'},
+    {label:'VOGUE POST 09', url:'https://www.instagram.com/p/DejGUn9p8M2/', target:'#vogueView .vogue-posts a[href*="DejGUn9p8M2"]'}
+  ];
+  const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : '—';
+  function extract(data) {
+    const candidates = [data, data?.data, data?.post, data?.media, data?.result, data?.data?.post, data?.result?.post].filter(Boolean);
+    let like = null, comments = null;
+    for (const x of candidates) {
+      like ??= x.likeCount ?? x.like_count ?? x.likesCount ?? x.likes;
+      comments ??= x.commentCount ?? x.comment_count ?? x.commentsCount ?? x.comments_count;
+    }
+    if (typeof comments === 'object' && comments !== null) comments = comments.count ?? comments.totalCount ?? comments.total_count;
+    if (typeof like === 'object' && like !== null) like = like.count ?? like.totalCount;
+    return {like, comments};
+  }
+  function createPanel(post) {
+    const panel = document.createElement('div');
+    panel.className = 'ig-metrics-panel';
+    panel.innerHTML = `<h3>PUBLIC POST METRICS</h3><div class="ig-metrics-row"><span>❤️ Likes: <b class="ig-metrics-number" data-like>—</b></span><span>💬 Comments: <b class="ig-metrics-number" data-comments>—</b></span></div><div class="ig-metrics-actions"><button type="button" data-refresh>UPDATE COUNTS</button><button type="button" data-key>SET API KEY</button></div><p class="ig-metrics-time" data-time>Last updated: not yet</p><p class="ig-metrics-status" data-status>Not connected. Public counts may be hidden or delayed. API key entered in the browser is not secret from the browser user.</p>`;
+    panel.querySelector('[data-key]').addEventListener('click', () => {
+      const current = sessionStorage.getItem(KEY_NAME) || '';
+      const key = prompt('Paste your FetchLayer API key. It is kept in this tab session only; do not use a key you cannot afford to expose in browser tools.', current);
+      if (key === null) return;
+      if (!key.trim()) { sessionStorage.removeItem(KEY_NAME); panel.querySelector('[data-status]').textContent = 'API key removed from this browser.'; return; }
+      sessionStorage.setItem(KEY_NAME, key.trim());
+      panel.querySelector('[data-status]').textContent = 'API key saved in this browser. Click UPDATE COUNTS.';
+    });
+    panel.querySelector('[data-refresh]').addEventListener('click', async () => {
+      let key = sessionStorage.getItem(KEY_NAME);
+      if (!key) {
+        key = prompt('Paste your FetchLayer API key. It is kept in this tab session only; do not use a key you cannot afford to expose in browser tools.');
+        if (!key?.trim()) { panel.querySelector('[data-status]').textContent = 'No API key entered. Counts were not changed.'; return; }
+        key = key.trim(); sessionStorage.setItem(KEY_NAME, key);
+      }
+      const button = panel.querySelector('[data-refresh]');
+      const status = panel.querySelector('[data-status]');
+      button.disabled = true; button.textContent = 'UPDATING…'; status.textContent = 'Requesting latest public counts…';
+      try {
+        const response = await fetch(API_URL, {method:'POST', headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'}, body:JSON.stringify({post:post.url})});
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(payload.message || payload.error || `API request failed (${response.status})`);
+        const counts = extract(payload);
+        if (counts.like == null && counts.comments == null) throw new Error('API response did not include like/comment counts. Check API endpoint access or response format.');
+        panel.querySelector('[data-like]').textContent = counts.like == null ? 'Not provided' : fmt(counts.like);
+        panel.querySelector('[data-comments]').textContent = counts.comments == null ? 'Not provided' : fmt(counts.comments);
+        panel.querySelector('[data-time]').textContent = 'Last updated: ' + new Date().toLocaleString();
+        status.textContent = payload.countsHidden ? 'API responded, but Instagram has hidden one or more counts.' : 'API returned counts. Compare with Instagram once to confirm; public data can lag or be unavailable.';
+      } catch (err) {
+        status.textContent = 'Could not update: ' + (err.message || 'unknown error') + '. Previous counts, if any, were kept.';
+      } finally { button.disabled = false; button.textContent = 'UPDATE COUNTS'; }
+    });
+    return panel;
+  }
+  function mount() {
+    for (const post of postUrls) {
+      const anchor = document.querySelector(post.target);
+      if (!anchor) continue;
+      if (post.target.includes('.vogue-posts a')) {
+        const card = document.createElement('div');
+        card.style.minWidth = '0';
+        anchor.parentNode.insertBefore(card, anchor);
+        card.appendChild(anchor);
+        card.appendChild(createPanel(post));
+      } else {
+        anchor.insertAdjacentElement('afterend', createPanel(post));
+      }
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount); else mount();
+})();
+</script>
 
 </body>
 </html>
