@@ -144,6 +144,26 @@ button {
   color: white;
   font-weight: 700;
   background: var(--deep);
+  box-shadow: 0 5px 0 #2f6287, 0 8px 16px #477fa729;
+  transform: translateY(0) scale(1);
+  transition: transform .14s cubic-bezier(.2,.8,.2,1), box-shadow .14s ease,
+              background-color .18s ease, opacity .18s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.primary:not(:disabled):hover {
+  background: #3c739a;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 #2f6287, 0 11px 18px #477fa72b;
+}
+.primary:not(:disabled):active {
+  transform: translateY(3px) scale(.985);
+  box-shadow: 0 2px 0 #2f6287, 0 3px 8px #477fa71c;
+  transition-duration: .07s;
+}
+.primary:focus-visible { outline: 3px solid #a8d9ff; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+  .primary { transition: none; }
 }
 
 .primary:disabled {
@@ -573,7 +593,10 @@ copyBtn.addEventListener("click", async () => {
 
   try {
     await navigator.clipboard.writeText(textToCopy);
-    setStatus("Copied! Updating the total…");
+    setStatus("Copied! Loading your next comment…");
+    // Start fetching the next comment immediately while the counter updates.
+    currentComment = null;
+    const nextCommentPromise = loadComment();
 
     try {
       const response = await fetch(
@@ -601,8 +624,7 @@ copyBtn.addEventListener("click", async () => {
       await refreshCopyCount();
     }
 
-    currentComment = null;
-    await loadComment();
+    await nextCommentPromise;
 
   } catch (error) {
     setStatus("Copy failed. Open the site in a secure browser and try again.");
@@ -782,15 +804,16 @@ vogueCopyButton.addEventListener("click", async () => {
   vogueCopyButton.disabled = true;
   try {
     await navigator.clipboard.writeText(vogueCurrentComment);
-    vogueCopyStatus.textContent = "Copied! Updating the total…";
+    // The next Vogue comment is already in memory, so show it instantly.
+    showNextVogueComment();
+    vogueCopyStatus.textContent = "Copied! Next comment ready — updating total…";
     try {
       await incrementVogueCopyCount();
       vogueCopyStatus.textContent = "Copied successfully! Another comment is ready.";
     } catch (counterError) {
-      vogueCopyStatus.textContent = "Comment copied, but the global counter could not update. Check the Supabase counter setup.";
+      vogueCopyStatus.textContent = "Comment copied and next comment ready, but the global counter could not update.";
       await refreshVogueCopyCount();
     }
-    showNextVogueComment();
   } catch (error) {
     vogueCopyStatus.textContent = "Copy failed. Open this website over HTTPS and try again.";
     vogueCopyButton.disabled = false;
