@@ -696,15 +696,47 @@ async function loadVogueComments() {
 }
 
 function shuffleVogueDeck() {
-  vogueDeck = [...vogueComments];
-
-  // Fisher-Yates shuffle: every comment appears once in this round.
-  for (let i = vogueDeck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [vogueDeck[i], vogueDeck[j]] = [vogueDeck[j], vogueDeck[i]];
+  // Group comments by the idea of their opening sentence, then deal from
+  // different groups in turn so similar topics are less likely to appear back-to-back.
+  const topicOf = (comment) => {
+    const first = String(comment).split(/[.!?。！？]/)[0].toLowerCase();
+    if (/louis vuitton|styling|outfit|fashion|룩|스타일링|아이템|패션|옷의/.test(first)) return "fashion";
+    if (/camera|lens|expression|gaze|카메라|렌즈|시선|표정/.test(first)) return "camera";
+    if (/composition|framing|pose|photography|구도|포즈|사진이|비주얼 디렉팅/.test(first)) return "composition";
+    if (/mood|atmosphere|cinematic|분위기|무드/.test(first)) return "mood";
+    if (/lighting|light and shadow|details|art direction|조명|디테일|빛과 그림자|아트 디렉팅/.test(first)) return "craft";
+    if (/identity|personality|individuality|character|개성|성현이답|자기만의 색|성격/.test(first)) return "identity";
+    if (/collaboration|collection|storytelling|컬렉션|스토리텔링|작업은 패션/.test(first)) return "brand";
+    if (/photo|set feels|sequence|revisit|화보예요|사진마다|사진들이|다시 볼|사진이 이어지는/.test(first)) return "variety";
+    if (/look forward|hope we|future|next chapter|기대돼요|만나고 싶어요|다음 활동|앞으로/.test(first)) return "future";
+    return "presence";
+  };
+  const groups = new Map();
+  for (const comment of vogueComments) {
+    const topic = topicOf(comment);
+    if (!groups.has(topic)) groups.set(topic, []);
+    groups.get(topic).push(comment);
   }
-
-  // Avoid showing the same comment at the boundary between two rounds.
+  for (const group of groups.values()) {
+    for (let i = group.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [group[i], group[j]] = [group[j], group[i]];
+    }
+  }
+  const topicNames = [...groups.keys()];
+  for (let i = topicNames.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [topicNames[i], topicNames[j]] = [topicNames[j], topicNames[i]];
+  }
+  vogueDeck = [];
+  while (topicNames.some(topic => groups.get(topic).length)) {
+    for (const topic of topicNames) {
+      const group = groups.get(topic);
+      if (group.length) vogueDeck.push(group.pop());
+    }
+  }
+  // showNextVogueComment() pops from the end, so reverse to keep the interleaving.
+  vogueDeck.reverse();
   if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrentComment) {
     [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
       [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
