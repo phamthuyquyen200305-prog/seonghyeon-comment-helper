@@ -739,7 +739,7 @@ vogueKoBtn.addEventListener("click", () => setVogueLanguage("ko"));
 async function refreshVogueCopyCount() {
   try {
     const response = await fetch(
-      SUPABASE_URL.replace(/\\/+$/, "") +
+      SUPABASE_URL.replace(/\/+$/, "") +
       "/rest/v1/vogue_copy_stats?select=copy_count&id=eq.1",
       {
         method: "GET",
@@ -762,7 +762,7 @@ async function refreshVogueCopyCount() {
 
 async function incrementVogueCopyCount() {
   const response = await fetch(
-    SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/rpc/increment_vogue_copy_count",
+    SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_vogue_copy_count",
     {
       method: "POST",
       headers: supabaseHeaders(),
