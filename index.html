@@ -1,4 +1,4 @@
-A
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -241,6 +241,11 @@ function nextVogueComment() {
   if (!vogueComments.length) return;
   if (!vogueDeck.length) {
     vogueDeck = shuffle([...vogueComments]);
+    // Start a fresh random round without immediately repeating the last comment.
+    if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrent) {
+      [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
+        [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
+    }
   }
   vogueCurrent = vogueDeck.pop();
   showVogueComment(vogueCurrent);
@@ -415,14 +420,23 @@ async function loadMassXComments() {
 }
 
 function nextMassXComment() {
-  if (!massXComments.length) return;
+  if (!massXComments.length) return false;
   massXIndex++;
+  let restartedRound = false;
   if (massXIndex >= massXComments.length) {
+    const lastComment = massXComments[massXIndex - 1];
     massXComments = shuffle([...massXComments]);
+    // Avoid showing the exact same comment twice across the round boundary.
+    if (massXComments.length > 1 && massXComments[0] === lastComment) {
+      const swapIndex = 1 + Math.floor(Math.random() * (massXComments.length - 1));
+      [massXComments[0], massXComments[swapIndex]] =
+        [massXComments[swapIndex], massXComments[0]];
+    }
     massXIndex = 0;
-    massXStatus.textContent = "All comments used. Starting a new shuffled round.";
+    restartedRound = true;
   }
   showMassXComment();
+  return restartedRound;
 }
 
 massXCopyBtn.addEventListener("click", async () => {
@@ -434,8 +448,10 @@ massXCopyBtn.addEventListener("click", async () => {
     await copyText(massXComments[massXIndex]);
 
     // Advance and unlock the button immediately after the clipboard succeeds.
-    nextMassXComment();
-    massXStatus.textContent = "Copied successfully. Next comment is ready.";
+    const restartedRound = nextMassXComment();
+    massXStatus.textContent = restartedRound
+      ? "All comments used. A new random round has started!"
+      : "Copied successfully. Next comment is ready.";
 
     // Update the database counter in the background so network latency
     // does not block the next copy.
