@@ -1,4 +1,4 @@
-
+A
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,8 +10,12 @@
 :root{--deep:#c34d86;--ink:#54243f;--muted:#96677f;--border:#f1bfd8;--soft:#fff6fa}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;padding:24px 16px;font-family:Arial,sans-serif;color:var(--ink);background:linear-gradient(145deg,#ffe6f1,#fff1f7)}
-button{font:inherit;cursor:pointer}
-button:disabled{opacity:.6;cursor:wait}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transform:translateZ(0);transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background-color .22s ease,border-color .22s ease;will-change:transform}
+button:focus-visible{outline:3px solid #e79ac1;outline-offset:3px}
+button:disabled{opacity:.72;cursor:wait}
+@keyframes button-pop{0%{transform:scale(1)}35%{transform:scale(.965)}68%{transform:scale(1.035)}100%{transform:scale(1)}}
+button.is-bouncing{animation:button-pop .38s cubic-bezier(.2,.75,.25,1) both}
+@media(prefers-reduced-motion:reduce){button{transition:none}button.is-bouncing{animation:none}}
 .home-menu,.card{width:100%;max-width:520px;margin:0 auto;padding:28px 22px;text-align:center;background:#fff;border:1px solid #f4c8dd;border-radius:26px;box-shadow:0 14px 40px #d78bb52b}
 .home-menu{margin-top:5vh}
 .view-shell{width:100%;max-width:520px;margin:0 auto}
@@ -21,13 +25,17 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 .subtitle,.menu-intro{color:var(--muted);line-height:1.65}
 .menu-intro{margin-bottom:22px}
 .menu-choice{display:block;width:100%;margin-top:13px;padding:17px;text-align:left;color:var(--ink);background:var(--soft);border:1px solid var(--border);border-radius:16px}
-.menu-choice:hover{background:#ffe4f0}
+.menu-choice:hover{background:#ffe4f0;transform:translateY(-2px);box-shadow:0 7px 16px #d78bb526}
+.menu-choice:active{transform:scale(.985)}
 .menu-choice strong{display:block;font-size:14px;line-height:1.5}
 .menu-choice span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.5}
 .back-button{display:block;width:100%;margin:0 auto 14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--deep);font-weight:700}
+.back-button:hover{background:var(--soft);transform:translateY(-1px)}
 .comment{min-height:150px;padding:22px 17px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.8;font-size:16px;background:var(--soft);border:1px solid #f6d6e6;border-radius:18px}
-.primary{width:100%;padding:15px;margin-top:17px;color:#fff;font-weight:700;background:var(--deep);border:0;border-radius:14px}
-.primary:hover:not(:disabled){background:#aa3972}
+.primary{width:100%;padding:15px;margin-top:17px;color:#fff;font-weight:700;background:var(--deep);border:0;border-radius:14px;box-shadow:0 6px 0 #8f2f62,0 10px 20px #c34d8626;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background-color .22s ease,opacity .2s ease}
+.primary:hover:not(:disabled){background:#aa3972;transform:translateY(-2px);box-shadow:0 8px 0 #8f2f62,0 14px 24px #c34d8633}
+.primary:active:not(:disabled){transform:translateY(3px) scale(.985);box-shadow:0 2px 0 #8f2f62,0 4px 10px #c34d8620}
+.primary:disabled{box-shadow:0 3px 0 #8f2f624d}
 .status{min-height:22px;margin:13px 0 0;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
 .counter,.vogue-counter{margin-top:19px;padding:14px;background:var(--soft);border:1px solid #f6d6e6;border-radius:16px;color:var(--muted);font-size:12px}
 .counter-label{font-size:11px;letter-spacing:1.3px;font-weight:700}
@@ -122,6 +130,17 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 
 <script>
 "use strict";
+
+// Small tactile bounce on button taps. Keeps the effect independent of network requests.
+document.querySelectorAll("button").forEach(button => {
+  button.addEventListener("click", () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    button.classList.remove("is-bouncing");
+    void button.offsetWidth;
+    button.classList.add("is-bouncing");
+    window.setTimeout(() => button.classList.remove("is-bouncing"), 420);
+  });
+});
 
 const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
@@ -280,13 +299,12 @@ vogueCopyBtn.addEventListener("click", async () => {
     await copyText(vogueCurrent);
 
     /*
-     * Existing database has vogue_copy_stats, but its increment RPC
-     * was not provided. Do not call the unrelated old post-specific RPC.
-     * Copy works; the total updates after the database counter is configured.
+     * Keep the UI responsive: show the next comment immediately.
+     * Refresh the shared counter in the background; do not make Copy wait.
      */
-    vogueStatus.textContent = "Copied successfully.";
     nextVogueComment();
-    await refreshVogueCount();
+    vogueStatus.textContent = "Copied successfully. Next comment is ready.";
+    void refreshVogueCount();
   } catch (error) {
     vogueStatus.textContent = "Copy failed: " + error.message;
   } finally {
@@ -414,14 +432,16 @@ massXCopyBtn.addEventListener("click", async () => {
 
   try {
     await copyText(massXComments[massXIndex]);
-    try {
-      await incrementMassXCount();
-      massXStatus.textContent = "Copied successfully. Next comment is ready.";
-    } catch (error) {
-      massXStatus.textContent = "Copied, but counter update failed: " + error.message;
-      await refreshMassXCount();
-    }
+
+    // Advance and unlock the button immediately after the clipboard succeeds.
     nextMassXComment();
+    massXStatus.textContent = "Copied successfully. Next comment is ready.";
+
+    // Update the database counter in the background so network latency
+    // does not block the next copy.
+    void incrementMassXCount().catch(() => {
+      void refreshMassXCount();
+    });
   } catch (error) {
     massXStatus.textContent = "Copy failed: " + error.message;
   } finally {
