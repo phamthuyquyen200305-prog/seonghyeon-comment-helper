@@ -602,17 +602,22 @@ async function refreshVogueCount() {
 
 async function loadVogueComments() {
   vogueCopyBtn.disabled = true;
-  vogueStatus.textContent = "Loading shared comment list…";
+  // Show a usable comment immediately so the page never feels frozen while
+  // the database responds. The shared database pool replaces this starter deck
+  // as soon as it arrives.
+  vogueComments = [...VOGUE_VARIETY_COMMENTS];
+  vogueDeck = makeVogueDeck();
+  nextVogueComment();
+  vogueCopyBtn.disabled = false;
+  vogueStatus.textContent = "Ready — syncing shared comments…";
+
   try {
+    // A bounded request avoids pulling the entire table on every visit.
     const rows = await fetchJSON(
-      API + "/rest/v1/vogue_comments?select=id,content&is_active=eq.true&order=id.asc"
+      API + "/rest/v1/vogue_comments?select=id,content&is_active=eq.true&order=id.asc&limit=500"
     );
-    // Remove exact duplicates and duplicates that only differ by case, spacing,
-    // punctuation, or invisible Unicode characters.
     const seenVogueContent = new Set();
-    // Merge database comments with a varied local set, then remove normalized duplicates.
-    // This keeps the feed varied even when the database mostly repeats one theme.
-    vogueComments = [...rows.map(row => row.content), ...VOGUE_VARIETY_COMMENTS]
+    const merged = [...rows.map(row => row.content), ...VOGUE_VARIETY_COMMENTS]
       .filter(content => typeof content === "string" && content.trim())
       .map(content => content.trim())
       .filter(content => {
@@ -622,20 +627,18 @@ async function loadVogueComments() {
         return true;
       });
 
-    if (!vogueComments.length) {
-      showVogueComment("No active comments found.");
-      vogueStatus.textContent = "Check whether vogue_comments contains active comments.";
-      return;
+    if (merged.length) {
+      vogueComments = merged;
+      vogueDeck = makeVogueDeck();
+      nextVogueComment();
+      vogueStatus.textContent = vogueComments.length.toLocaleString() +
+        " unique comments ready (shared comments synced).";
     }
-
-    vogueDeck = makeVogueDeck();
-    nextVogueComment();
-    vogueStatus.textContent =
-      vogueComments.length.toLocaleString() +
-      " unique comments loaded (database + varied comments). Comments are shared across all 9 posts.";
   } catch (error) {
-    showVogueComment("Unable to load comments.");
-    vogueStatus.textContent = error.message;
+    // Local comments remain usable even if the network/database is slow.
+    vogueStatus.textContent = "Using quick comments while shared comments are unavailable.";
+  } finally {
+    vogueCopyBtn.disabled = !vogueCurrent;
   }
 }
 
