@@ -47,6 +47,25 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 .note{margin-top:18px;color:#ad8499;font-size:12px;line-height:1.7}
 .footer{margin-top:19px;padding-top:13px;border-top:1px solid #f1d7e4;color:#ad8499;font-size:11px;line-height:1.7}
 @media(max-width:420px){body{padding:16px 10px}.card,.home-menu{padding:23px 15px}h1{font-size:23px}}
+
+/* TREND TRACKER */
+.trend-tracker{margin-top:20px;padding:17px 15px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:18px}
+.trend-tracker-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.trend-tracker-title{color:var(--deep);font-size:12px;font-weight:700;letter-spacing:1px}
+.trend-refresh{width:auto;margin:0;padding:10px 14px;border-radius:12px;font-size:12px}
+.trend-refresh:disabled{opacity:.6}
+.trend-tracker-status{margin:12px 0;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.trend-results{display:grid;gap:9px}
+.trend-empty{padding:14px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-size:13px;line-height:1.6}
+.trend-table-wrap{overflow-x:auto}
+.trend-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+.trend-table th,.trend-table td{padding:10px 7px;border-bottom:1px solid #f7e1ec;text-align:left;vertical-align:top}
+.trend-table th{color:var(--muted);font-size:10px;letter-spacing:.5px}
+.trend-table td a{color:var(--deep);font-weight:700;text-decoration:none}
+.trend-keyword{overflow-wrap:anywhere;font-weight:700;color:var(--ink)}
+.trend-rank{white-space:nowrap;color:var(--muted)}
+.trend-meta{margin-top:10px;color:#ad8499;font-size:11px;line-height:1.6}
+
 </style>
 </head>
 <body>
@@ -114,6 +133,27 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
       <div class="counter-label">TOTAL COPIES</div>
       <div class="counter-number" id="massXTotalCopies">Loading…</div>
     </div>
+
+    <section class="trend-tracker" id="trendTracker">
+      <div class="trend-tracker-head">
+        <div class="trend-tracker-title">TRENDS24 · TREND TRACKER</div>
+        <button class="primary trend-refresh" id="trendRefreshBtn" type="button">↻ Refresh</button>
+      </div>
+      <p class="trend-tracker-status" id="trendTrackerStatus" aria-live="polite">
+        Ready to check public Trends24 pages.
+      </p>
+      <div class="trend-results" id="trendTrackerResults">
+        <div class="trend-empty">Bấm Refresh để kiểm tra từ khóa trong Trending Topics mới nhất.</div>
+      </div>
+      <p class="trend-meta" id="trendTrackerCheckedAt">
+        Checks Worldwide and selected country pages. Only verified matches are displayed.
+      </p>
+      <p class="trend-meta">
+        Nguồn: <a href="https://trends24.in/" target="_blank" rel="noopener noreferrer">Trends24.in</a>.
+        Vì trình duyệt có thể chặn đọc chéo miền (CORS), công cụ dùng proxy công khai để đọc HTML; proxy có thể giới hạn tốc độ hoặc tạm thời không khả dụng.
+      </p>
+    </section>
+
     <section class="notice">
       <div class="notice-title">HASHTAGS FOR SEONGHYEON AT NOL FESTIVAL</div>
       <p>17/10/2026 · 7:00 PM KST</p>
@@ -389,10 +429,15 @@ async function refreshMassXCount() {
     const rows = await fetchJSON(
       API + "/rest/v1/mass_x_copy_stats?select=copy_count&id=eq.1"
     );
-    if (!rows.length) throw new Error("Counter row not found");
-    massXCount.textContent = Number(rows[0].copy_count).toLocaleString("en-US");
-  } catch {
+    if (!rows.length) throw new Error("Counter row id=1 was not found");
+    const total = Number(rows[0].copy_count);
+    if (!Number.isFinite(total)) throw new Error("copy_count is not numeric");
+    massXCount.textContent = total.toLocaleString("en-US");
+    return total;
+  } catch (error) {
     massXCount.textContent = "Unavailable";
+    console.error("MASS X counter read failed:", error);
+    throw error;
   }
 }
 
@@ -402,8 +447,30 @@ async function incrementMassXCount() {
     { method: "POST", body: "{}" }
   );
 
-  if (typeof result === "number") {
-    massXCount.textContent = result.toLocaleString("en-US");
+  // PostgREST may return a scalar, a one-item array, or an object depending
+  // on how the SQL function is declared. Handle these response shapes safely.
+  let total = null;
+  if (typeof result === "number") total = result;
+  else if (Array.isArray(result) && result.length === 1) {
+    const first = result[0];
+    if (typeof first === "number") total = first;
+    else if (first && typeof first === "object") {
+      const value = Object.values(first).find(v => Number.isFinite(Number(v)));
+      if (value !== undefined) total = Number(value);
+    }
+  } else if (result && typeof result === "object") {
+    const value = Object.values(result).find(v => Number.isFinite(Number(v)));
+    if (value !== undefined) total = Number(value);
+  }
+
+  if (Number.isFinite(total)) {
+    // Avoid the displayed total moving backwards if simultaneous RPC replies
+    // arrive out of order in this browser.
+    const currentlyShown = Number(String(massXCount.textContent).replace(/,/g, ""));
+    massXCount.textContent = Math.max(
+      Number.isFinite(currentlyShown) ? currentlyShown : 0,
+      total
+    ).toLocaleString("en-US");
   } else {
     await refreshMassXCount();
   }
@@ -524,9 +591,18 @@ massXCopyBtn.addEventListener("click", async () => {
 
     // Update the database counter in the background so network latency
     // does not block the next copy.
-    void incrementMassXCount().catch(() => {
-      // Keep copy interaction smooth; the displayed count can be refreshed
-      // on the next page visit if the counter endpoint is temporarily unavailable.
+    void incrementMassXCount().catch(async error => {
+      // Keep copying responsive, but do not silently hide a broken counter.
+      console.error("MASS X counter increment failed:", error);
+      massXStatus.textContent =
+        "Copied successfully, but the total counter did not update: " +
+        (error && error.message ? error.message : "unknown error") +
+        ". Check the increment_mass_x_copy_count RPC and Supabase permissions.";
+      try {
+        await refreshMassXCount();
+      } catch (_) {
+        // refreshMassXCount already displays Unavailable.
+      }
     });
   } catch (error) {
     massXStatus.textContent = "Copy failed: " + error.message;
@@ -536,9 +612,311 @@ massXCopyBtn.addEventListener("click", async () => {
   }
 });
 
+
+/* TRENDS24 TREND TRACKER: only display exact matches read from public topic lists. */
+const TREND_KEYWORDS = [
+  "SEONGHYEON ACES HEART RACE",
+  "#SEONGHYEONTurnsUpNOL",
+  "#SEONGHYEON",
+  "#성현"
+];
+
+// Worldwide is always checked first. Other locations are a practical, editable subset
+// of public Trends24 country pages; unavailable pages are reported and never fabricated.
+const TREND_LOCATIONS = [
+  { name: "Worldwide", url: "https://trends24.in/" },
+  { name: "Brazil", url: "https://trends24.in/brazil/" },
+  { name: "India", url: "https://trends24.in/india/" },
+  { name: "Indonesia", url: "https://trends24.in/indonesia/" },
+  { name: "Japan", url: "https://trends24.in/japan/" },
+  { name: "Malaysia", url: "https://trends24.in/malaysia/" },
+  { name: "Mexico", url: "https://trends24.in/mexico/" },
+  { name: "Philippines", url: "https://trends24.in/philippines/" },
+  { name: "Singapore", url: "https://trends24.in/singapore/" },
+  { name: "South Korea", url: "https://trends24.in/south-korea/" },
+  { name: "Taiwan", url: "https://trends24.in/taiwan/" },
+  { name: "Thailand", url: "https://trends24.in/thailand/" },
+  { name: "United Kingdom", url: "https://trends24.in/united-kingdom/" },
+  { name: "United States", url: "https://trends24.in/united-states/" },
+  { name: "Vietnam", url: "https://trends24.in/vietnam/" }
+];
+
+const trendRefreshBtn = document.getElementById("trendRefreshBtn");
+const trendTrackerStatus = document.getElementById("trendTrackerStatus");
+const trendTrackerResults = document.getElementById("trendTrackerResults");
+const trendTrackerCheckedAt = document.getElementById("trendTrackerCheckedAt");
+let trendTrackerBusy = false;
+
+function normalizeTrendText(value) {
+  return String(value || "")
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase();
+}
+
+function findTrendMatches(topicItems, location) {
+  const matches = [];
+  for (const item of topicItems) {
+    const topic = String(item.topic || "").trim();
+    if (!topic) continue;
+    const normalizedTopic = normalizeTrendText(topic);
+    for (const keyword of TREND_KEYWORDS) {
+      if (normalizedTopic === normalizeTrendText(keyword)) {
+        matches.push({
+          region: location.name,
+          url: location.url,
+          keyword,
+          rank: Number.isFinite(item.rank) && item.rank > 0 ? item.rank : null
+        });
+      }
+    }
+  }
+  return matches;
+}
+
+function parseTrends24Page(markup, location) {
+  const doc = new DOMParser().parseFromString(markup, "text/html");
+  const heading = [...doc.querySelectorAll("h1,h2,h3,h4,h5")]
+    .find(el => /Twitter Trends Timeline for last 24 hours/i.test(el.textContent || ""));
+
+  if (!heading) {
+    throw new Error("Không tìm thấy mục Trending Topics trên trang.");
+  }
+
+  const followsHeading = node =>
+    Boolean(heading.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+  // Prefer the first ordered/unordered topic list after the timeline heading.
+  // The list's displayed order supplies a rank when the source does not print one.
+  const lists = [...doc.querySelectorAll("ol,ul")]
+    .filter(followsHeading)
+    .map(list => ({
+      list,
+      items: [...list.querySelectorAll(":scope > li")]
+    }))
+    .filter(entry => entry.items.length >= 5 && entry.items.length <= 100);
+
+  if (lists.length) {
+    const items = lists[0].items.map((li, index) => {
+      const links = [...li.querySelectorAll("a")]
+        .map(a => (a.textContent || "").trim())
+        .filter(Boolean);
+      const topic = links.length ? links[0] : (li.textContent || "").trim();
+      return { topic, rank: index + 1 };
+    }).filter(item => item.topic);
+    if (items.length) {
+      return {
+        matches: findTrendMatches(items, location),
+        parsedTopics: items.length
+      };
+    }
+  }
+
+  // Fallback for a layout change: inspect only the newest snapshot in the visible
+  // timeline text. If a keyword is present but its rank is not parseable, keep it.
+  const lines = (doc.body.innerText || doc.body.textContent || "")
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+  const headingIndex = lines.findIndex(line => /Twitter Trends Timeline for last 24 hours/i.test(line));
+  if (headingIndex < 0) throw new Error("Không đọc được nội dung timeline.");
+
+  const dateLine = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+[A-Z][a-z]{2}\s+\d{1,2}\s+\d{4}/i;
+  const firstDate = lines.findIndex((line, i) => i > headingIndex && dateLine.test(line));
+  if (firstDate < 0) throw new Error("Không xác định được danh sách trend mới nhất.");
+
+  let end = lines.findIndex((line, i) => i > firstDate && dateLine.test(line));
+  if (end < 0) end = Math.min(lines.length, firstDate + 80);
+  const snapshot = lines.slice(firstDate + 1, end);
+  const items = [];
+
+  for (const line of snapshot) {
+    const ranked = line.match(/^(\d{1,2})[.)]?\s+(.+)$/);
+    items.push({
+      topic: ranked ? ranked[2].trim() : line,
+      rank: ranked ? Number(ranked[1]) : null
+    });
+  }
+
+  const matches = findTrendMatches(items, location);
+  if (!matches.length && !items.length) {
+    throw new Error("Trang đã mở nhưng không đọc được danh sách trend.");
+  }
+  return { matches, parsedTopics: items.length };
+}
+
+async function fetchTrendPage(location) {
+  const proxies = [
+    url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+    url => "https://corsproxy.io/?url=" + encodeURIComponent(url)
+  ];
+  let lastError = null;
+
+  for (const makeProxyUrl of proxies) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 18000);
+      let response;
+      try {
+        response = await fetch(makeProxyUrl(location.url), {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
+      if (!response.ok) throw new Error("HTTP " + response.status + " từ proxy");
+      const markup = await response.text();
+      if (!markup || !/<html|<!doctype/i.test(markup)) {
+        throw new Error("Proxy không trả về HTML đọc được");
+      }
+      return parseTrends24Page(markup, location);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  throw new Error(lastError ? lastError.message : "Không truy cập được trang.");
+}
+
+function renderTrendTracker(matches, errors, checkedAt) {
+  trendTrackerResults.replaceChildren();
+
+  const sorted = [...matches].sort((a, b) => {
+    if (a.region === "Worldwide" && b.region !== "Worldwide") return -1;
+    if (b.region === "Worldwide" && a.region !== "Worldwide") return 1;
+    const regionOrder = a.region.localeCompare(b.region);
+    if (regionOrder !== 0) return regionOrder;
+    return (a.rank ?? 999) - (b.rank ?? 999);
+  });
+
+  if (!sorted.length) {
+    const empty = document.createElement("div");
+    empty.className = "trend-empty";
+    empty.textContent = "Không tìm thấy từ khóa nào trong danh sách Trending Topics của các trang đọc được.";
+    trendTrackerResults.appendChild(empty);
+  } else {
+    const wrap = document.createElement("div");
+    wrap.className = "trend-table-wrap";
+    const table = document.createElement("table");
+    table.className = "trend-table";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["KHU VỰC", "TỪ KHÓA ĐANG TREND", "HẠNG"].forEach(label => {
+      const th = document.createElement("th");
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    for (const match of sorted) {
+      const tr = document.createElement("tr");
+      const regionTd = document.createElement("td");
+      const regionLink = document.createElement("a");
+      regionLink.href = match.url;
+      regionLink.target = "_blank";
+      regionLink.rel = "noopener noreferrer";
+      regionLink.textContent = match.region;
+      regionTd.appendChild(regionLink);
+
+      const keywordTd = document.createElement("td");
+      keywordTd.className = "trend-keyword";
+      keywordTd.textContent = match.keyword;
+
+      const rankTd = document.createElement("td");
+      rankTd.className = "trend-rank";
+      rankTd.textContent = match.rank ? "#" + match.rank : "Không đọc được";
+
+      tr.append(regionTd, keywordTd, rankTd);
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    trendTrackerResults.appendChild(wrap);
+  }
+
+  trendTrackerCheckedAt.textContent =
+    "Thời điểm kiểm tra: " + checkedAt.toLocaleString() +
+    " · Chỉ hiển thị kết quả đọc được từ trang công khai; không có dữ liệu nào được tự tạo.";
+
+  const failedNames = errors.map(item => item.name + " (" + item.message + ")");
+  if (failedNames.length) {
+    trendTrackerStatus.textContent =
+      "Đã kiểm tra " + TREND_LOCATIONS.length + " trang; tìm thấy " + sorted.length +
+      " kết quả. Không đọc được " + failedNames.length + " trang: " +
+      failedNames.join("; ") + ". Có thể do CORS/proxy, giới hạn truy cập hoặc thay đổi cấu trúc trang.";
+  } else {
+    trendTrackerStatus.textContent =
+      "Đã kiểm tra " + TREND_LOCATIONS.length + " trang; tìm thấy " + sorted.length +
+      " kết quả khớp trong danh sách Trending Topics mới nhất.";
+  }
+}
+
+async function refreshTrendTracker() {
+  if (trendTrackerBusy) return;
+  trendTrackerBusy = true;
+  trendRefreshBtn.disabled = true;
+  trendRefreshBtn.textContent = "Checking…";
+  trendTrackerStatus.textContent =
+    "Đang đọc các trang Trends24 công khai qua proxy. Chỉ kết quả xác minh được mới xuất hiện.";
+  trendTrackerResults.replaceChildren();
+  const startedAt = new Date();
+  const results = new Array(TREND_LOCATIONS.length);
+  let nextIndex = 0;
+  let completed = 0;
+
+  async function worker() {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= TREND_LOCATIONS.length) return;
+      const location = TREND_LOCATIONS[index];
+      try {
+        results[index] = {
+          location,
+          ...(await fetchTrendPage(location)),
+          error: null
+        };
+      } catch (error) {
+        results[index] = {
+          location,
+          matches: [],
+          error: error instanceof Error ? error.message : String(error)
+        };
+      }
+      completed++;
+      trendTrackerStatus.textContent =
+        "Đang kiểm tra trang " + completed + "/" + TREND_LOCATIONS.length + "…";
+    }
+  }
+
+  try {
+    await Promise.all(Array.from({ length: 4 }, () => worker()));
+    const matches = results.flatMap(result => result && result.matches ? result.matches : []);
+    const errors = results
+      .filter(result => result && result.error)
+      .map(result => ({ name: result.location.name, message: result.error }));
+    renderTrendTracker(matches, errors, new Date());
+  } finally {
+    trendTrackerBusy = false;
+    trendRefreshBtn.disabled = false;
+    trendRefreshBtn.textContent = "↻ Refresh";
+  }
+}
+
+trendRefreshBtn.addEventListener("click", () => {
+  void refreshTrendTracker();
+});
+
+
 function initializeMassX() {
   loadMassXComments();
   refreshMassXCount();
+  void refreshTrendTracker();
 }
 </script>
 </body>
