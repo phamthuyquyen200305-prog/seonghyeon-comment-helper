@@ -16,42 +16,29 @@
   --soft:#fff6fa;
 }
 * { box-sizing:border-box; }
-
 body {
-  margin:0;
-  min-height:100vh;
-  padding:24px 16px;
-  font-family:Arial,sans-serif;
-  color:var(--ink);
+  margin:0; min-height:100vh; padding:24px 16px;
+  font-family:Arial,sans-serif; color:var(--ink);
   background:linear-gradient(145deg,#ffe6f1,#fff1f7);
 }
 button { font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-button:focus-visible,a:focus-visible {
-  outline:3px solid #f2a6cb; outline-offset:3px;
-}
+button:focus-visible,a:focus-visible { outline:3px solid #f2a6cb; outline-offset:3px; }
 button:disabled { opacity:.6; cursor:wait; }
 button:not(:disabled) { transition:transform .18s ease,background .18s ease; }
 button:not(:disabled):active { transform:scale(.96); }
-
 .home-menu,.card {
-  width:100%; max-width:520px; margin:0 auto;
-  padding:28px 22px; text-align:center;
-  background:rgba(255,255,255,.96);
+  width:100%; max-width:520px; margin:0 auto; padding:28px 22px;
+  text-align:center; background:rgba(255,255,255,.96);
   border:1px solid #f4c8dd; border-radius:26px;
   box-shadow:0 14px 40px #d78bb52b;
 }
 .home-menu { margin-top:5vh; }
 .view-shell { width:100%; max-width:520px; margin:0 auto; }
 [hidden] { display:none!important; }
-
-.eyebrow {
-  color:var(--deep); font-size:12px; font-weight:700;
-  letter-spacing:2px;
-}
+.eyebrow { color:var(--deep); font-size:12px; font-weight:700; letter-spacing:2px; }
 h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
 .subtitle,.menu-intro { color:var(--muted); line-height:1.65; }
 .menu-intro { margin-bottom:22px; }
-
 .menu-choice {
   display:block; width:100%; margin-top:13px; padding:17px;
   text-align:left; color:var(--ink); background:var(--soft);
@@ -59,83 +46,46 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
 }
 .menu-choice:hover { background:#ffe4f0; }
 .menu-choice strong { display:block; font-size:14px; line-height:1.5; }
-.menu-choice span {
-  display:block; margin-top:5px; color:var(--muted);
-  font-size:12px; line-height:1.5;
-}
+.menu-choice span { display:block; margin-top:5px; color:var(--muted); font-size:12px; line-height:1.5; }
 .back-button {
   display:block; width:100%; margin:0 auto 14px; padding:12px;
   border:1px solid var(--border); border-radius:12px;
   background:white; color:var(--deep); font-weight:700;
 }
-.languages {
-  display:flex; justify-content:center; gap:10px; margin:20px 0 12px;
-}
-.lang {
-  padding:10px 18px; color:var(--deep);
-  background:#fff0f7; border:1px solid var(--border); border-radius:12px;
-}
-.lang.active { background:#f6c5df; font-weight:700; }
-
 .comment {
   min-height:150px; padding:22px 17px; display:flex;
-  align-items:center; justify-content:center;
-  overflow-wrap:anywhere; white-space:pre-wrap; line-height:1.8;
-  font-size:16px; background:var(--soft);
-  border:1px solid #f6d6e6; border-radius:18px;
-  transition:opacity .18s ease;
+  align-items:center; justify-content:center; overflow-wrap:anywhere;
+  white-space:pre-wrap; line-height:1.8; font-size:16px;
+  background:var(--soft); border:1px solid #f6d6e6;
+  border-radius:18px; transition:opacity .18s ease;
 }
 .comment.changing { opacity:.35; }
-
 .primary {
   width:100%; padding:15px; margin-top:17px;
   color:white; font-weight:700; background:var(--deep);
   border:0; border-radius:14px;
 }
 .primary:hover:not(:disabled) { background:#aa3972; }
-
 .status {
   min-height:22px; margin:13px 0 0; color:var(--muted);
   font-size:12px; line-height:1.6; overflow-wrap:anywhere;
 }
 .counter,.vogue-counter {
-  margin-top:19px; padding:14px;
-  background:var(--soft); border:1px solid #f6d6e6;
-  border-radius:16px; color:var(--muted); font-size:12px;
+  margin-top:19px; padding:14px; background:var(--soft);
+  border:1px solid #f6d6e6; border-radius:16px;
+  color:var(--muted); font-size:12px;
 }
-.counter-label {
-  font-size:11px; letter-spacing:1.3px; font-weight:700;
-}
+.counter-label { font-size:11px; letter-spacing:1.3px; font-weight:700; }
 .counter-number { margin-top:6px; font-size:27px; font-weight:700; color:var(--deep); }
 .notice {
   margin-top:22px; padding:17px 15px; text-align:left;
   background:#fff0f7; border:1px solid var(--border);
   border-radius:18px; line-height:1.65; overflow-wrap:anywhere;
 }
-.notice-title {
-  color:var(--deep); font-size:12px; font-weight:700;
-  letter-spacing:1px; margin-bottom:8px;
-}
+.notice-title { color:var(--deep); font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
 .notice p { margin:7px 0; font-size:13px; }
 .notice a { color:var(--deep); font-weight:700; text-decoration:none; }
 .notice a:hover { text-decoration:underline; }
-.target-post {
-  margin-top:13px; padding:13px; background:white;
-  border:1px solid var(--border); border-radius:12px;
-}
-.target-title { color:var(--deep); font-size:12px; font-weight:700; }
-.post-button {
-  display:block; margin-top:10px; padding:12px;
-  text-align:center; color:white!important; background:var(--deep);
-  border-radius:10px; text-decoration:none!important; font-size:13px;
-}
-.ownership,.footer {
-  color:#ad8499; font-size:11px; line-height:1.7;
-}
-.ownership { padding-top:12px; margin-top:14px; border-top:1px solid var(--border); }
-.note { margin-top:18px; color:#ad8499; font-size:12px; line-height:1.6; }
-.footer { margin-top:19px; padding-top:13px; border-top:1px solid #f1d7e4; }
-
 .vogue-posts {
   display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
   gap:9px; margin-top:15px;
@@ -146,7 +96,9 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
   border-radius:10px; color:var(--deep); font-size:12px;
 }
 .vogue-posts a:last-child { grid-column:1/-1; }
-
+.footer,.note { color:#ad8499; font-size:11px; line-height:1.7; }
+.note { margin-top:18px; font-size:12px; }
+.footer { margin-top:19px; padding-top:13px; border-top:1px solid #f1d7e4; }
 @media(max-width:420px) {
   body { padding:16px 10px; }
   .card,.home-menu { padding:23px 15px; }
@@ -164,62 +116,20 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
   <h1>Seonghyeon Comment Helper</h1>
   <p class="menu-intro">Choose a project to view its comment collection and related links.</p>
 
-
   <button class="menu-choice" type="button" data-open-view="vogueView">
-    <strong>02 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
-    <span>9 Instagram posts · POST 08 / POST 09 · Shuffled comments</span>
+    <strong>01 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
+    <span>9 Instagram posts · Shared comments · Total copy counter</span>
   </button>
+
   <button class="menu-choice" type="button" data-open-view="massXView">
-    <strong>03 · MASS X</strong>
+    <strong>02 · MASS X</strong>
     <span>NOL Festival · Auto-next · Total copy counter</span>
   </button>
+
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </section>
 
-<div class="view-shell" id="voteView" hidden>
-  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
-  <main class="card">
-    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
-    <h1>Seonghyeon Comment Helper</h1>
-    <p class="subtitle">One click, one comment. Let's support Seonghyeon together!</p>
-
-    <div class="languages">
-      <button class="lang active" id="enBtn" type="button">English</button>
-      <button class="lang" id="koBtn" type="button">한국어</button>
-    </div>
-
-    <div class="comment" id="comment" aria-live="polite">Open the project to load a comment.</div>
-    <button class="primary" id="copyBtn" type="button" disabled>Copy comment</button>
-    <p class="status" id="status" aria-live="polite">Ready.</p>
-
-    <div class="counter">
-      <div class="counter-label">TOTAL COMMENTS COPIED</div>
-      <div class="counter-number" id="copyCount">Loading…</div>
-    </div>
-
-    <section class="notice">
-      <div class="notice-title">IMPORTANT — MUST FOLLOW</div>
-      <p>MUST FOLLOW INSTAGRAM ACCOUNT:
-        <a href="https://www.instagram.com/special.awards/" target="_blank" rel="noopener noreferrer">@special.awards</a>
-      </p>
-      <p>Follow EomLand:
-        <a href="https://www.instagram.com/eomland.seonghyeoniverse/" target="_blank" rel="noopener noreferrer">@eomland.seonghyeoniverse</a>
-      </p>
-      <div class="target-post">
-        <div class="target-title">TARGET POST — COMMENT HERE</div>
-        <p>Support Seonghyeon by leaving comments on this Instagram post.</p>
-        <a class="post-button" href="https://www.instagram.com/p/DeJSyyECYya/" target="_blank" rel="noopener noreferrer">OPEN INSTAGRAM POST ↗</a>
-      </div>
-      <div class="ownership">
-        <strong>© EomLand. All rights reserved.</strong><br>
-        This comment collection is owned and managed by EomLand. Please do not redistribute or reuse it without permission.
-      </div>
-    </section>
-    <p class="note">This tool copies comments only. It does not post to social media automatically.</p>
-    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
-  </main>
-</div>
-
+<!-- VOGUE -->
 <div class="view-shell" id="vogueView" hidden>
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
   <main class="card">
@@ -227,21 +137,18 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
     <h1>VOGUE × LOUIS VUITTON × SEONGHYEON</h1>
     <p class="subtitle">Celebrate Seonghyeon's unique charm, artistic vision and effortless style.</p>
 
-    <div class="languages">
-      <button class="lang active" id="voguePost08Btn" type="button">POST 08</button>
-      <button class="lang" id="voguePost09Btn" type="button">POST 09</button>
-    </div>
     <div id="vogueComment" class="comment" aria-live="polite">Open this project to load comments.</div>
     <button class="primary" id="vogueCopyBtn" type="button" disabled>Copy comment</button>
     <p id="vogueCopyStatus" class="status" aria-live="polite">Ready.</p>
+
     <div class="vogue-counter">
-      <strong id="vogueCounterTitle">POST 08 · COMMENTS COPIED</strong>
-      <div id="vogueCopyCount">Loading…</div>
+      <strong>TOTAL VOGUE COMMENTS COPIED</strong>
+      <div class="counter-number" id="vogueCopyCount">Loading…</div>
     </div>
 
     <section class="notice">
       <div class="notice-title">VOGUE × LOUIS VUITTON — INSTAGRAM POSTS</div>
-      <p>Open a post below and leave a comment supporting Seonghyeon.</p>
+      <p>Open any post below and leave a comment supporting Seonghyeon.</p>
       <div class="vogue-posts">
         <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1" target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
         <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1" target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
@@ -254,11 +161,13 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
         <a href="https://www.instagram.com/p/DejGUn9p8M2/" target="_blank" rel="noopener noreferrer">POST 09 ↗</a>
       </div>
     </section>
+
     <p class="note">This tool copies comments only. It does not post to Instagram automatically.</p>
     <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
   </main>
 </div>
 
+<!-- MASS X -->
 <div class="view-shell" id="massXView" hidden>
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
   <main class="card">
@@ -269,6 +178,7 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
     <div id="massXComment" class="comment" aria-live="polite">Open the project to load comments.</div>
     <button class="primary" id="massXCopyBtn" type="button" disabled>Copy comment</button>
     <p id="massXStatus" class="status" aria-live="polite">Ready.</p>
+
     <div class="counter">
       <div class="counter-label">TOTAL COPIES</div>
       <div class="counter-number" id="massXTotalCopies">Loading…</div>
@@ -281,6 +191,7 @@ h1 { font-size:27px; line-height:1.3; margin:12px 0 8px; }
       <p>#SEONGHYEONTurnsUpNOL · #SEONGHYEON · #성현 · #CORTIS_NOLFest2026</p>
       <p>EOMACE · ALLROUNDER SEAN · EOMASTER OF STAGE</p>
     </section>
+
     <p class="note">This tool copies comments only. It does not post to X automatically. Avoid posting repetitive comments too rapidly and follow X's rules.</p>
     <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
   </main>
@@ -300,15 +211,19 @@ function headers() {
     "Content-Type": "application/json"
   };
 }
+
 async function fetchJSON(url, options = {}) {
   const response = await fetch(url, {
     ...options,
     headers: { ...headers(), ...(options.headers || {}) },
     cache: "no-store"
   });
-  if (!response.ok) throw new Error("Supabase request failed (" + response.status + ")");
+  if (!response.ok) {
+    throw new Error("Supabase request failed (" + response.status + ")");
+  }
   return response.json();
 }
+
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -316,6 +231,7 @@ function shuffle(array) {
   }
   return array;
 }
+
 async function copyText(text) {
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
@@ -331,141 +247,53 @@ async function copyText(text) {
   area.remove();
   if (!ok) throw new Error("Clipboard access failed");
 }
+
 function setComment(element, text) {
   element.classList.add("changing");
   element.textContent = text;
   requestAnimationFrame(() => element.classList.remove("changing"));
 }
 
-/* Home navigation */
+/* HOME NAVIGATION */
 const homeView = document.getElementById("homeView");
 const views = {
-  voteView: document.getElementById("voteView"),
   vogueView: document.getElementById("vogueView"),
   massXView: document.getElementById("massXView")
 };
-const initialized = { voteView:false, vogueView:false, massXView:false };
+const initialized = {
+  vogueView: false,
+  massXView: false
+};
 
 function openView(id) {
   homeView.hidden = true;
+
   Object.entries(views).forEach(([key, element]) => {
     element.hidden = key !== id;
   });
-  window.scrollTo({ top:0, behavior:"auto" });
+
+  window.scrollTo({ top: 0, behavior: "auto" });
 
   if (!initialized[id]) {
     initialized[id] = true;
-    if (id === "voteView") initializeVote();
     if (id === "vogueView") initializeVogue();
     if (id === "massXView") initializeMassX();
   }
 }
+
 document.querySelectorAll("[data-open-view]").forEach(button => {
   button.addEventListener("click", () => openView(button.dataset.openView));
 });
+
 document.querySelectorAll("[data-go-home]").forEach(button => {
   button.addEventListener("click", () => {
     Object.values(views).forEach(element => element.hidden = true);
     homeView.hidden = false;
-    window.scrollTo({ top:0, behavior:"auto" });
+    window.scrollTo({ top: 0, behavior: "auto" });
   });
 });
 
-/* TOP FACE */
-let voteLanguage = "en";
-let voteCurrent = null;
-let voteBusy = false;
-let voteRequestId = 0;
-
-const voteComment = document.getElementById("comment");
-const voteCopy = document.getElementById("copyBtn");
-const voteStatus = document.getElementById("status");
-const voteCount = document.getElementById("copyCount");
-const enBtn = document.getElementById("enBtn");
-const koBtn = document.getElementById("koBtn");
-
-async function refreshVoteCount() {
-  try {
-    const total = await fetchJSON(API + "/rest/v1/rpc/get_copy_count", {
-      method:"POST", body:"{}"
-    });
-    voteCount.textContent = Number(total).toLocaleString("en-US");
-  } catch {
-    voteCount.textContent = "Unavailable";
-  }
-}
-async function loadVoteComment() {
-  const id = ++voteRequestId;
-  voteCurrent = null;
-  voteCopy.disabled = true;
-  voteStatus.textContent = "Finding an available comment…";
-  setComment(voteComment, "Loading a comment…");
-
-  try {
-    const rows = await fetchJSON(API + "/rest/v1/rpc/claim_comment", {
-      method:"POST",
-      body:JSON.stringify({ p_language:voteLanguage })
-    });
-    if (id !== voteRequestId) return;
-    if (!Array.isArray(rows) || !rows.length) {
-      setComment(voteComment, "No comments available right now.");
-      voteStatus.textContent = "Check the Supabase comment data.";
-      return;
-    }
-    voteCurrent = rows[0].content;
-    setComment(voteComment, voteCurrent);
-    voteStatus.textContent = "Ready to copy.";
-    voteCopy.disabled = false;
-  } catch (error) {
-    if (id === voteRequestId) {
-      setComment(voteComment, "Couldn't load a comment.");
-      voteStatus.textContent = error.message;
-    }
-  }
-}
-function setVoteLanguage(lang) {
-  if (voteLanguage === lang) return;
-  voteLanguage = lang;
-  enBtn.classList.toggle("active", lang === "en");
-  koBtn.classList.toggle("active", lang === "ko");
-  loadVoteComment();
-}
-enBtn.addEventListener("click", () => setVoteLanguage("en"));
-koBtn.addEventListener("click", () => setVoteLanguage("ko"));
-
-voteCopy.addEventListener("click", async () => {
-  if (!voteCurrent || voteBusy) return;
-  voteBusy = true;
-  voteCopy.disabled = true;
-  const text = voteCurrent;
-  try {
-    await copyText(text);
-    voteStatus.textContent = "Copied! Updating counter…";
-    try {
-      const total = await fetchJSON(API + "/rest/v1/rpc/increment_copy_count", {
-        method:"POST", body:"{}"
-      });
-      voteCount.textContent = Number(total).toLocaleString("en-US");
-    } catch {
-      voteStatus.textContent = "Copied, but counter update failed.";
-      await refreshVoteCount();
-    }
-    await loadVoteComment();
-  } catch (error) {
-    voteStatus.textContent = "Copy failed: " + error.message;
-    voteCopy.disabled = !voteCurrent;
-  } finally {
-    voteBusy = false;
-    voteCopy.disabled = !voteCurrent;
-  }
-});
-function initializeVote() {
-  refreshVoteCount();
-  loadVoteComment();
-}
-
-/* VOGUE POST 08 / POST 09 */
-let voguePost = "post08";
+/* VOGUE — SHARED COMMENT LIST */
 let vogueComments = [];
 let vogueDeck = [];
 let vogueCurrent = "";
@@ -477,68 +305,90 @@ const vogueComment = document.getElementById("vogueComment");
 const vogueCopy = document.getElementById("vogueCopyBtn");
 const vogueStatus = document.getElementById("vogueCopyStatus");
 const vogueCount = document.getElementById("vogueCopyCount");
-const vogueTitle = document.getElementById("vogueCounterTitle");
-const post08Btn = document.getElementById("voguePost08Btn");
-const post09Btn = document.getElementById("voguePost09Btn");
 
 async function refreshVogueCount() {
-  const requestedPost = voguePost;
   try {
     const rows = await fetchJSON(
-      API + "/rest/v1/vogue_post_copy_stats?select=copy_count&post=eq." +
-      encodeURIComponent(requestedPost)
+      API + "/rest/v1/vogue_post_copy_stats?select=post,copy_count"
     );
-    if (requestedPost !== voguePost) return;
-    if (!rows.length) throw new Error("Counter row not found");
-    vogueCount.textContent = Number(rows[0].copy_count).toLocaleString("en-US");
+
+    const total = rows.reduce(
+      (sum, row) => sum + Number(row.copy_count || 0),
+      0
+    );
+
+    vogueCount.textContent = total.toLocaleString("en-US");
   } catch {
-    if (requestedPost === voguePost) vogueCount.textContent = "Unavailable";
+    vogueCount.textContent = "Unavailable";
   }
 }
+
 function shuffleVogueDeck() {
   vogueDeck = shuffle([...vogueComments]);
-  if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrent) {
+
+  if (
+    vogueDeck.length > 1 &&
+    vogueDeck[vogueDeck.length - 1] === vogueCurrent
+  ) {
     [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
       [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
   }
 }
+
 function nextVogueComment() {
   if (!vogueComments.length) return;
+
   if (!vogueDeck.length) {
     shuffleVogueDeck();
     vogueStatus.textContent = "New shuffled round started.";
   }
+
   vogueCurrent = vogueDeck.pop();
   setComment(vogueComment, vogueCurrent);
   vogueCopy.disabled = false;
 }
+
 async function loadVogueComments() {
   const id = ++vogueLoadId;
+
   vogueBusy = true;
   vogueCopy.disabled = true;
   vogueCurrent = "";
   vogueComments = [];
   vogueDeck = [];
+
   setComment(vogueComment, "Loading comments…");
   vogueStatus.textContent = "";
 
   try {
+    // No post filter: combine comments from all Vogue posts.
     const rows = await fetchJSON(
-      API + "/rest/v1/vogue_post_comments?select=id,content,look,length,focus&post=eq." +
-      encodeURIComponent(voguePost) + "&is_active=eq.true&order=id.asc"
+      API +
+      "/rest/v1/vogue_post_comments?select=id,content,look,length,focus&is_active=eq.true&order=id.asc"
     );
+
     if (id !== vogueLoadId) return;
-    vogueComments = rows.map(row => row.content)
-      .filter(text => typeof text === "string" && text.trim());
+
+    vogueComments = [
+      ...new Set(
+        rows
+          .map(row => row.content)
+          .filter(text => typeof text === "string" && text.trim())
+      )
+    ];
+
     if (!vogueComments.length) {
       setComment(vogueComment, "No active comments found.");
       vogueStatus.textContent = "Check the Vogue table and its read policy.";
       return;
     }
+
     shuffleVogueDeck();
     nextVogueComment();
-    vogueStatus.textContent = vogueComments.length.toLocaleString() +
-      " comments loaded. Shuffled order; no repeats until this round ends.";
+
+    vogueStatus.textContent =
+      vogueComments.length.toLocaleString() +
+      " unique comments loaded. No repeats until this round ends.";
   } catch (error) {
     if (id === vogueLoadId) {
       setComment(vogueComment, "Unable to load comments.");
@@ -551,36 +401,38 @@ async function loadVogueComments() {
     }
   }
 }
-async function setVoguePost(post) {
-  if (voguePost === post || vogueBusy) return;
-  voguePost = post;
-  post08Btn.classList.toggle("active", post === "post08");
-  post09Btn.classList.toggle("active", post === "post09");
-  vogueTitle.textContent = post.toUpperCase() + " · COMMENTS COPIED";
-  vogueCount.textContent = "Loading…";
-  await Promise.all([loadVogueComments(), refreshVogueCount()]);
-}
-post08Btn.addEventListener("click", () => setVoguePost("post08"));
-post09Btn.addEventListener("click", () => setVoguePost("post09"));
 
 vogueCopy.addEventListener("click", async () => {
   if (!vogueCurrent || vogueBusy) return;
+
   vogueBusy = true;
   vogueCopy.disabled = true;
   const text = vogueCurrent;
-  const postAtCopy = voguePost;
+
   try {
     await copyText(text);
     vogueStatus.textContent = "Copied! Updating counter…";
+
     try {
-      const total = await fetchJSON(API + "/rest/v1/rpc/increment_vogue_post_copy_count", {
-        method:"POST", body:JSON.stringify({ p_post:postAtCopy })
-      });
-      if (postAtCopy === voguePost) vogueCount.textContent = Number(total).toLocaleString("en-US");
+      /*
+       * Compatibility with the existing counter RPC:
+       * new copies are added to the post08 bucket.
+       */
+      await fetchJSON(
+        API + "/rest/v1/rpc/increment_vogue_post_copy_count",
+        {
+          method: "POST",
+          body: JSON.stringify({ p_post: "post08" })
+        }
+      );
+
+      await refreshVogueCount();
+      vogueStatus.textContent = "Copied successfully. Next comment is ready.";
     } catch {
-      vogueStatus.textContent = "Copied, but counter update failed.";
+      vogueStatus.textContent = "Copied, but the counter update failed.";
       await refreshVogueCount();
     }
+
     nextVogueComment();
   } catch (error) {
     vogueStatus.textContent = "Copy failed: " + error.message;
@@ -589,6 +441,7 @@ vogueCopy.addEventListener("click", async () => {
     vogueCopy.disabled = !vogueCurrent;
   }
 });
+
 function initializeVogue() {
   if (vogueInitialized) return;
   vogueInitialized = true;
@@ -596,7 +449,7 @@ function initializeVogue() {
   refreshVogueCount();
 }
 
-/* MASS X — paginated loading, shuffled comments, automatic next */
+/* MASS X — ORIGINAL PAGINATED LOADING AND AUTO-NEXT */
 let massXComments = [];
 let massXIndex = 0;
 let massXBusy = false;
@@ -618,17 +471,20 @@ async function refreshMassXCount() {
     massXCount.textContent = "Unavailable";
   }
 }
+
 async function incrementMassXCount() {
   const total = await fetchJSON(
     API + "/rest/v1/rpc/increment_mass_x_copy_count",
-    { method:"POST", body:"{}" }
+    { method: "POST", body: "{}" }
   );
   massXCount.textContent = Number(total).toLocaleString("en-US");
 }
+
 function showMassXComment() {
   if (!massXComments.length) return;
   setComment(massXComment, massXComments[massXIndex]);
 }
+
 async function loadMassXComments() {
   massXCopy.disabled = true;
   massXStatus.textContent = "Loading comments…";
@@ -643,21 +499,30 @@ async function loadMassXComments() {
       const response = await fetch(
         API + "/rest/v1/mass_x_comments?select=id,content&is_active=eq.true&order=id.asc",
         {
-          method:"GET",
-          headers:{ ...headers(), Range:`${start}-${start + pageSize - 1}`, Prefer:"count=none" },
-          cache:"no-store"
+          method: "GET",
+          headers: {
+            ...headers(),
+            Range: `${start}-${start + pageSize - 1}`,
+            Prefer: "count=none"
+          },
+          cache: "no-store"
         }
       );
-      if (!response.ok) throw new Error("Supabase request failed (" + response.status + ")");
+
+      if (!response.ok) {
+        throw new Error("Supabase request failed (" + response.status + ")");
+      }
+
       const rows = await response.json();
       allRows.push(...rows);
+
       if (rows.length < pageSize) break;
       start += pageSize;
     }
 
-    // Remove exact duplicate comments, then shuffle.
     const unique = [...new Set(
-      allRows.map(row => row.content)
+      allRows
+        .map(row => row.content)
         .filter(text => typeof text === "string" && text.trim())
     )];
 
@@ -669,27 +534,36 @@ async function loadMassXComments() {
       massXStatus.textContent = "Check mass_x_comments and its read policy.";
       return;
     }
+
     showMassXComment();
-    massXStatus.textContent = massXComments.length.toLocaleString() +
+    massXStatus.textContent =
+      massXComments.length.toLocaleString() +
       " unique comments loaded in random order.";
     massXCopy.disabled = false;
   } catch (error) {
     setComment(massXComment, "Unable to load comments from Supabase.");
-    massXStatus.textContent = error.message + ". Check the table and read policy.";
+    massXStatus.textContent =
+      error.message + ". Check the table and read policy.";
   }
 }
+
 function nextMassXComment() {
   if (!massXComments.length) return;
+
   massXIndex++;
+
   if (massXIndex >= massXComments.length) {
     shuffle(massXComments);
     massXIndex = 0;
     massXStatus.textContent = "All comments used. Starting a new shuffled round.";
   }
+
   showMassXComment();
 }
+
 massXCopy.addEventListener("click", async () => {
   if (!massXComments.length || massXBusy) return;
+
   massXBusy = true;
   massXCopy.disabled = true;
   const text = massXComments[massXIndex];
@@ -697,6 +571,7 @@ massXCopy.addEventListener("click", async () => {
   try {
     await copyText(text);
     massXStatus.textContent = "Copied! Preparing the next comment…";
+
     try {
       await incrementMassXCount();
       massXStatus.textContent = "Copied successfully. Next comment is ready.";
@@ -704,6 +579,7 @@ massXCopy.addEventListener("click", async () => {
       massXStatus.textContent = "Copied, but the total counter could not update.";
       await refreshMassXCount();
     }
+
     nextMassXComment();
   } catch (error) {
     massXStatus.textContent = "Copy failed: " + error.message;
@@ -712,6 +588,7 @@ massXCopy.addEventListener("click", async () => {
     massXCopy.disabled = !massXComments.length;
   }
 });
+
 function initializeMassX() {
   if (massXInitialized) return;
   massXInitialized = true;
