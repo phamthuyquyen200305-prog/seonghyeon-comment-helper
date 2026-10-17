@@ -73,9 +73,35 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 .trend-peak{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;background:var(--soft);border-radius:10px;font-size:12px}
 .trend-peak strong{color:var(--deep);white-space:nowrap}
 
+
+
+/* SOFT PRINCESS PINK + PETAL EFFECTS */
+:root{--deep:#c85f91;--ink:#63364d;--muted:#a57990;--border:#f3c9dc;--soft:#fff7fb}
+body{background:radial-gradient(ellipse at 15% 5%,#fffafd 0%,transparent 38%),linear-gradient(145deg,#fff0f7,#ffe6f1 55%,#fff5fa)}
+.home-menu,.card{border-color:#f5cfe0;box-shadow:0 12px 36px #d78bb51c}
+.eyebrow{letter-spacing:2.5px;color:#c85f91}
+h1{color:#9f4d75;letter-spacing:.15px}
+.menu-choice{transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.primary{background:#d875a3;box-shadow:0 4px 0 #b85c88,0 8px 18px #c34d861c}
+.primary:hover:not(:disabled){background:#c96596;box-shadow:0 6px 0 #b85c88,0 12px 22px #c34d8626}
+.back-button{color:#c85f91}
+/* Petals are small, brief and never intercept clicks. */
+.petal-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:9998}
+.petal{position:fixed;left:0;top:0;pointer-events:none;will-change:transform,opacity;font-size:15px;line-height:1;animation:petal-drift 1.15s ease-out forwards;filter:drop-shadow(0 2px 3px #d875a322)}
+.petal.bloom{font-size:19px;animation:bloom-pop .9s cubic-bezier(.16,.75,.25,1) forwards}
+@keyframes petal-drift{0%{opacity:0;transform:translate3d(0,0,0) rotate(0) scale(.55)}18%{opacity:.95}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--rot)) scale(1.1)}}
+@keyframes bloom-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(-25deg)}25%{opacity:1;transform:translate(calc(-50% + var(--dx)*.35),calc(-50% + var(--dy)*.35)) scale(1.2) rotate(12deg)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.8) rotate(45deg)}}
+.music-toggle{position:fixed;right:16px;bottom:16px;z-index:9999;display:flex;align-items:center;gap:8px;padding:11px 14px;border:1px solid #f0bfd5;border-radius:999px;background:#fff9fc;color:#ad527e;box-shadow:0 5px 20px #a94f7d20;font-size:12px;font-weight:700;backdrop-filter:blur(8px)}
+.music-toggle[aria-pressed="true"]{background:#f9dce9}
+.music-toggle .music-dot{width:7px;height:7px;border-radius:50%;background:#d875a3;box-shadow:0 0 0 3px #f7d6e5}
+@media(max-width:420px){.music-toggle{right:10px;bottom:10px;padding:10px 12px}.petal{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.petal{display:none!important}.menu-choice{transition:none!important}}
+
 </style>
 </head>
 <body>
+<div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+<button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" aria-label="Play princess music"><span class="music-dot"></span><span id="musicLabel">♫ PLAY MUSIC</span></button>
 
 <section class="home-menu" id="homeView">
   <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
@@ -200,6 +226,113 @@ document.querySelectorAll("button").forEach(button => {
     );
   });
 });
+
+
+
+/* PETALS: light trail while moving; flower burst when either Copy button is used. */
+const petalLayer = document.getElementById("petalLayer");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let lastPetalAt = 0;
+function sprinklePetals(x, y, count = 3, burst = false) {
+  if (reduceMotion.matches || !petalLayer) return;
+  const symbols = burst ? ["🌸", "✿", "🌷", "♡"] : ["🌸", "✿", "❀"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "petal" + (burst ? " bloom" : "");
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    const angle = Math.random() * Math.PI * 2;
+    const distance = burst ? 28 + Math.random() * 62 : 10 + Math.random() * 28;
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+    el.style.setProperty("--dy", (Math.sin(angle) * distance + (burst ? 10 : 22)) + "px");
+    el.style.setProperty("--rot", (Math.random() * 180 - 90) + "deg");
+    petalLayer.appendChild(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
+    setTimeout(() => el.remove(), 1500);
+  }
+}
+document.addEventListener("pointermove", event => {
+  if (event.pointerType === "touch") return;
+  const now = performance.now();
+  if (now - lastPetalAt < 75) return;
+  lastPetalAt = now;
+  sprinklePetals(event.clientX, event.clientY, 1, false);
+}, { passive: true });
+function bloomAtButton(button) {
+  if (!button) return;
+  const rect = button.getBoundingClientRect();
+  sprinklePetals(rect.left + rect.width / 2, rect.top + rect.height / 2, 13, true);
+}
+
+/* A tiny music-box melody synthesized in-browser: no external audio file needed.
+   Browsers require the visitor's first click before sound can begin. */
+const musicToggle = document.getElementById("musicToggle");
+const musicLabel = document.getElementById("musicLabel");
+let musicContext = null;
+let musicTimer = null;
+let musicStep = 0;
+let musicOn = false;
+const musicNotes = [
+  [659.25, 0.24], [783.99, 0.24], [987.77, 0.38], [783.99, 0.24],
+  [880.00, 0.24], [783.99, 0.24], [659.25, 0.38], [587.33, 0.28],
+  [659.25, 0.24], [783.99, 0.24], [880.00, 0.38], [783.99, 0.24],
+  [659.25, 0.24], [587.33, 0.24], [523.25, 0.42], [587.33, 0.3]
+];
+function playMusicNote() {
+  if (!musicOn || !musicContext) return;
+  const [frequency, duration] = musicNotes[musicStep % musicNotes.length];
+  musicStep++;
+  const now = musicContext.currentTime;
+  const osc = musicContext.createOscillator();
+  const gain = musicContext.createGain();
+  const shimmer = musicContext.createOscillator();
+  const shimmerGain = musicContext.createGain();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(frequency, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.075, now + 0.018);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 2.7);
+  shimmer.type = "sine";
+  shimmer.frequency.setValueAtTime(frequency * 2.01, now);
+  shimmerGain.gain.setValueAtTime(0.0001, now);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.012, now + 0.02);
+  shimmerGain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.8);
+  osc.connect(gain).connect(musicContext.destination);
+  shimmer.connect(shimmerGain).connect(musicContext.destination);
+  osc.start(now); shimmer.start(now);
+  osc.stop(now + duration * 2.8); shimmer.stop(now + duration * 1.9);
+  musicTimer = setTimeout(playMusicNote, duration * 1000 * 1.55);
+}
+async function toggleMusic() {
+  try {
+    if (!musicContext) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) throw new Error("Audio is not supported by this browser.");
+      musicContext = new AudioContextClass();
+    }
+    if (musicOn) {
+      musicOn = false;
+      clearTimeout(musicTimer);
+      await musicContext.suspend();
+      musicToggle.setAttribute("aria-pressed", "false");
+      musicToggle.setAttribute("aria-label", "Play princess music");
+      musicLabel.textContent = "♫ PLAY MUSIC";
+    } else {
+      await musicContext.resume();
+      musicOn = true;
+      musicToggle.setAttribute("aria-pressed", "true");
+      musicToggle.setAttribute("aria-label", "Pause princess music");
+      musicLabel.textContent = "♫ MUSIC ON";
+      playMusicNote();
+    }
+  } catch (error) {
+    musicLabel.textContent = "MUSIC UNAVAILABLE";
+    console.warn("Music playback could not start:", error);
+  }
+}
+musicToggle.addEventListener("click", toggleMusic);
+
 
 const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
@@ -483,6 +616,7 @@ vogueCopyBtn.addEventListener("click", async () => {
 
   try {
     await copyText(vogueCurrent);
+    bloomAtButton(vogueCopyBtn);
 
     /*
      * Keep the UI responsive: show the next comment immediately.
@@ -677,6 +811,7 @@ massXCopyBtn.addEventListener("click", async () => {
 
   try {
     await copyText(massXComments[massXIndex]);
+    bloomAtButton(massXCopyBtn);
 
     // Advance and unlock the button immediately after the clipboard succeeds.
     const restartedRound = nextMassXComment();
