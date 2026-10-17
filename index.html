@@ -97,28 +97,6 @@ h1{color:#9f4d75;letter-spacing:.15px}
 @media(max-width:420px){.music-toggle{right:10px;bottom:10px;padding:10px 12px}.petal{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.petal{display:none!important}.menu-choice{transition:none!important}}
 
-
-/* INTERACTIVE 3D/PARALLAX LV SPACE — uses the real supplied portrait */
-body.lv-immersive{padding:0;background:#f9dce9;overflow-x:hidden}
-#vogueView.lv-immersive-view{position:relative;isolation:isolate;max-width:none;min-height:100svh;padding:20px 14px 34px;overflow:hidden;background:radial-gradient(ellipse at 50% 25%,#fff2f8 0%,#e8b3ce 52%,#9b647f 100%)}
-.lv-space{position:absolute;inset:-7%;z-index:-1;perspective:1000px;transform-style:preserve-3d;overflow:hidden;pointer-events:none;--tiltX:0deg;--tiltY:0deg;--shiftX:0px;--shiftY:0px}
-.lv-space__glow{position:absolute;inset:-10%;background:radial-gradient(ellipse at 50% 42%,#ffeaf5a8,transparent 48%),linear-gradient(130deg,#ffdcebc9,#b67f9b66 60%,#ffe7f4b0);transform:translate3d(calc(var(--shiftX)*-.25),calc(var(--shiftY)*-.25),-100px) scale(1.2)}
-.lv-space__floor{position:absolute;left:-20%;right:-20%;height:58%;bottom:-8%;transform:rotateX(68deg) translateZ(-100px);transform-origin:center top;background:repeating-linear-gradient(90deg,#fff7 0 1px,transparent 1px 90px),repeating-linear-gradient(0deg,#fff6 0 1px,transparent 1px 70px),linear-gradient(#f5cfe2aa,#b67f9b77);box-shadow:0 -20px 80px #fff7}
-.lv-space__ring{position:absolute;left:50%;top:40%;width:min(120vw,1100px);height:min(120vw,1100px);border:1px solid #fff9;border-radius:50%;box-shadow:0 0 30px #fff7,inset 0 0 30px #fff4;transform:translate3d(-50%,-50%,-140px) rotateX(72deg)}
-.lv-space__portrait{position:absolute;left:50%;top:43%;width:min(68vw,360px);height:min(94vw,500px);border:1px solid #fff9;border-radius:4px;overflow:hidden;box-shadow:0 30px 80px #54243f55,0 0 22px #fff9;transform:translate3d(calc(-50% + var(--shiftX)*.45),calc(-50% + var(--shiftY)*.4),80px) rotateY(calc(var(--tiltY)*-.55)) rotateX(calc(var(--tiltX)*.45));transform-style:preserve-3d;transition:transform .18s ease-out;background:#9d7d73}
-.lv-space__portrait img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;filter:saturate(.96);transform:scale(1.04)}
-.lv-space__portrait:after{content:"";position:absolute;inset:0;border:8px solid #ffe9f566;box-shadow:inset 0 0 35px #fff5;pointer-events:none}
-.lv-space__side{position:absolute;top:44%;width:min(31vw,190px);height:min(50vw,300px);border:1px solid #fff9;box-shadow:0 20px 55px #54243f44;overflow:hidden;opacity:.78;background:#d9a5bd;transform-style:preserve-3d;transition:transform .18s ease-out}
-.lv-space__side img{width:100%;height:100%;object-fit:cover;filter:saturate(.8)}
-.lv-space__side--left{left:2%;transform:translate3d(calc(var(--shiftX)*.7),calc(-50% + var(--shiftY)*.65),-100px) rotateY(22deg) rotateX(calc(var(--tiltX)*.2))}
-.lv-space__side--right{right:2%;transform:translate3d(calc(var(--shiftX)*-.7),calc(-50% + var(--shiftY)*.65),-100px) rotateY(-22deg) rotateX(calc(var(--tiltX)*.2))}
-.lv-space__petals{position:absolute;inset:0;transform:translate3d(calc(var(--shiftX)*-.9),calc(var(--shiftY)*-.9),130px);font-size:clamp(18px,3vw,34px);color:#fff9;text-shadow:0 2px 14px #d875a3;letter-spacing:30px;line-height:2.4}
-#vogueView.lv-immersive-view>.back-button{position:relative;z-index:3;max-width:520px;background:#fff9;backdrop-filter:blur(12px)}
-#vogueView.lv-immersive-view>.card{position:relative;z-index:2;background:#fff9;backdrop-filter:blur(12px);border-color:#fff9;box-shadow:0 20px 70px #6f365126}
-.lv-motion-hint{position:relative;z-index:3;width:max-content;max-width:95%;margin:0 auto 12px;padding:8px 12px;border:1px solid #fff9;border-radius:999px;background:#fff8;color:#9f4d75;font-size:11px;backdrop-filter:blur(8px)}
-@media(max-width:600px){#vogueView.lv-immersive-view{padding:12px 10px 28px}.lv-space__portrait{top:31%;width:58vw;height:82vw}.lv-space__side{top:32%;width:27vw;height:43vw}.lv-space__floor{height:65%}#vogueView.lv-immersive-view>.card{padding:22px 14px}}
-@media(prefers-reduced-motion:reduce){.lv-space__portrait,.lv-space__side{transition:none}}
-
 </style>
 </head>
 <body>
@@ -142,14 +120,6 @@ body.lv-immersive{padding:0;background:#f9dce9;overflow-x:hidden}
 
 <!-- VOGUE -->
 <div class="view-shell" id="vogueView" hidden>
-  <div class="lv-space" id="lvSpace" aria-hidden="true">
-    <div class="lv-space__glow"></div><div class="lv-space__floor"></div><div class="lv-space__ring"></div>
-    <div class="lv-space__side lv-space__side--left"><img src="seonghyeon-lv.jpg" alt=""></div>
-    <div class="lv-space__side lv-space__side--right"><img src="seonghyeon-lv.jpg" alt=""></div>
-    <div class="lv-space__portrait"><img src="seonghyeon-lv.jpg" alt="Seonghyeon for VOGUE"></div>
-    <div class="lv-space__petals">✧　✿　✧　❀　✧　✿　✧</div>
-  </div>
-  <div class="lv-motion-hint">✧ Move your phone or drag to explore the space ✧</div>
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
   <main class="card">
     <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
@@ -1294,25 +1264,5 @@ function initializeMassX() {
   void refreshTrendTracker();
 }
 </script>
-
-<script>
-// Gentle parallax responds to pointer movement and, where permitted, phone orientation.
-(() => {
- const view=document.getElementById('vogueView'), scene=document.getElementById('lvSpace');
- if(!view||!scene)return;
- let dragging=false,lastX=0,lastY=0,dragX=0,dragY=0,deviceX=0,deviceY=0;
- const paint=()=>{scene.style.setProperty('--tiltX',`${Math.max(-12,Math.min(12,deviceY+dragY*.08))}deg`);scene.style.setProperty('--tiltY',`${Math.max(-16,Math.min(16,deviceX+dragX*.08))}deg`);scene.style.setProperty('--shiftX',`${Math.max(-32,Math.min(32,dragX+deviceX*1.6))}px`);scene.style.setProperty('--shiftY',`${Math.max(-24,Math.min(24,dragY+deviceY*1.3))}px`)};
- const active=()=>!view.hidden;
- document.addEventListener('pointerdown',e=>{if(!active())return;dragging=true;lastX=e.clientX;lastY=e.clientY;try{view.setPointerCapture?.(e.pointerId)}catch(_){}});
- document.addEventListener('pointermove',e=>{if(!active())return;if(dragging){dragX+=(e.clientX-lastX)*.22;dragY+=(e.clientY-lastY)*.22;dragX=Math.max(-30,Math.min(30,dragX));dragY=Math.max(-22,Math.min(22,dragY));lastX=e.clientX;lastY=e.clientY}else{const r=view.getBoundingClientRect();const x=(e.clientX-r.left)/Math.max(1,r.width)-.5;const y=(e.clientY-r.top)/Math.max(1,r.height)-.5;deviceX=x*8;deviceY=-y*6}paint()},{passive:true});
- document.addEventListener('pointerup',()=>{dragging=false});document.addEventListener('pointercancel',()=>{dragging=false});
- const orientation=e=>{if(!active())return;deviceX=Math.max(-10,Math.min(10,(e.gamma||0)*.45));deviceY=Math.max(-8,Math.min(8,((e.beta||45)-45)*.28));paint()};
- const enableMotion=()=>{if(typeof DeviceOrientationEvent!=='undefined'&&typeof DeviceOrientationEvent.requestPermission==='function'){DeviceOrientationEvent.requestPermission().then(v=>{if(v==='granted')window.addEventListener('deviceorientation',orientation,{passive:true})}).catch(()=>{})}else if('DeviceOrientationEvent'in window){window.addEventListener('deviceorientation',orientation,{passive:true})}};
- document.addEventListener('click',e=>{if(e.target.closest('[data-open-view="vogueView"]')){document.body.classList.add('lv-immersive');view.classList.add('lv-immersive-view');enableMotion()}if(e.target.closest('[data-go-home]')){document.body.classList.remove('lv-immersive');view.classList.remove('lv-immersive-view')}},{passive:true});
- // Request sensor permission on a user gesture for iOS devices.
- document.querySelector('[data-open-view="vogueView"]')?.addEventListener('click',enableMotion,{once:true});
-})();
-</script>
-
 </body>
 </html>
