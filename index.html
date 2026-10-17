@@ -65,6 +65,13 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 .trend-keyword{overflow-wrap:anywhere;font-weight:700;color:var(--ink)}
 .trend-rank{white-space:nowrap;color:var(--muted)}
 .trend-meta{margin-top:10px;color:#ad8499;font-size:11px;line-height:1.6}
+.trend-history{margin-top:16px;padding-top:15px;border-top:1px solid #f7e1ec}
+.trend-history-title{font-size:12px;font-weight:700;color:var(--deep);letter-spacing:.7px;margin-bottom:8px}
+.trend-chart-wrap{width:100%;overflow-x:auto}
+.trend-chart{display:block;width:100%;min-width:320px;height:auto;background:#fffafd;border:1px solid #f6d6e6;border-radius:12px}
+.trend-peak-list{display:grid;gap:7px;margin-top:10px}
+.trend-peak{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;background:var(--soft);border-radius:10px;font-size:12px}
+.trend-peak strong{color:var(--deep);white-space:nowrap}
 
 </style>
 </head>
@@ -148,6 +155,12 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
       <p class="trend-meta" id="trendTrackerCheckedAt">
         Checks Worldwide and selected country pages. Only verified matches are displayed.
       </p>
+      <div class="trend-history">
+        <div class="trend-history-title">HISTORICAL PEAK & RANK MOVEMENT</div>
+        <p class="trend-meta" id="trendHistoryNote">Lịch sử sẽ được ghi nhận mỗi lần Refresh trên trình duyệt này.</p>
+        <div class="trend-chart-wrap" id="trendChartWrap"><div class="trend-empty">Refresh để bắt đầu ghi lịch sử và vẽ biểu đồ.</div></div>
+        <div class="trend-peak-list" id="trendPeakList"></div>
+      </div>
       <p class="trend-meta">
         Nguồn: <a href="https://trends24.in/" target="_blank" rel="noopener noreferrer">Trends24.in</a>.
         Vì trình duyệt có thể chặn đọc chéo miền (CORS), công cụ dùng proxy công khai để đọc HTML; proxy có thể giới hạn tốc độ hoặc tạm thời không khả dụng.
@@ -646,6 +659,86 @@ const trendTrackerStatus = document.getElementById("trendTrackerStatus");
 const trendTrackerResults = document.getElementById("trendTrackerResults");
 const trendTrackerCheckedAt = document.getElementById("trendTrackerCheckedAt");
 let trendTrackerBusy = false;
+const TREND_HISTORY_KEY = "eomland_trends24_history_v1";
+const TREND_HISTORY_LIMIT = 60;
+const trendChartWrap = document.getElementById("trendChartWrap");
+const trendPeakList = document.getElementById("trendPeakList");
+const trendHistoryNote = document.getElementById("trendHistoryNote");
+
+function readTrendHistory() {
+  try {
+    const value = JSON.parse(localStorage.getItem(TREND_HISTORY_KEY) || "[]");
+    return Array.isArray(value) ? value.filter(row => row && row.at && Array.isArray(row.matches)) : [];
+  } catch { return []; }
+}
+
+function saveTrendSnapshot(matches, checkedAt) {
+  const history = readTrendHistory();
+  // Keep the latest snapshot per minute to avoid duplicates from rapid refreshes.
+  const stamp = checkedAt.toISOString().slice(0, 16);
+  const snapshot = {
+    at: checkedAt.toISOString(),
+    matches: matches.map(item => ({ region: item.region, keyword: item.keyword, rank: item.rank }))
+  };
+  const existing = history.findIndex(row => String(row.at).slice(0, 16) === stamp);
+  if (existing >= 0) history[existing] = snapshot;
+  else history.push(snapshot);
+  history.sort((a, b) => new Date(a.at) - new Date(b.at));
+  try { localStorage.setItem(TREND_HISTORY_KEY, JSON.stringify(history.slice(-TREND_HISTORY_LIMIT))); }
+  catch (error) { console.warn("Unable to save trend history locally:", error); }
+  renderTrendHistory(readTrendHistory());
+}
+
+function renderTrendHistory(history) {
+  trendPeakList.replaceChildren();
+  if (!history.length) {
+    trendChartWrap.innerHTML = '<div class="trend-empty">Chưa có lịch sử. Bấm Refresh để ghi nhận điểm dữ liệu đầu tiên.</div>';
+    trendHistoryNote.textContent = "Lịch sử bắt đầu từ lần Refresh đầu tiên trên trình duyệt này; không thể tự khôi phục dữ liệu trước đó.";
+    return;
+  }
+  const keys = TREND_KEYWORDS;
+  const series = keys.map(keyword => ({ keyword, points: history.map(row => {
+    const found = row.matches.filter(m => m.keyword === keyword && Number.isFinite(m.rank) && m.rank > 0);
+    return found.length ? Math.min(...found.map(m => m.rank)) : null;
+  }) })).filter(item => item.points.some(v => v !== null));
+  const width = Math.max(320, history.length * 22), height = 190, padL = 34, padR = 12, padT = 18, padB = 32;
+  const vals = series.flatMap(s => s.points.filter(v => v !== null));
+  const minRank = vals.length ? Math.max(1, Math.min(...vals)) : 1;
+  const maxRank = vals.length ? Math.max(...vals) : 10;
+  const x = i => padL + (history.length <= 1 ? 0 : i * (width - padL - padR) / (history.length - 1));
+  const y = v => padT + ((v - minRank) / Math.max(1, maxRank - minRank)) * (height - padT - padB);
+  const colors = ["#c34d86", "#4777b8", "#2a9d8f", "#d18a2e"];
+  let svg = `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Biểu đồ biến động thứ hạng từ các lần kiểm tra đã lưu">`;
+  for (let i = 0; i < 4; i++) {
+    const yy = padT + i * (height - padT - padB) / 3;
+    const label = Math.round(minRank + i * (maxRank - minRank) / 3);
+    svg += `<line x1="${padL}" y1="${yy}" x2="${width-padR}" y2="${yy}" stroke="#f1d7e4" stroke-dasharray="3 3"/><text x="${padL-7}" y="${yy+4}" text-anchor="end" font-size="10" fill="#96677f">#${label}</text>`;
+  }
+  series.forEach((s, si) => {
+    let segment = [];
+    const flush = () => { if (segment.length > 1) svg += `<polyline fill="none" stroke="${colors[si%colors.length]}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${segment.map(p=>`${p.x},${p.y}`).join(" ")}"/>`; for (const p of segment) svg += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${colors[si%colors.length]}"/>`; segment=[]; };
+    s.points.forEach((v,i) => { if (v === null) { flush(); return; } segment.push({x:x(i), y:y(v)}); }); flush();
+  });
+  const firstLabel = new Date(history[0].at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  const lastLabel = new Date(history[history.length-1].at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  svg += `<text x="${padL}" y="${height-10}" font-size="10" fill="#96677f">${firstLabel}</text><text x="${width-padR}" y="${height-10}" text-anchor="end" font-size="10" fill="#96677f">${lastLabel}</text></svg>`;
+  trendChartWrap.innerHTML = svg;
+  trendHistoryNote.textContent = `Đã lưu ${history.length} lần kiểm tra gần nhất trên trình duyệt này. Hạng càng gần #1 càng tốt; khoảng trống nghĩa là lần đó không có hạng đọc được.`;
+  const peaks = TREND_KEYWORDS.map(keyword => {
+    const ranked = history.flatMap(row => row.matches.filter(m => m.keyword === keyword && Number.isFinite(m.rank) && m.rank > 0).map(m => ({...m, at: row.at})));
+    if (!ranked.length) return null;
+    const best = ranked.reduce((a,b) => b.rank < a.rank ? b : a);
+    return {keyword, ...best};
+  }).filter(Boolean).sort((a,b)=>a.rank-b.rank);
+  for (const peak of peaks) {
+    const item = document.createElement("div"); item.className = "trend-peak";
+    const name = document.createElement("span"); name.textContent = `${peak.keyword} · ${peak.region}`;
+    const rank = document.createElement("strong"); rank.textContent = `Best #${peak.rank}`;
+    item.append(name,rank); trendPeakList.appendChild(item);
+  }
+  if (!peaks.length) trendPeakList.innerHTML = '<div class="trend-empty">Chưa ghi nhận được hạng số nào cho các từ khóa.</div>';
+}
+renderTrendHistory(readTrendHistory());
 
 function normalizeTrendText(value) {
   return String(value || "")
@@ -900,7 +993,9 @@ async function refreshTrendTracker() {
     const errors = results
       .filter(result => result && result.error)
       .map(result => ({ name: result.location.name, message: result.error }));
-    renderTrendTracker(matches, errors, new Date());
+    const checkedAt = new Date();
+    renderTrendTracker(matches, errors, checkedAt);
+    saveTrendSnapshot(matches, checkedAt);
   } finally {
     trendTrackerBusy = false;
     trendRefreshBtn.disabled = false;
