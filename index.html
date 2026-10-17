@@ -371,28 +371,46 @@ async function loadMassXComments() {
   try {
     const allRows = [];
     const pageSize = 1000;
+    const parallelPages = 4;
     let start = 0;
+    let reachedEnd = false;
 
-    while (true) {
-      const response = await fetch(
-        API + "/rest/v1/mass_x_comments?select=id,content&is_active=eq.true&order=id.asc",
-        {
-          headers: {
-            ...headers(),
-            Range: `${start}-${start + pageSize - 1}`
-          },
-          cache: "no-store"
-        }
+    // Fetch up to four pages at once instead of waiting for every page
+    // sequentially. This reduces startup time for large comment pools.
+    while (!reachedEnd) {
+      const starts = Array.from(
+        { length: parallelPages },
+        (_, index) => start + index * pageSize
       );
 
-      if (!response.ok) {
-        throw new Error("Supabase request failed (" + response.status + ")");
+      const pageResults = await Promise.all(starts.map(async pageStart => {
+        const response = await fetch(
+          API + "/rest/v1/mass_x_comments?select=content&is_active=eq.true&order=id.asc",
+          {
+            headers: {
+              ...headers(),
+              Range: `${pageStart}-${pageStart + pageSize - 1}`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Supabase request failed (" + response.status + ")");
+        }
+        return response.json();
+      }));
+
+      for (const rows of pageResults) {
+        allRows.push(...rows);
+        if (rows.length < pageSize) {
+          reachedEnd = true;
+          break;
+        }
       }
 
-      const rows = await response.json();
-      allRows.push(...rows);
-      if (rows.length < pageSize) break;
-      start += pageSize;
+      start += parallelPages * pageSize;
+      massXStatus.textContent =
+        "Loading comments… " + allRows.length.toLocaleString() + " loaded";
     }
 
     massXComments = shuffle([...new Set(
