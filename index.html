@@ -282,6 +282,58 @@ document.querySelectorAll("[data-go-home]").forEach(button => {
 });
 
 /* VOGUE: one shared pool, one shared displayed counter */
+// Extra varied comments prevent the feed from feeling stuck on one "visuals" theme.
+// These are merged with active Supabase comments and de-duplicated at load time.
+const VOGUE_VARIETY_COMMENTS = [
+  "Seonghyeon brings such a refined energy to this Louis Vuitton moment.",
+  "The styling feels timeless, modern, and effortlessly confident.",
+  "He carries the whole concept with so much grace.",
+  "Every detail in this campaign feels carefully considered.",
+  "Seonghyeon's expression adds a beautiful story to the frame.",
+  "That quiet confidence makes this look unforgettable.",
+  "The Louis Vuitton pieces suit his personal aura so well.",
+  "A perfect balance of sophistication and youthful charm.",
+  "His presence gives this editorial a distinct point of view.",
+  "The pose, styling, and mood come together beautifully.",
+  "Seonghyeon makes high fashion feel natural and approachable.",
+  "The composition is elegant without trying too hard.",
+  "Love how the textures and accessories complement the whole look.",
+  "He has a talent for making a simple moment feel cinematic.",
+  "This concept highlights his versatility as an artist and model.",
+  "The atmosphere here is polished, bold, and full of character.",
+  "His expressions shift the mood in the most interesting way.",
+  "A memorable campaign moment with such a clear identity.",
+  "Seonghyeon brings warmth to an otherwise sharp editorial style.",
+  "The silhouette and styling are so well put together.",
+  "He looks completely at ease in this fashion world.",
+  "The creative direction and his energy work perfectly together.",
+  "There is something magnetic about his calm confidence.",
+  "The details deserve a closer look; everything feels intentional.",
+  "He makes this luxury styling feel fresh rather than predictable.",
+  "Such a strong editorial mood from Seonghyeon.",
+  "The contrast between the outfit and the setting works beautifully.",
+  "His natural charisma gives the campaign extra personality.",
+  "This is the kind of styling that stays in your mind.",
+  "Seonghyeon has a lovely way of balancing elegance with edge.",
+  "The whole frame feels like a page from a fashion story.",
+  "I love the restraint in the styling and the confidence in his pose.",
+  "A sophisticated look with just the right amount of attitude.",
+  "His versatility keeps every concept interesting.",
+  "The mood is subtle, but his presence speaks loudly.",
+  "This collaboration feels like a natural match for his style.",
+  "The accessories add character without overpowering the look.",
+  "Seonghyeon gives this editorial a distinct sense of movement.",
+  "The overall styling feels luxurious, clean, and contemporary.",
+  "He communicates so much through a small change in expression.",
+  "A beautiful example of fashion storytelling through mood and detail.",
+  "The look is bold, but he wears it with effortless ease.",
+  "His charm comes through even in the most minimal styling.",
+  "This editorial shows another side of Seonghyeon's style.",
+  "The color palette and textures create such a cohesive look.",
+  "He brings a distinctive character to every concept he takes on.",
+  "The result feels polished while still feeling uniquely him.",
+  "A graceful, confident, and very memorable fashion moment."
+];
 let vogueComments = [];
 let vogueDeck = [];
 let vogueCurrent = "";
@@ -307,30 +359,45 @@ function vogueNormalize(text) {
 }
 
 function voguePatternKey(text) {
-  // Group comments with the same opening so the deck doesn't bunch similar ones together.
-  return vogueNormalize(text).slice(0, 70);
+  // Catch repeated openings and common templated phrases.
+  const normalized = vogueNormalize(text);
+  return normalized.split(" ").slice(0, 4).join(" ");
+}
+
+function vogueTheme(text) {
+  const t = vogueNormalize(text);
+  if (/visual|face|features|beauty|handsome|gorgeous|pretty|look/.test(t)) return "appearance";
+  if (/outfit|styling|style|fashion|clothes|silhouette|wear|accessor|texture|color palette/.test(t)) return "fashion";
+  if (/expression|smile|eyes|gaze|pose|charisma|charm|confidence|personality|energy|presence|aura/.test(t)) return "presence";
+  if (/campaign|editorial|concept|creative direction|frame|composition|photograph|shot|story|mood|atmosphere/.test(t)) return "editorial";
+  if (/louis vuitton|luxury|brand|collection|collaboration|piece|detail/.test(t)) return "brand-details";
+  return "general";
 }
 
 function makeVogueDeck() {
   const remaining = shuffle([...vogueComments]);
   const deck = [];
   let previous = vogueCurrent;
+  let previousTheme = vogueCurrent ? vogueTheme(vogueCurrent) : "";
+  let previousOpening = vogueCurrent ? voguePatternKey(vogueCurrent) : "";
 
-  // Greedily select a random comment with a different opening from the last one.
-  // Every comment is still used once before the next round begins.
+  // Spread themes as well as openings. Every comment is used once per deck.
   while (remaining.length) {
-    let candidates = remaining
-      .map((text, index) => ({ text, index }))
-      .filter(item => voguePatternKey(item.text) !== voguePatternKey(previous));
-
-    // If all remaining comments share the same opening, don't get stuck: pick randomly.
-    if (!candidates.length) {
-      candidates = remaining.map((text, index) => ({ text, index }));
-    }
+    const ranked = remaining.map((text, index) => ({
+      text, index,
+      theme: vogueTheme(text),
+      opening: voguePatternKey(text),
+      score: (vogueTheme(text) === previousTheme ? 3 : 0) +
+        (voguePatternKey(text) === previousOpening ? 5 : 0)
+    }));
+    const bestScore = Math.min(...ranked.map(item => item.score));
+    const candidates = ranked.filter(item => item.score === bestScore);
     const chosen = candidates[Math.floor(Math.random() * candidates.length)];
     deck.push(chosen.text);
     remaining.splice(chosen.index, 1);
     previous = chosen.text;
+    previousTheme = chosen.theme;
+    previousOpening = chosen.opening;
   }
 
   // nextVogueComment() pops from the end, so reverse the prepared sequence.
@@ -380,8 +447,9 @@ async function loadVogueComments() {
     // Remove exact duplicates and duplicates that only differ by case, spacing,
     // punctuation, or invisible Unicode characters.
     const seenVogueContent = new Set();
-    vogueComments = rows
-      .map(row => row.content)
+    // Merge database comments with a varied local set, then remove normalized duplicates.
+    // This keeps the feed varied even when the database mostly repeats one theme.
+    vogueComments = [...rows.map(row => row.content), ...VOGUE_VARIETY_COMMENTS]
       .filter(content => typeof content === "string" && content.trim())
       .map(content => content.trim())
       .filter(content => {
@@ -401,7 +469,7 @@ async function loadVogueComments() {
     nextVogueComment();
     vogueStatus.textContent =
       vogueComments.length.toLocaleString() +
-      " unique comments loaded. Comments are shared across all 9 posts.";
+      " unique comments loaded (database + varied comments). Comments are shared across all 9 posts.";
   } catch (error) {
     showVogueComment("Unable to load comments.");
     vogueStatus.textContent = error.message;
