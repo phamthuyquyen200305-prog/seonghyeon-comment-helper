@@ -296,39 +296,45 @@ function showVogueComment(text) {
   vogueComment.textContent = text;
 }
 
-function voguePatternKey(text) {
-  // Compare normalized opening text so very similar/template-based comments
-  // are less likely to appear consecutively.
+function vogueNormalize(text) {
   return String(text)
+    .normalize("NFKC")
     .toLocaleLowerCase()
-    .replace(/[\\s\\p{P}\\p{S}]+/gu, " ")
-    .trim()
-    .slice(0, 42);
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function voguePatternKey(text) {
+  // Group comments with the same opening so the deck doesn't bunch similar ones together.
+  return vogueNormalize(text).slice(0, 70);
 }
 
 function makeVogueDeck() {
-  const deck = shuffle([...vogueComments]);
+  const remaining = shuffle([...vogueComments]);
+  const deck = [];
+  let previous = vogueCurrent;
 
-  // De-cluster adjacent comments with the same opening when alternatives exist.
-  for (let i = 1; i < deck.length; i++) {
-    if (voguePatternKey(deck[i]) !== voguePatternKey(deck[i - 1])) continue;
-    const candidates = [];
-    for (let j = i + 1; j < deck.length; j++) {
-      if (voguePatternKey(deck[j]) !== voguePatternKey(deck[i - 1])) {
-        candidates.push(j);
-      }
+  // Greedily select a random comment with a different opening from the last one.
+  // Every comment is still used once before the next round begins.
+  while (remaining.length) {
+    let candidates = remaining
+      .map((text, index) => ({ text, index }))
+      .filter(item => voguePatternKey(item.text) !== voguePatternKey(previous));
+
+    // If all remaining comments share the same opening, don't get stuck: pick randomly.
+    if (!candidates.length) {
+      candidates = remaining.map((text, index) => ({ text, index }));
     }
-    if (candidates.length) {
-      const j = candidates[Math.floor(Math.random() * candidates.length)];
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+    deck.push(chosen.text);
+    remaining.splice(chosen.index, 1);
+    previous = chosen.text;
   }
 
-  // Avoid repeating the previous round's last comment at the round boundary.
-  if (deck.length > 1 && deck[deck.length - 1] === vogueCurrent) {
-    [deck[0], deck[deck.length - 1]] = [deck[deck.length - 1], deck[0]];
-  }
-  return deck;
+  // nextVogueComment() pops from the end, so reverse the prepared sequence.
+  return deck.reverse();
 }
 
 function nextVogueComment() {
@@ -371,11 +377,19 @@ async function loadVogueComments() {
     const rows = await fetchJSON(
       API + "/rest/v1/vogue_comments?select=id,content&is_active=eq.true&order=id.asc"
     );
-    vogueComments = [...new Set(
-      rows.map(row => row.content)
-        .filter(content => typeof content === "string" && content.trim())
-        .map(content => content.trim())
-    )];
+    // Remove exact duplicates and duplicates that only differ by case, spacing,
+    // punctuation, or invisible Unicode characters.
+    const seenVogueContent = new Set();
+    vogueComments = rows
+      .map(row => row.content)
+      .filter(content => typeof content === "string" && content.trim())
+      .map(content => content.trim())
+      .filter(content => {
+        const key = vogueNormalize(content);
+        if (!key || seenVogueContent.has(key)) return false;
+        seenVogueContent.add(key);
+        return true;
+      });
 
     if (!vogueComments.length) {
       showVogueComment("No active comments found.");
