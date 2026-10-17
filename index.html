@@ -126,7 +126,6 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
 const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
 const API = SUPABASE_URL.replace(/\/+$/, "");
-const PAGE_SIZE = 1000;
 
 function headers() {
   return {
@@ -148,37 +147,6 @@ async function fetchJSON(url, options = {}) {
       (details ? ": " + details.slice(0, 180) : ""));
   }
   return response.json();
-}
-
-/* Fetch every page. Does not stop until a short or empty page is returned. */
-async function fetchAllPages(table, select, filters = "") {
-  const allRows = [];
-  let offset = 0;
-
-  while (true) {
-    const separator = filters ? "&" : "";
-    const url = API + "/rest/v1/" + table +
-      "?select=" + encodeURIComponent(select) +
-      filters + separator +
-      "order=id.asc";
-
-    const rows = await fetchJSON(url, {
-      headers: {
-        Range: `${offset}-${offset + PAGE_SIZE - 1}`,
-        "Range-Unit": "items"
-      }
-    });
-
-    if (!Array.isArray(rows)) {
-      throw new Error("Unexpected response while loading " + table);
-    }
-
-    allRows.push(...rows);
-    if (rows.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
-  }
-
-  return allRows;
 }
 
 function shuffle(array) {
@@ -217,7 +185,6 @@ function openView(id) {
   homeView.hidden = true;
   Object.entries(views).forEach(([key, el]) => el.hidden = key !== id);
   window.scrollTo(0, 0);
-
   if (!initialized[id]) {
     initialized[id] = true;
     if (id === "vogueView") initializeVogue();
@@ -228,7 +195,6 @@ function openView(id) {
 document.querySelectorAll("[data-open-view]").forEach(button => {
   button.addEventListener("click", () => openView(button.dataset.openView));
 });
-
 document.querySelectorAll("[data-go-home]").forEach(button => {
   button.addEventListener("click", () => {
     Object.values(views).forEach(el => el.hidden = true);
@@ -237,7 +203,7 @@ document.querySelectorAll("[data-go-home]").forEach(button => {
   });
 });
 
-/* VOGUE */
+/* VOGUE: one shared pool, one shared displayed counter */
 let vogueComments = [];
 let vogueDeck = [];
 let vogueCurrent = "";
@@ -248,27 +214,26 @@ const vogueCopyBtn = document.getElementById("vogueCopyBtn");
 const vogueStatus = document.getElementById("vogueCopyStatus");
 const vogueCount = document.getElementById("vogueCopyCount");
 
+function showVogueComment(text) {
+  vogueComment.textContent = text;
+}
+
 function nextVogueComment() {
   if (!vogueComments.length) return;
-
   if (!vogueDeck.length) {
     vogueDeck = shuffle([...vogueComments]);
   }
-
   vogueCurrent = vogueDeck.pop();
-  vogueComment.textContent = vogueCurrent;
+  showVogueComment(vogueCurrent);
   vogueCopyBtn.disabled = false;
 }
 
 async function refreshVogueCount() {
   try {
-    const rows = await fetchAllPages(
-      "vogue_copy_stats",
-      "id,copy_count"
+    const rows = await fetchJSON(
+      API + "/rest/v1/vogue_copy_stats?select=id,copy_count"
     );
-    const total = rows.reduce(
-      (sum, row) => sum + Number(row.copy_count || 0), 0
-    );
+    const total = rows.reduce((sum, row) => sum + Number(row.copy_count || 0), 0);
     vogueCount.textContent = total.toLocaleString("en-US");
   } catch (error) {
     vogueCount.textContent = "Unavailable";
@@ -278,34 +243,30 @@ async function refreshVogueCount() {
 
 async function loadVogueComments() {
   vogueCopyBtn.disabled = true;
-  vogueStatus.textContent = "Loading comments…";
-
+  vogueStatus.textContent = "Loading shared comment list…";
   try {
-    const rows = await fetchAllPages(
-      "vogue_comments",
-      "id,content",
-      "&is_active=eq.true&"
+    const rows = await fetchJSON(
+      API + "/rest/v1/vogue_comments?select=id,content&is_active=eq.true&order=id.asc"
     );
-
-    // Keep every active record, including records with identical text.
-    vogueComments = rows
-      .filter(row => typeof row.content === "string" && row.content.trim())
-      .map(row => row.content.trim());
+    vogueComments = [...new Set(
+      rows.map(row => row.content)
+        .filter(content => typeof content === "string" && content.trim())
+        .map(content => content.trim())
+    )];
 
     if (!vogueComments.length) {
-      vogueComment.textContent = "No active comments found.";
-      vogueStatus.textContent = "Check vogue_comments and its read policy.";
+      showVogueComment("No active comments found.");
+      vogueStatus.textContent = "Check whether vogue_comments contains active comments.";
       return;
     }
 
     vogueDeck = shuffle([...vogueComments]);
     nextVogueComment();
     vogueStatus.textContent =
-      rows.length.toLocaleString() + " records fetched; " +
       vogueComments.length.toLocaleString() +
-      " active comments loaded. No repeats until the round ends.";
+      " unique comments loaded. Comments are shared across all 9 posts.";
   } catch (error) {
-    vogueComment.textContent = "Unable to load comments.";
+    showVogueComment("Unable to load comments.");
     vogueStatus.textContent = error.message;
   }
 }
@@ -317,8 +278,13 @@ vogueCopyBtn.addEventListener("click", async () => {
 
   try {
     await copyText(vogueCurrent);
-    vogueStatus.textContent =
-      "Copied. The next comment is ready. Counter refreshes from Supabase.";
+
+    /*
+     * Existing database has vogue_copy_stats, but its increment RPC
+     * was not provided. Do not call the unrelated old post-specific RPC.
+     * Copy works; the total updates after the database counter is configured.
+     */
+    vogueStatus.textContent = "Copied successfully.";
     nextVogueComment();
     await refreshVogueCount();
   } catch (error) {
@@ -334,7 +300,7 @@ function initializeVogue() {
   refreshVogueCount();
 }
 
-/* MASS X */
+/* MASS X: paginated comments, shuffle, auto-next, existing RPC */
 let massXComments = [];
 let massXIndex = 0;
 let massXBusy = false;
@@ -375,37 +341,42 @@ function showMassXComment() {
   }
 }
 
-function nextMassXComment() {
-  if (!massXComments.length) return;
-  massXIndex++;
-
-  if (massXIndex >= massXComments.length) {
-    massXComments = shuffle([...massXComments]);
-    massXIndex = 0;
-    massXStatus.textContent =
-      "All comments used. Starting a new shuffled round.";
-  }
-
-  showMassXComment();
-}
-
 async function loadMassXComments() {
   massXCopyBtn.disabled = true;
   massXStatus.textContent = "Loading comments…";
 
   try {
-    const rows = await fetchAllPages(
-      "mass_x_comments",
-      "id,content",
-      "&is_active=eq.true&"
-    );
+    const allRows = [];
+    const pageSize = 1000;
+    let start = 0;
 
-    // Preserve every active row; do not deduplicate records.
-    massXComments = shuffle(
-      rows
-        .filter(row => typeof row.content === "string" && row.content.trim())
-        .map(row => row.content.trim())
-    );
+    while (true) {
+      const response = await fetch(
+        API + "/rest/v1/mass_x_comments?select=id,content&is_active=eq.true&order=id.asc",
+        {
+          headers: {
+            ...headers(),
+            Range: `${start}-${start + pageSize - 1}`
+          },
+          cache: "no-store"
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Supabase request failed (" + response.status + ")");
+      }
+
+      const rows = await response.json();
+      allRows.push(...rows);
+      if (rows.length < pageSize) break;
+      start += pageSize;
+    }
+
+    massXComments = shuffle([...new Set(
+      allRows.map(row => row.content)
+        .filter(content => typeof content === "string" && content.trim())
+        .map(content => content.trim())
+    )]);
 
     massXIndex = 0;
 
@@ -417,8 +388,7 @@ async function loadMassXComments() {
 
     showMassXComment();
     massXStatus.textContent =
-      rows.length.toLocaleString() + " records fetched; " +
-      massXComments.length.toLocaleString() + " active comments loaded.";
+      massXComments.length.toLocaleString() + " unique comments loaded.";
     massXCopyBtn.disabled = false;
   } catch (error) {
     massXComment.textContent = "Unable to load comments.";
@@ -426,24 +396,31 @@ async function loadMassXComments() {
   }
 }
 
+function nextMassXComment() {
+  if (!massXComments.length) return;
+  massXIndex++;
+  if (massXIndex >= massXComments.length) {
+    massXComments = shuffle([...massXComments]);
+    massXIndex = 0;
+    massXStatus.textContent = "All comments used. Starting a new shuffled round.";
+  }
+  showMassXComment();
+}
+
 massXCopyBtn.addEventListener("click", async () => {
   if (!massXComments.length || massXBusy) return;
-
   massXBusy = true;
   massXCopyBtn.disabled = true;
 
   try {
     await copyText(massXComments[massXIndex]);
-
     try {
       await incrementMassXCount();
       massXStatus.textContent = "Copied successfully. Next comment is ready.";
     } catch (error) {
-      massXStatus.textContent =
-        "Copied, but counter update failed: " + error.message;
+      massXStatus.textContent = "Copied, but counter update failed: " + error.message;
       await refreshMassXCount();
     }
-
     nextMassXComment();
   } catch (error) {
     massXStatus.textContent = "Copy failed: " + error.message;
