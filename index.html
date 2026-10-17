@@ -243,19 +243,59 @@ function showVogueComment(text) {
   vogueComment.textContent = text;
 }
 
-function nextVogueComment() {
-  if (!vogueComments.length) return;
-  if (!vogueDeck.length) {
-    vogueDeck = shuffle([...vogueComments]);
-    // Start a fresh random round without immediately repeating the last comment.
-    if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrent) {
-      [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
-        [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
+function voguePatternKey(text) {
+  // Compare normalized opening text so very similar/template-based comments
+  // are less likely to appear consecutively.
+  return String(text)
+    .toLocaleLowerCase()
+    .replace(/[\\s\\p{P}\\p{S}]+/gu, " ")
+    .trim()
+    .slice(0, 42);
+}
+
+function makeVogueDeck() {
+  const deck = shuffle([...vogueComments]);
+
+  // De-cluster adjacent comments with the same opening when alternatives exist.
+  for (let i = 1; i < deck.length; i++) {
+    if (voguePatternKey(deck[i]) !== voguePatternKey(deck[i - 1])) continue;
+    const candidates = [];
+    for (let j = i + 1; j < deck.length; j++) {
+      if (voguePatternKey(deck[j]) !== voguePatternKey(deck[i - 1])) {
+        candidates.push(j);
+      }
+    }
+    if (candidates.length) {
+      const j = candidates[Math.floor(Math.random() * candidates.length)];
+      [deck[i], deck[j]] = [deck[j], deck[i]];
     }
   }
+
+  // Avoid repeating the previous round's last comment at the round boundary.
+  if (deck.length > 1 && deck[deck.length - 1] === vogueCurrent) {
+    [deck[0], deck[deck.length - 1]] = [deck[deck.length - 1], deck[0]];
+  }
+  return deck;
+}
+
+function nextVogueComment() {
+  if (!vogueComments.length) return;
+  if (!vogueDeck.length) vogueDeck = makeVogueDeck();
   vogueCurrent = vogueDeck.pop();
   showVogueComment(vogueCurrent);
   vogueCopyBtn.disabled = false;
+}
+
+async function incrementVogueCount() {
+  const result = await fetchJSON(
+    API + "/rest/v1/rpc/increment_vogue_copy_count",
+    { method: "POST", body: "{}" }
+  );
+  if (typeof result === "number") {
+    vogueCount.textContent = result.toLocaleString("en-US");
+  } else {
+    await refreshVogueCount();
+  }
 }
 
 async function refreshVogueCount() {
@@ -290,7 +330,7 @@ async function loadVogueComments() {
       return;
     }
 
-    vogueDeck = shuffle([...vogueComments]);
+    vogueDeck = makeVogueDeck();
     nextVogueComment();
     vogueStatus.textContent =
       vogueComments.length.toLocaleString() +
@@ -315,7 +355,12 @@ vogueCopyBtn.addEventListener("click", async () => {
      */
     nextVogueComment();
     vogueStatus.textContent = "Copied successfully. Next comment is ready.";
-    void refreshVogueCount();
+    // Increment the shared database counter in the background so copying stays responsive.
+    void incrementVogueCount().catch(error => {
+      vogueStatus.textContent =
+        "Copied successfully, but the counter could not update. Run the Vogue counter SQL setup.";
+      console.error("Vogue counter update failed:", error);
+    });
   } catch (error) {
     vogueStatus.textContent = "Copy failed: " + error.message;
   } finally {
