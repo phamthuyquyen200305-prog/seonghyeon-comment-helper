@@ -334,6 +334,10 @@ button:disabled {
     <strong>02 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
     <span>9 Instagram posts · English / Korean · Auto-next Copy</span>
   </button>
+  <button class="menu-choice" type="button" data-open-view="massXView">
+    <strong>03 · MASS X</strong>
+    <span>Seonghyeon support comments · Copy and auto-next</span>
+  </button>
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </section>
 
@@ -428,16 +432,16 @@ button:disabled {
   <h1>VOGUE × LOUIS VUITTON × SEONGHYEON</h1>
   <p class="subtitle">Celebrate Seonghyeon's unique charm, artistic vision and effortless style.</p>
 
-  <div class="languages">
-    <button class="lang active" id="vogueEnBtn" type="button">English</button>
-    <button class="lang" id="vogueKoBtn" type="button">한국어</button>
+  <div class="languages" aria-label="Choose Instagram post">
+    <button class="lang active" id="voguePost08Btn" type="button">POST 08</button>
+    <button class="lang" id="voguePost09Btn" type="button">POST 09</button>
   </div>
 
-  <div id="vogueComment" class="comment">Loading a comment…</div>
+  <div id="vogueComment" class="comment">Choose a post to load its comments…</div>
   <button class="primary" id="vogueCopyBtn" type="button" disabled>Copy comment</button>
   <p id="vogueCopyStatus" class="status" aria-live="polite">Connecting to the database…</p>
   <div class="vogue-counter">
-    <strong>TOTAL VOGUE COMMENTS COPIED</strong>
+    <strong id="vogueCounterTitle">POST 08 · COMMENTS COPIED</strong>
     <span id="vogueCopyCount">Loading…</span>
   </div>
 
@@ -459,6 +463,30 @@ button:disabled {
   <p class="note">This tool copies comments only. It does not post or interact with Instagram automatically.</p>
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </main>
+</div>
+
+
+<div class="view-shell" id="massXView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+  <main class="card">
+    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+    <h1>HASHTAGS FOR SEONGHYEON AT NOL FESTIVAL</h1>
+    <p class="subtitle">17 October 2026 · Celebrate Seonghyeon at NOL Festival</p>
+    <div id="massXComment" class="comment" aria-live="polite">Ready to support Seonghyeon!</div>
+    <button class="primary" id="massXCopyBtn" type="button">Copy comment</button>
+    <button class="lang" id="massXNextBtn" type="button">Next comment ↻</button>
+    <p id="massXStatus" class="status" aria-live="polite">Choose Copy comment to copy, then move to the next comment.</p>
+    <p class="status">TOTAL COPIES: <strong id="massXTotalCopies">0</strong></p>
+    <section class="notice">
+      <div class="notice-title">HASHTAGS FOR SEONGHYEON AT NOL FESTIVAL</div>
+      <p>17/10/2026 · 7:00 PM KST</p>
+      <p><strong>SEONGHYEON ACES HEART RACE</strong></p>
+      <p>#SEONGHYEONTurnsUpNOL · #SEONGHYEON · #성현 · #CORTIS_NOLFest2026</p>
+      <p>EOMACE · ALLROUNDER SEAN · EOMASTER OF STAGE</p>
+    </section>
+    <p class="note">This tool copies comments only. It does not post to X automatically. Avoid posting repetitive comments too rapidly; follow X's rules.</p>
+    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+  </main>
 </div>
 
 <script>
@@ -635,15 +663,16 @@ koBtn.addEventListener("click", () => setLanguage("ko"));
 refreshCopyCount();
 loadComment();
   
-/* VOGUE × LOUIS VUITTON × SEONGHYEON COMMENTS — stored in Supabase */
+/* VOGUE POST 08 / POST 09 comments — loaded only when the Vogue view is opened. */
 const vogueCommentElement = document.getElementById("vogueComment");
 const vogueCopyButton = document.getElementById("vogueCopyBtn");
 const vogueCopyStatus = document.getElementById("vogueCopyStatus");
 const vogueCopyCountElement = document.getElementById("vogueCopyCount");
-const vogueEnBtn = document.getElementById("vogueEnBtn");
-const vogueKoBtn = document.getElementById("vogueKoBtn");
+const voguePost08Btn = document.getElementById("voguePost08Btn");
+const voguePost09Btn = document.getElementById("voguePost09Btn");
+const vogueCounterTitle = document.getElementById("vogueCounterTitle");
 
-let vogueLanguage = "en";
+let voguePost = "post08";
 let vogueComments = [];
 let vogueDeck = [];
 let vogueCurrentComment = "";
@@ -654,58 +683,35 @@ let vogueInitialized = false;
 async function loadVogueComments() {
   vogueLoading = true;
   vogueCopyButton.disabled = true;
-  vogueCommentElement.textContent = "Loading comments…";
+  vogueCommentElement.textContent = "Loading comments for " + voguePost.toUpperCase() + "…";
   vogueCopyStatus.textContent = "";
   vogueComments = [];
   vogueDeck = [];
   vogueCurrentComment = "";
-
   try {
-    const allRows = [];
-    const pageSize = 1000;
-    let offset = 0;
-
-    while (true) {
-      const url = SUPABASE_URL.replace(/\/+$/, "") +
-        "/rest/v1/vogue_comments?select=content&language=eq." +
-        encodeURIComponent(vogueLanguage) +
-        "&is_active=eq.true&order=id.asc&limit=" + pageSize +
-        "&offset=" + offset;
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: supabaseHeaders(),
-        cache: "no-store"
-      });
-
-      if (!response.ok) {
-        throw new Error("Supabase request failed (" + response.status + ").");
-      }
-
-      const rows = await response.json();
-      allRows.push(...rows);
-      if (rows.length < pageSize) break;
-      offset += pageSize;
-    }
-
-    vogueComments = allRows
-      .map(row => row.content)
+    const url = SUPABASE_URL.replace(/\/+$/, "") +
+      "/rest/v1/vogue_post_comments?select=id,content,look,length,focus&post=eq." +
+      encodeURIComponent(voguePost) + "&is_active=eq.true&order=id.asc";
+    const response = await fetch(url, {
+      method: "GET", headers: supabaseHeaders(), cache: "no-store"
+    });
+    if (!response.ok) throw new Error("Supabase request failed (" + response.status + ").");
+    const rows = await response.json();
+    vogueComments = rows.map(row => row.content)
       .filter(content => typeof content === "string" && content.trim());
-
-    if (vogueComments.length === 0) {
-      vogueCommentElement.textContent = "No comments found for this language.";
-      vogueCopyStatus.textContent = "Check that comments were imported and is_active is true.";
+    if (!vogueComments.length) {
+      vogueCommentElement.textContent = "No active comments found for " + voguePost.toUpperCase() + ".";
+      vogueCopyStatus.textContent = "Check that comments for this post were imported and is_active is true.";
       return;
     }
-
     shuffleVogueDeck();
     showNextVogueComment();
-    vogueCopyStatus.textContent = vogueComments.length.toLocaleString() + " comments loaded. Shuffled order; no repeats until this round ends.";
+    vogueCopyStatus.textContent = vogueComments.length.toLocaleString() +
+      " comments loaded for " + voguePost.toUpperCase() + ". Shuffled order; no repeats until this round ends.";
   } catch (error) {
     console.error("Error loading Vogue comments:", error);
     vogueCommentElement.textContent = "Unable to load comments.";
-    vogueCopyStatus.textContent = (error.message || "Connection error") +
-      " Check the Supabase table and read policy.";
+    vogueCopyStatus.textContent = (error.message || "Connection error") + " Check the vogue_post_comments table and read policy.";
   } finally {
     vogueLoading = false;
     vogueCopyButton.disabled = !vogueCurrentComment;
@@ -713,94 +719,48 @@ async function loadVogueComments() {
 }
 
 function shuffleVogueDeck() {
-  // Group comments by the idea of their opening sentence, then deal from
-  // different groups in turn so similar topics are less likely to appear back-to-back.
-  const topicOf = (comment) => {
-    const first = String(comment).split(/[.!?。！？]/)[0].toLowerCase();
-    if (/louis vuitton|styling|outfit|fashion|룩|스타일링|아이템|패션|옷의/.test(first)) return "fashion";
-    if (/camera|lens|expression|gaze|카메라|렌즈|시선|표정/.test(first)) return "camera";
-    if (/composition|framing|pose|photography|구도|포즈|사진이|비주얼 디렉팅/.test(first)) return "composition";
-    if (/mood|atmosphere|cinematic|분위기|무드/.test(first)) return "mood";
-    if (/lighting|light and shadow|details|art direction|조명|디테일|빛과 그림자|아트 디렉팅/.test(first)) return "craft";
-    if (/identity|personality|individuality|character|개성|성현이답|자기만의 색|성격/.test(first)) return "identity";
-    if (/collaboration|collection|storytelling|컬렉션|스토리텔링|작업은 패션/.test(first)) return "brand";
-    if (/photo|set feels|sequence|revisit|화보예요|사진마다|사진들이|다시 볼|사진이 이어지는/.test(first)) return "variety";
-    if (/look forward|hope we|future|next chapter|기대돼요|만나고 싶어요|다음 활동|앞으로/.test(first)) return "future";
-    return "presence";
-  };
-  const groups = new Map();
-  for (const comment of vogueComments) {
-    const topic = topicOf(comment);
-    if (!groups.has(topic)) groups.set(topic, []);
-    groups.get(topic).push(comment);
-  }
-  for (const group of groups.values()) {
-    for (let i = group.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [group[i], group[j]] = [group[j], group[i]];
-    }
-  }
-  const topicNames = [...groups.keys()];
-  for (let i = topicNames.length - 1; i > 0; i--) {
+  vogueDeck = [...vogueComments];
+  for (let i = vogueDeck.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [topicNames[i], topicNames[j]] = [topicNames[j], topicNames[i]];
+    [vogueDeck[i], vogueDeck[j]] = [vogueDeck[j], vogueDeck[i]];
   }
-  vogueDeck = [];
-  while (topicNames.some(topic => groups.get(topic).length)) {
-    for (const topic of topicNames) {
-      const group = groups.get(topic);
-      if (group.length) vogueDeck.push(group.pop());
-    }
-  }
-  // showNextVogueComment() pops from the end, so reverse to keep the interleaving.
-  vogueDeck.reverse();
   if (vogueDeck.length > 1 && vogueDeck[vogueDeck.length - 1] === vogueCurrentComment) {
-    [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] =
-      [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
+    [vogueDeck[0], vogueDeck[vogueDeck.length - 1]] = [vogueDeck[vogueDeck.length - 1], vogueDeck[0]];
   }
 }
 
 function showNextVogueComment() {
-  if (!vogueCommentElement || vogueComments.length === 0) return;
-
-  // When this round is exhausted, shuffle the full collection and begin a new round.
-  if (vogueDeck.length === 0) {
+  if (!vogueCommentElement || !vogueComments.length) return;
+  if (!vogueDeck.length) {
     shuffleVogueDeck();
     vogueCopyStatus.textContent = "New shuffled round started.";
   }
-
   vogueCurrentComment = vogueDeck.pop();
   vogueCommentElement.textContent = vogueCurrentComment;
   vogueCopyButton.disabled = false;
 }
 
-function setVogueLanguage(lang) {
-  if (vogueLanguage === lang || vogueLoading) return;
-  vogueLanguage = lang;
-  vogueEnBtn.classList.toggle("active", lang === "en");
-  vogueKoBtn.classList.toggle("active", lang === "ko");
-  loadVogueComments();
+async function setVoguePost(post) {
+  if (voguePost === post || vogueLoading) return;
+  voguePost = post;
+  voguePost08Btn.classList.toggle("active", post === "post08");
+  voguePost09Btn.classList.toggle("active", post === "post09");
+  vogueCounterTitle.textContent = post.toUpperCase() + " · COMMENTS COPIED";
+  vogueCopyCountElement.textContent = "Loading…";
+  await Promise.all([loadVogueComments(), refreshVogueCopyCount()]);
 }
-
-vogueEnBtn.addEventListener("click", () => setVogueLanguage("en"));
-vogueKoBtn.addEventListener("click", () => setVogueLanguage("ko"));
+voguePost08Btn.addEventListener("click", () => setVoguePost("post08"));
+voguePost09Btn.addEventListener("click", () => setVoguePost("post09"));
 
 async function refreshVogueCopyCount() {
   try {
     const response = await fetch(
-      SUPABASE_URL.replace(/\/+$/, "") +
-      "/rest/v1/vogue_copy_stats?select=copy_count&id=eq.1",
-      {
-        method: "GET",
-        headers: supabaseHeaders(),
-        cache: "no-store"
-      }
+      SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/vogue_post_copy_stats?select=copy_count&post=eq." + encodeURIComponent(voguePost),
+      { method: "GET", headers: supabaseHeaders(), cache: "no-store" }
     );
-    if (!response.ok) throw new Error("Could not load Vogue counter");
+    if (!response.ok) throw new Error("Could not load counter");
     const rows = await response.json();
-    if (!Array.isArray(rows) || rows.length === 0) {
-      throw new Error("Vogue counter row not found");
-    }
+    if (!Array.isArray(rows) || !rows.length) throw new Error("Counter row not found for " + voguePost);
     vogueCopyCount = Number(rows[0].copy_count) || 0;
     vogueCopyCountElement.textContent = vogueCopyCount.toLocaleString("en-US");
   } catch (error) {
@@ -811,12 +771,10 @@ async function refreshVogueCopyCount() {
 
 async function incrementVogueCopyCount() {
   const response = await fetch(
-    SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_vogue_copy_count",
+    SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_vogue_post_copy_count",
     {
-      method: "POST",
-      headers: supabaseHeaders(),
-      body: "{}",
-      cache: "no-store"
+      method: "POST", headers: supabaseHeaders(),
+      body: JSON.stringify({ p_post: voguePost }), cache: "no-store"
     }
   );
   if (!response.ok) throw new Error("Vogue counter update failed");
@@ -827,16 +785,15 @@ async function incrementVogueCopyCount() {
 
 vogueCopyButton.addEventListener("click", async () => {
   if (!vogueCurrentComment || vogueLoading) return;
-
   vogueCopyButton.disabled = true;
   try {
     await navigator.clipboard.writeText(vogueCurrentComment);
-    vogueCopyStatus.textContent = "Copied! Updating the total…";
+    vogueCopyStatus.textContent = "Copied! Updating the " + voguePost.toUpperCase() + " counter…";
     try {
       await incrementVogueCopyCount();
       vogueCopyStatus.textContent = "Copied successfully! Another comment is ready.";
     } catch (counterError) {
-      vogueCopyStatus.textContent = "Comment copied, but the global counter could not update. Check the Supabase counter setup.";
+      vogueCopyStatus.textContent = "Comment copied, but the counter could not update.";
       await refreshVogueCopyCount();
     }
     showNextVogueComment();
@@ -849,21 +806,100 @@ vogueCopyButton.addEventListener("click", async () => {
 function initializeVogueView() {
   if (vogueInitialized) return;
   vogueInitialized = true;
-  // Load the Vogue database only when the user opens that page, not during initial page load.
   refreshVogueCopyCount();
   loadVogueComments();
 }
 
-// Switch between the home menu and the two separate project pages.
+
+// MASS X comments and persistent total copy counter use Supabase.
+let massXTotalCopies = 0;
+const massXTotalCopiesEl = document.getElementById("massXTotalCopies");
+async function refreshMassXTotalCopies() {
+  try {
+    const response = await fetch(SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/mass_x_copy_stats?select=copy_count&id=eq.1", {
+      method: "GET", headers: supabaseHeaders(), cache: "no-store"
+    });
+    if (!response.ok) throw new Error("Could not read MASS X copy total");
+    const rows = await response.json();
+    massXTotalCopies = rows.length ? Number(rows[0].copy_count) || 0 : 0;
+    massXTotalCopiesEl.textContent = massXTotalCopies.toLocaleString();
+  } catch (error) {
+    massXTotalCopiesEl.textContent = "—";
+  }
+}
+async function incrementMassXTotalCopies() {
+  const response = await fetch(SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/increment_mass_x_copy_count", {
+    method: "POST", headers: { ...supabaseHeaders(), "Content-Type": "application/json" }, body: "{}"
+  });
+  if (!response.ok) throw new Error("Could not update MASS X copy total");
+  const value = await response.json();
+  massXTotalCopies = Number(value) || (massXTotalCopies + 1);
+  massXTotalCopiesEl.textContent = massXTotalCopies.toLocaleString();
+}
+
+// MASS X comments are loaded from Supabase table mass_x_comments.
+let massXComments = [];
+let massXIndex = 0;
+const massXComment = document.getElementById("massXComment");
+const massXStatus = document.getElementById("massXStatus");
+async function loadMassXComments() {
+  massXStatus.textContent = "Loading comments from Supabase…";
+  try {
+    const response = await fetch(SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/mass_x_comments?select=content&is_active=eq.true&order=id.asc", {
+      method: "GET", headers: supabaseHeaders(), cache: "no-store"
+    });
+    if (!response.ok) throw new Error("Supabase request failed (" + response.status + "). Check the table and read policy.");
+    const rows = await response.json();
+    massXComments = rows.map(row => row.content).filter(Boolean);
+    if (!massXComments.length) {
+      massXComment.textContent = "No active comments found.";
+      massXStatus.textContent = "Import the CSV into mass_x_comments and set is_active to true.";
+      return;
+    }
+    massXIndex = 0;
+    showMassXComment();
+    massXStatus.textContent = massXComments.length.toLocaleString() + " comments loaded from Supabase.";
+  } catch (error) {
+    massXComment.textContent = "Unable to load comments from Supabase.";
+    massXStatus.textContent = (error.message || "Connection error") + " Check mass_x_comments and its read policy.";
+  }
+}
+function showMassXComment() {
+  if (massXComments.length) massXComment.textContent = massXComments[massXIndex];
+}
+document.getElementById("massXNextBtn").addEventListener("click", () => {
+  if (!massXComments.length) return;
+  massXIndex = (massXIndex + 1) % massXComments.length;
+  showMassXComment();
+  massXStatus.textContent = `Comment ${massXIndex + 1} of ${massXComments.length}`;
+});
+document.getElementById("massXCopyBtn").addEventListener("click", async () => {
+  if (!massXComments.length) { massXStatus.textContent = "No comments loaded yet."; return; }
+  try {
+    await navigator.clipboard.writeText(massXComments[massXIndex]);
+    massXStatus.textContent = "Copied! Moving to the next comment…";
+    try { await incrementMassXTotalCopies(); } catch (counterError) { massXStatus.textContent = "Comment copied, but total counter could not update. Check Supabase setup."; }
+    massXIndex = (massXIndex + 1) % massXComments.length;
+    showMassXComment();
+  } catch (error) {
+    massXStatus.textContent = "Copy failed. Please allow clipboard access and try again.";
+  }
+});
+loadMassXComments();
+refreshMassXTotalCopies();
+
+// Switch between the home menu and project pages.
 const homeView = document.getElementById("homeView");
 const voteView = document.getElementById("voteView");
 const vogueView = document.getElementById("vogueView");
+const massXView = document.getElementById("massXView");
 
 document.querySelectorAll("[data-open-view]").forEach((button) => {
   button.addEventListener("click", () => {
     homeView.hidden = true;
     voteView.hidden = button.dataset.openView !== "voteView";
     vogueView.hidden = button.dataset.openView !== "vogueView";
+    massXView.hidden = button.dataset.openView !== "massXView";
     if (button.dataset.openView === "vogueView") initializeVogueView();
     window.scrollTo({ top: 0, behavior: "auto" });
   });
@@ -873,6 +909,7 @@ document.querySelectorAll("[data-go-home]").forEach((button) => {
   button.addEventListener("click", () => {
     voteView.hidden = true;
     vogueView.hidden = true;
+    massXView.hidden = true;
     homeView.hidden = false;
     window.scrollTo({ top: 0, behavior: "auto" });
   });
