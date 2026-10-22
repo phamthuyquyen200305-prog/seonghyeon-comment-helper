@@ -30,7 +30,7 @@ h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
 .back-button{display:block;width:100%;margin:0 auto 14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--deep);font-weight:700}
 .back-button:hover{background:var(--soft);transform:translateY(-1px)}
 .comment{min-height:150px;padding:22px 17px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.8;font-size:16px;background:var(--soft);border:1px solid #f6d6e6;border-radius:18px}
-.primary{width:100%;padding:15px;margin-top:17px;color:#fff;font-weight:700;background:var(--deep);border:0;border-radius:14px;box-shadow:0 6px 0 #8f2f62,0 10px 20px #c34d8626;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background-color .22s ease,opacity .2s ease}
+.comment.is-clickable{cursor:pointer;display:block;text-align:left;max-height:260px;overflow:hidden}.comment-hint{font-size:12px;color:var(--muted);margin:8px 0 0}.full-comment-modal{position:fixed;inset:0;z-index:10000;background:#54243f99;display:flex;align-items:center;justify-content:center;padding:18px}.full-comment-panel{width:min(680px,100%);max-height:85vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;text-align:left;box-shadow:0 20px 60px #54243f55}.full-comment-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;margin:16px 0}.full-comment-actions{display:flex;gap:10px}.full-comment-actions button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--soft);color:var(--deep);font-weight:700}.primary{width:100%;padding:15px;margin-top:17px;color:#fff;font-weight:700;background:var(--deep);border:0;border-radius:14px;box-shadow:0 6px 0 #8f2f62,0 10px 20px #c34d8626;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background-color .22s ease,opacity .2s ease}
 .primary:hover:not(:disabled){background:#aa3972;transform:translateY(-2px);box-shadow:0 8px 0 #8f2f62,0 14px 24px #c34d8633}
 .primary:active:not(:disabled){transform:translateY(3px) scale(.985);box-shadow:0 2px 0 #8f2f62,0 4px 10px #c34d8620}
 .primary:disabled{box-shadow:0 3px 0 #8f2f624d}
@@ -113,7 +113,11 @@ h1{color:#9f4d75;letter-spacing:.15px}
   </button>
   <button class="menu-choice" type="button" data-open-view="massXView">
     <strong>02 · MASS X</strong>
-    <span>NOL Festival · Auto-next · Total copy counter</span>
+    <span>Auto-next · Total copy counter</span>
+  </button>
+  <button class="menu-choice" type="button" data-open-view="massYtbView">
+    <strong>03 · MASS YTB</strong>
+    <span>YouTube comment collection · Auto-next · Total copy counter</span>
   </button>
   <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
 </section>
@@ -157,8 +161,8 @@ h1{color:#9f4d75;letter-spacing:.15px}
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
   <main class="card">
     <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
-    <h1>HASHTAGS FOR SEONGHYEON AT NOL FESTIVAL</h1>
-    <p class="subtitle">17 October 2026 · Celebrate Seonghyeon at NOL Festival</p>
+    <h1>HASHTAGS FOR SEONGHYEON</h1>
+    <p class="subtitle">Celebrate Seonghyeon</p>
     <div id="massXComment" class="comment" aria-live="polite">Loading comments…</div>
     <button class="primary" id="massXCopyBtn" type="button" disabled>Copy comment</button>
     <p id="massXStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
@@ -194,15 +198,48 @@ h1{color:#9f4d75;letter-spacing:.15px}
     </section>
 
     <section class="notice">
-      <div class="notice-title">HASHTAGS FOR SEONGHYEON AT NOL FESTIVAL</div>
+      <div class="notice-title">HASHTAGS FOR SEONGHYEON</div>
       <p>17/10/2026 · 7:00 PM KST</p>
       <p><strong>SEONGHYEON ACES HEART RACE</strong></p>
-      <p>#SEONGHYEONTurnsUpNOL · #SEONGHYEON · #성현 · #CORTIS_NOLFest2026</p>
+      <p>#SEONGHYEON · #성현 · #CORTIS</p>
       <p>EOMACE · ALLROUNDER SEAN · EOMASTER OF STAGE</p>
     </section>
     <p class="note">This tool copies comments only. It does not post to X automatically. Follow X's rules and avoid repetitive comments too rapidly.</p>
     <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
   </main>
+</div>
+
+
+
+<!-- MASS YTB -->
+<div class="view-shell" id="massYtbView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+  <main class="card">
+    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+    <h1>MASS YTB</h1>
+    <p class="subtitle">Support Seonghyeon with your comments on YouTube.</p>
+    <div id="massYtbComment" class="comment is-clickable" role="button" tabindex="0" aria-label="Click to view the full comment" aria-live="polite">Loading comments…</div>
+    <p class="comment-hint">Long comment? Tap the text to view the full version.</p>
+    <button class="primary" id="massYtbCopyBtn" type="button" disabled>Copy comment</button>
+    <p id="massYtbStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
+    <div class="counter">
+      <div class="counter-label">TOTAL MASS YTB COPIES</div>
+      <div class="counter-number" id="massYtbTotalCopies">Loading…</div>
+    </div>
+    <p class="note">This tool copies comments only. It does not post to YouTube automatically.</p>
+    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+  </main>
+</div>
+
+<div class="full-comment-modal" id="fullCommentModal" hidden>
+  <section class="full-comment-panel" role="dialog" aria-modal="true" aria-labelledby="fullCommentTitle">
+    <div class="eyebrow" id="fullCommentTitle">FULL COMMENT</div>
+    <div class="full-comment-text" id="fullCommentText"></div>
+    <div class="full-comment-actions">
+      <button type="button" id="modalCopyBtn">Copy full comment</button>
+      <button type="button" id="modalCloseBtn">Close</button>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -876,10 +913,112 @@ massXCopyBtn.addEventListener("click", async () => {
 });
 
 
+/* MASS YTB: independent comment table and independent counter */
+let massYtbComments = [];
+let massYtbIndex = 0;
+let massYtbBusy = false;
+const massYtbComment = document.getElementById("massYtbComment");
+const massYtbCopyBtn = document.getElementById("massYtbCopyBtn");
+const massYtbStatus = document.getElementById("massYtbStatus");
+const massYtbCount = document.getElementById("massYtbTotalCopies");
+const fullCommentModal = document.getElementById("fullCommentModal");
+const fullCommentText = document.getElementById("fullCommentText");
+
+function renderMassYtbComment() {
+  if (!massYtbComments.length) return;
+  const full = massYtbComments[massYtbIndex];
+  const limit = 300;
+  massYtbComment.textContent = full.length > limit ? full.slice(0, limit).trimEnd() + "..." : full;
+  massYtbComment.dataset.fullComment = full;
+}
+function openFullMassYtbComment() {
+  if (!massYtbComments.length) return;
+  fullCommentText.textContent = massYtbComments[massYtbIndex];
+  fullCommentModal.hidden = false;
+}
+massYtbComment.addEventListener("click", openFullMassYtbComment);
+massYtbComment.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    openFullMassYtbComment();
+  }
+});
+document.getElementById("modalCloseBtn").addEventListener("click", () => fullCommentModal.hidden = true);
+fullCommentModal.addEventListener("click", event => {
+  if (event.target === fullCommentModal) fullCommentModal.hidden = true;
+});
+document.getElementById("modalCopyBtn").addEventListener("click", async () => {
+  try {
+    await copyText(fullCommentText.textContent);
+    document.getElementById("modalCopyBtn").textContent = "Copied!";
+  } catch (error) {
+    document.getElementById("modalCopyBtn").textContent = "Copy failed";
+  }
+});
+async function refreshMassYtbCount() {
+  try {
+    const rows = await fetchJSON(API + "/rest/v1/mass_ytb_copy_counter?select=total&id=eq.1");
+    if (!rows.length) throw new Error("Counter row id=1 was not found");
+    massYtbCount.textContent = Number(rows[0].total).toLocaleString("en-US");
+  } catch (error) {
+    massYtbCount.textContent = "Unavailable";
+    console.error("MASS YTB counter read failed:", error);
+  }
+}
+async function incrementMassYtbCount() {
+  const result = await fetchJSON(API + "/rest/v1/rpc/increment_mass_ytb_copy_count", {method:"POST", body:"{}"});
+  let total = null;
+  if (typeof result === "number") total = result;
+  else if (Array.isArray(result) && result.length) total = Number(result[0]);
+  else if (result && typeof result === "object") total = Number(Object.values(result)[0]);
+  if (Number.isFinite(total)) massYtbCount.textContent = total.toLocaleString("en-US");
+  else await refreshMassYtbCount();
+}
+async function loadMassYtbComments() {
+  massYtbCopyBtn.disabled = true;
+  try {
+    const rows = await fetchJSON(API + "/rest/v1/mass_ytb_comments?select=content&is_active=eq.true&event=eq.MASS%20YTB&order=id.asc");
+    massYtbComments = rows.map(row => row.content).filter(text => typeof text === "string" && text.trim()).map(text => text.trim());
+    if (!massYtbComments.length) {
+      massYtbComment.textContent = "No active comments found yet.";
+      massYtbStatus.textContent = "Import the MASS YTB comments into mass_ytb_comments.";
+      return;
+    }
+    massYtbIndex = Math.floor(Math.random() * massYtbComments.length);
+    renderMassYtbComment();
+    massYtbStatus.textContent = massYtbComments.length + " comments loaded.";
+    massYtbCopyBtn.disabled = false;
+  } catch (error) {
+    massYtbComment.textContent = "Unable to load comments.";
+    massYtbStatus.textContent = error.message;
+  }
+}
+massYtbCopyBtn.addEventListener("click", async () => {
+  if (!massYtbComments.length || massYtbBusy) return;
+  massYtbBusy = true;
+  massYtbCopyBtn.disabled = true;
+  try {
+    await copyText(massYtbComments[massYtbIndex]);
+    massYtbIndex = (massYtbIndex + 1) % massYtbComments.length;
+    renderMassYtbComment();
+    massYtbStatus.textContent = "Copied successfully. Next comment is ready.";
+    void incrementMassYtbCount().catch(error => {
+      console.error("MASS YTB counter increment failed:", error);
+      massYtbStatus.textContent = "Copied, but the counter could not update. Check the MASS YTB SQL setup.";
+    });
+  } catch (error) {
+    massYtbStatus.textContent = "Copy failed: " + error.message;
+  } finally {
+    massYtbBusy = false;
+    massYtbCopyBtn.disabled = !massYtbComments.length;
+  }
+});
+loadMassYtbComments();
+refreshMassYtbCount();
+
 /* TRENDS24 TREND TRACKER: only display exact matches read from public topic lists. */
 const TREND_KEYWORDS = [
   "SEONGHYEON ACES HEART RACE",
-  "#SEONGHYEONTurnsUpNOL",
   "#SEONGHYEON",
   "#성현"
 ];
