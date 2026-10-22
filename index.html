@@ -97,7 +97,10 @@ h1{color:#9f4d75;letter-spacing:.15px}
 @media(max-width:420px){.music-toggle{right:10px;bottom:10px;padding:10px 12px}.petal{font-size:13px}}
 @media(prefers-reduced-motion:reduce){.petal{display:none!important}.menu-choice{transition:none!important}}
 
-</style>
+
+.event-link { margin: 10px 0 18px; text-align: center; }
+.event-link a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+\n</style>
 </head>
 <body>
 <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
@@ -113,7 +116,7 @@ h1{color:#9f4d75;letter-spacing:.15px}
   </button>
   <button class="menu-choice" type="button" data-open-view="massXView">
     <strong>02 · MASS X</strong>
-    <span>Auto-next · Total copy counter</span>
+    <span>X comment collection · Auto-next · Total copy counter</span>
   </button>
   <button class="menu-choice" type="button" data-open-view="massYtbView">
     <strong>03 · MASS YTB</strong>
@@ -161,8 +164,8 @@ h1{color:#9f4d75;letter-spacing:.15px}
   <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
   <main class="card">
     <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
-    <h1>HASHTAGS FOR SEONGHYEON</h1>
-    <p class="subtitle">Celebrate Seonghyeon</p>
+    <h1>MASS X</h1>
+    <p class="subtitle">Support Seonghyeon with your comments on X.</p>
     <div id="massXComment" class="comment" aria-live="polite">Loading comments…</div>
     <button class="primary" id="massXCopyBtn" type="button" disabled>Copy comment</button>
     <p id="massXStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
@@ -197,13 +200,6 @@ h1{color:#9f4d75;letter-spacing:.15px}
       </p>
     </section>
 
-    <section class="notice">
-      <div class="notice-title">HASHTAGS FOR SEONGHYEON</div>
-      <p>17/10/2026 · 7:00 PM KST</p>
-      <p><strong>SEONGHYEON ACES HEART RACE</strong></p>
-      <p>#SEONGHYEON · #성현 · #CORTIS</p>
-      <p>EOMACE · ALLROUNDER SEAN · EOMASTER OF STAGE</p>
-    </section>
     <p class="note">This tool copies comments only. It does not post to X automatically. Follow X's rules and avoid repetitive comments too rapidly.</p>
     <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
   </main>
@@ -218,6 +214,7 @@ h1{color:#9f4d75;letter-spacing:.15px}
     <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
     <h1>MASS YTB</h1>
     <p class="subtitle">Support Seonghyeon with your comments on YouTube.</p>
+    <p class="event-link"><a href="https://www.youtube.com/watch?v=WEwdaxKOAuY" target="_blank" rel="noopener noreferrer">OPEN YOUTUBE POST ↗</a></p>
     <div id="massYtbComment" class="comment is-clickable" role="button" tabindex="0" aria-label="Click to view the full comment" aria-live="polite">Loading comments…</div>
     <p class="comment-hint">Long comment? Tap the text to view the full version.</p>
     <button class="primary" id="massYtbCopyBtn" type="button" disabled>Copy comment</button>
@@ -455,9 +452,10 @@ async function copyText(text) {
 const homeView = document.getElementById("homeView");
 const views = {
   vogueView: document.getElementById("vogueView"),
-  massXView: document.getElementById("massXView")
+  massXView: document.getElementById("massXView"),
+  massYtbView: document.getElementById("massYtbView")
 };
-const initialized = { vogueView: false, massXView: false };
+const initialized = { vogueView: false, massXView: false, massYtbView: false };
 
 function openView(id) {
   homeView.hidden = true;
@@ -467,6 +465,10 @@ function openView(id) {
     initialized[id] = true;
     if (id === "vogueView") initializeVogue();
     if (id === "massXView") initializeMassX();
+    if (id === "massYtbView") {
+      loadMassYtbComments();
+      refreshMassYtbCount();
+    }
   }
 }
 
@@ -1013,12 +1015,10 @@ massYtbCopyBtn.addEventListener("click", async () => {
     massYtbCopyBtn.disabled = !massYtbComments.length;
   }
 });
-loadMassYtbComments();
-refreshMassYtbCount();
+/* MASS YTB data is loaded when its section is opened. */
 
 /* TRENDS24 TREND TRACKER: only display exact matches read from public topic lists. */
 const TREND_KEYWORDS = [
-  "SEONGHYEON ACES HEART RACE",
   "#SEONGHYEON",
   "#성현"
 ];
