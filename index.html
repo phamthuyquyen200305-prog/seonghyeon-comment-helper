@@ -1,727 +1,1407 @@
+
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#171329">
-<title>MAIL VOTE – SH TEAM ❄️</title>
+<meta name="theme-color" content="#ffe6f1">
+<title>Seonghyeon Comment Helper | EomLand</title>
 <style>
-:root{--bg:#171329;--card:#211b38;--card2:#292142;--purple:#a68aff;--pink:#ffb5d8;--orange:#ff9b51;--text:#fff8ff;--muted:#c0b6d5;--border:#4b3c68;--green:#9ce7bd;--red:#ff9eac}
+:root{--deep:#c34d86;--ink:#54243f;--muted:#96677f;--border:#f1bfd8;--soft:#fff6fa}
 *{box-sizing:border-box}
-html{min-height:100%;background:var(--bg)}
-body{margin:0;min-height:100vh;padding:24px 15px;display:grid;place-items:center;background:radial-gradient(ellipse at 12% 5%,#3b285d 0,transparent 40%),radial-gradient(ellipse at 90% 90%,#502d49 0,transparent 36%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
-#magicCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
-.shell{position:relative;z-index:1;width:100%;max-width:460px;margin:auto}
-.brand{text-align:center;margin:0 auto 20px;position:relative}
-.decor{font-size:27px;display:flex;justify-content:center;gap:18px;margin-bottom:9px;filter:drop-shadow(0 0 10px #ff9b5160)}
-.brand h1{font-size:clamp(23px,5vw,29px);letter-spacing:-.8px;margin:0;font-weight:900;background:linear-gradient(100deg,#ffd39d,#ffb5d8,#c3b2ff);background-clip:text;-webkit-background-clip:text;color:transparent}
-.brand p{font-size:13px;line-height:1.6;color:var(--muted);margin:8px 0 0}
-.card{padding:24px;border:1px solid #6c5385;border-radius:24px;background:linear-gradient(150deg,rgba(42,33,67,.98),rgba(29,24,49,.98));box-shadow:0 18px 48px #08061165,0 0 0 1px #ffb5d80b;backdrop-filter:blur(8px)}
-.card h2{font-size:20px;margin:0;letter-spacing:-.3px}
-.subheading{margin:8px 0 21px;color:var(--muted);font-size:13px;line-height:1.65}
-.field{margin-bottom:15px}
-.field label{display:block;margin-bottom:8px;font-size:13px;font-weight:750}
-input{width:100%;min-height:47px;padding:12px 14px;border:1px solid var(--border);border-radius:13px;outline:none;background:#171329;color:var(--text);font:inherit;transition:border-color .16s,box-shadow .16s}
-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px #a68aff20}
-button{font:inherit;font-weight:750;border:0;-webkit-tap-highlight-color:transparent;transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s,background-color .16s,opacity .16s}
-button:not(:disabled){cursor:pointer}
-button:not(:disabled):hover{filter:brightness(1.09);transform:translateY(-2px)}
-button:not(:disabled):active{transform:translateY(1px) scale(.975);transition-duration:.06s}
-button:disabled{opacity:.6;cursor:wait}
-.btn{width:100%;min-height:48px;padding:12px 15px;display:flex;align-items:center;justify-content:center;gap:9px;border-radius:14px}
-.primary{color:#20152e;background:linear-gradient(110deg,#ffc17b,#ffacd0 52%,#c6b2ff);box-shadow:0 7px 20px #e99bc529}
-.logout{padding:9px 12px;border:1px solid var(--border);border-radius:11px;background:#2c2443;color:var(--muted);font-size:12px}
-.copy{margin-top:12px;min-height:38px;padding:9px 13px;border:1px solid #675083;border-radius:11px;background:#35274c;color:#ffd8ec;font-size:12px}
-.btn.is-loading:after{content:"";width:14px;height:14px;flex-shrink:0;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .65s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
-.topbar h2{font-size:19px;margin:0}
-.user-label{font-size:12px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}
-.counter{padding:16px;margin-bottom:17px;border:1px solid #69507e;border-radius:16px;background:linear-gradient(130deg,#342344,#2b2346);text-align:center}
-.counter-label{font-size:10px;font-weight:850;letter-spacing:1.3px;color:#d8c8ee}
-.counter-number{margin-top:5px;font-size:35px;font-weight:900;color:#ffc28d;font-variant-numeric:tabular-nums}
-.counter-note{margin-top:4px;color:var(--muted);font-size:11px}
-.mail-box{padding:15px;margin-bottom:13px;border:1px solid var(--border);border-radius:15px;background:#19152b}
-.mail-label{margin-bottom:8px;color:#d4c1eb;font-size:10px;font-weight:850;letter-spacing:1px;text-transform:uppercase}
-.mail-value{min-height:24px;overflow-wrap:anywhere;word-break:break-word;font-size:14px;font-weight:650;line-height:1.6;user-select:text;-webkit-user-select:text}
-.placeholder{color:#9387a9;font-weight:450}
-.notice{display:none;margin-bottom:15px;padding:11px 13px;border-radius:12px;font-size:13px;line-height:1.55;overflow-wrap:anywhere}
-.notice.show{display:block;animation:noticeIn .18s ease both}
-.notice.success{background:#1e4438;color:var(--green)}.notice.error{background:#4c2535;color:var(--red)}.notice.info{background:#342b53;color:#e0d2ff}
-@keyframes noticeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-.rules{margin-top:17px;padding:13px;border-radius:13px;background:#19152b;color:var(--muted);font-size:12px;line-height:1.8}
-.rules strong{color:#ffd1a5}
-.footer{text-align:center;color:#a99bbf;font-size:11px;line-height:1.8;margin-top:18px}
+body{margin:0;min-height:100vh;padding:24px 16px;font-family:Arial,sans-serif;color:var(--ink);background:linear-gradient(145deg,#ffe6f1,#fff1f7)}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid #e79ac1;outline-offset:3px}
+button:disabled{opacity:.72;cursor:wait}
+@media(prefers-reduced-motion:reduce){button{transition:none!important}}
+.home-menu,.card{width:100%;max-width:520px;margin:0 auto;padding:28px 22px;text-align:center;background:#fff;border:1px solid #f4c8dd;border-radius:26px;box-shadow:0 14px 40px #d78bb52b}
+.home-menu{margin-top:5vh}
+.view-shell{width:100%;max-width:520px;margin:0 auto}
 [hidden]{display:none!important}
-@media(max-width:380px){.card{padding:18px}.topbar h2{font-size:17px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+.eyebrow{color:var(--deep);font-size:12px;font-weight:700;letter-spacing:2px}
+h1{font-size:27px;line-height:1.3;margin:12px 0 8px}
+.subtitle,.menu-intro{color:var(--muted);line-height:1.65}
+.menu-intro{margin-bottom:22px}
+.menu-choice{display:block;width:100%;margin-top:13px;padding:17px;text-align:left;color:var(--ink);background:var(--soft);border:1px solid var(--border);border-radius:16px}
+.menu-choice:hover{background:#ffe4f0;transform:translateY(-2px);box-shadow:0 7px 16px #d78bb526}
+.menu-choice:active{transform:scale(.985)}
+.menu-choice strong{display:block;font-size:14px;line-height:1.5}
+.menu-choice span{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.5}
+.back-button{display:block;width:100%;margin:0 auto 14px;padding:12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--deep);font-weight:700}
+.back-button:hover{background:var(--soft);transform:translateY(-1px)}
+.comment{min-height:150px;padding:22px 17px;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.8;font-size:16px;background:var(--soft);border:1px solid #f6d6e6;border-radius:18px}
+.comment.is-clickable{cursor:pointer;display:block;text-align:left;max-height:260px;overflow:hidden}.comment-hint{font-size:12px;color:var(--muted);margin:8px 0 0}.full-comment-modal{position:fixed;inset:0;z-index:10000;background:#54243f99;display:flex;align-items:center;justify-content:center;padding:18px}.full-comment-panel{width:min(680px,100%);max-height:85vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:20px;padding:22px;text-align:left;box-shadow:0 20px 60px #54243f55}.full-comment-text{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;margin:16px 0}.full-comment-actions{display:flex;gap:10px}.full-comment-actions button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--border);background:var(--soft);color:var(--deep);font-weight:700}.primary{width:100%;padding:15px;margin-top:17px;color:#fff;font-weight:700;background:var(--deep);border:0;border-radius:14px;box-shadow:0 6px 0 #8f2f62,0 10px 20px #c34d8626;transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s ease,background-color .22s ease,opacity .2s ease}
+.primary:hover:not(:disabled){background:#aa3972;transform:translateY(-2px);box-shadow:0 8px 0 #8f2f62,0 14px 24px #c34d8633}
+.primary:active:not(:disabled){transform:translateY(3px) scale(.985);box-shadow:0 2px 0 #8f2f62,0 4px 10px #c34d8620}
+.primary:disabled{box-shadow:0 3px 0 #8f2f624d}
+.status{min-height:22px;margin:13px 0 0;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.counter,.vogue-counter{margin-top:19px;padding:14px;background:var(--soft);border:1px solid #f6d6e6;border-radius:16px;color:var(--muted);font-size:12px}
+.counter-label{font-size:11px;letter-spacing:1.3px;font-weight:700}
+.counter-number{margin-top:6px;font-size:27px;font-weight:700;color:var(--deep)}
+.notice{margin-top:22px;padding:17px 15px;text-align:left;background:#fff0f7;border:1px solid var(--border);border-radius:18px;line-height:1.65;overflow-wrap:anywhere}
+.notice-title{color:var(--deep);font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
+.notice p{margin:7px 0;font-size:13px}
+.vogue-posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:15px}
+.vogue-posts a{display:block;padding:12px 8px;text-align:center;background:var(--soft);border:1px solid var(--border);border-radius:10px;color:var(--deep);font-size:12px;text-decoration:none}
+.vogue-posts a:last-child{grid-column:1/-1}
+.note{margin-top:18px;color:#ad8499;font-size:12px;line-height:1.7}
+.footer{margin-top:19px;padding-top:13px;border-top:1px solid #f1d7e4;color:#ad8499;font-size:11px;line-height:1.7}
+@media(max-width:420px){body{padding:16px 10px}.card,.home-menu{padding:23px 15px}h1{font-size:23px}}
 
-/* LITTLE MYSTERY JOURNEY */
-.journey{margin:0 0 18px;padding:17px 15px 15px;border:1px solid #765889;border-radius:18px;background:linear-gradient(145deg,rgba(55,37,75,.96),rgba(35,29,59,.98));box-shadow:inset 0 1px 0 #ffffff0b,0 8px 24px #08061125}
-.journey-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:17px}
-.journey-title{font-size:13px;font-weight:950;letter-spacing:1.1px;color:#ffd6a6}
-.journey-caption{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.5}
-.journey-count{flex-shrink:0;color:#ffc5df;font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
-.journey-track-wrap{position:relative;padding:29px 0 0}
-.journey-track{height:9px;overflow:hidden;border-radius:99px;background:#171329;border:1px solid #57456d;box-shadow:inset 0 2px 4px #08061170}
-.journey-fill{width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ffad83,#ffafd5 55%,#c5adff);box-shadow:0 0 12px #ffb5d899;transition:width .45s ease}
-.journey-marker{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;min-width:45px;text-align:center}
-.journey-marker[data-step="100"]{left:10%}.journey-marker[data-step="500"]{left:50%}.journey-marker[data-step="1000"]{left:100%}
-.journey-pumpkin{display:block;font-size:20px;line-height:22px;filter:grayscale(.75) brightness(.75);opacity:.72;transform-origin:center}
-.journey-marker.is-unlocked .journey-pumpkin{filter:drop-shadow(0 0 5px #ffad55) drop-shadow(0 0 10px #ff8bc8);opacity:1;animation:pumpkinUnlocked 2.1s ease-in-out infinite}
-.journey-marker.is-unlocked .journey-step{color:#ffe0a8}
-.journey-step{font-size:10px;font-weight:850;color:#b9abc9;font-variant-numeric:tabular-nums}
-.journey-status{min-height:11px;font-size:8px;font-weight:900;letter-spacing:.7px;color:#a8efc8}
-@keyframes pumpkinUnlocked{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.13) rotate(4deg)}}
-.reward-overlay{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:18px;background:rgba(10,7,21,.86);opacity:0;visibility:hidden;transition:opacity .2s ease,visibility .2s ease;pointer-events:none}
-.reward-overlay.is-visible{opacity:1;visibility:visible}
-.reward-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.reward-dialog{position:relative;z-index:1;width:min(100%,440px);max-height:min(88vh,760px);overflow:auto;padding:28px 22px 22px;text-align:center;border:1px solid #f6b5e4a8;border-radius:27px;background:radial-gradient(ellipse at 50% 0%,#59406f 0,transparent 55%),linear-gradient(150deg,#302344,#201a37 72%);box-shadow:0 0 35px #ff9edc36,0 24px 80px #0009;pointer-events:auto}
-.reward-dialog.reward-100{border-color:#ffc0d9;box-shadow:0 0 28px #ffb5d866,0 24px 80px #0009}
-.reward-dialog.reward-500{border-color:#ffc36e;box-shadow:0 0 38px #ffb54c88,0 24px 80px #0009}
-.reward-dialog.reward-1000{width:min(100%,600px);border-color:#ffe29a;box-shadow:0 0 55px #ffc65d99,0 24px 90px #000b}
-.reward-close{position:absolute;top:12px;right:12px;width:34px;height:34px;border:1px solid #ffffff30;border-radius:50%;background:#ffffff12;color:white;font-size:19px;line-height:1}
-.reward-eyebrow{margin:0 0 10px;color:#ffd4a5;font-size:10px;font-weight:950;letter-spacing:2px}
-.reward-pumpkin{font-size:76px;line-height:1.2;margin:3px auto 12px;filter:drop-shadow(0 0 14px #ff9c57)}
-.reward-100 .reward-pumpkin{animation:rewardShake .7s ease-in-out both}
-.reward-500 .reward-pumpkin{animation:rewardBurst .95s cubic-bezier(.2,.8,.2,1) both}
-.reward-1000 .reward-pumpkin{font-size:clamp(90px,22vw,150px);animation:giantPumpkin 1.5s ease-in-out both}
-@keyframes rewardShake{0%,100%{transform:rotate(0) scale(1)}15%,45%,75%{transform:rotate(-9deg) scale(1.08)}30%,60%,90%{transform:rotate(9deg) scale(1.08)}}
-@keyframes rewardBurst{0%{transform:scale(.55) rotate(-25deg);opacity:.5}55%{transform:scale(1.3) rotate(18deg);opacity:1}100%{transform:scale(1) rotate(0)}}
-@keyframes giantPumpkin{0%{transform:scale(.2) rotate(-20deg);opacity:0}30%{transform:scale(1.2) rotate(12deg);opacity:1}55%{transform:scale(1) rotate(-10deg)}75%{transform:scale(1.12) rotate(8deg);filter:drop-shadow(0 0 35px #ffb84c)}100%{transform:scale(.05) rotate(45deg);opacity:0}}
-.reward-message{margin:5px 0 18px;font-size:clamp(21px,6vw,30px);font-weight:1000;line-height:1.25;overflow-wrap:anywhere;background:linear-gradient(100deg,#ffe0a6,#ffadd6,#c8b5ff);background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 0 22px #ffadd633}
-.reward-100 .reward-message{animation:messagePop .55s .5s both}
-.reward-500 .reward-message{animation:messagePop .7s .7s both}
-@keyframes messagePop{from{opacity:0;transform:scale(.55) translateY(15px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.reward-sub{margin:-8px 0 19px;color:#d7c8e8;font-size:12px}
-.reward-final-title{position:relative;z-index:2;margin:5px 0 20px;font-size:clamp(34px,9vw,64px);font-weight:1000;letter-spacing:-1.5px;line-height:1.05;background:linear-gradient(100deg,#fff0a8,#ffb2d8 48%,#c9b7ff);background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 0 25px #ffd36c99;animation:finalTitleIn 1s 1.15s cubic-bezier(.16,1,.3,1) both}
-@keyframes finalTitleIn{0%{opacity:0;transform:scale(.25);filter:blur(12px)}65%{opacity:1;transform:scale(1.12);filter:blur(0)}100%{opacity:1;transform:scale(1)}}
-.love-cloud{position:relative;z-index:2;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 18px;max-width:500px}
-.love-cloud span{padding:6px 9px;border:1px solid #ffffff24;border-radius:99px;background:#ffffff0d;color:#ffe1f1;font-size:11px;font-weight:800;animation:loveFloat 3s ease-in-out infinite alternate}
-.love-cloud span:nth-child(2n){animation-delay:-1s;color:#ffe0a6}.love-cloud span:nth-child(3n){animation-delay:-2s;color:#d9caff}
-@keyframes loveFloat{from{transform:translateY(3px)}to{transform:translateY(-5px)}}
-.reward-final-note{position:relative;z-index:2;color:#e5d8f2;font-size:12px;line-height:1.6}
-.reward-close-cta{position:relative;z-index:3;min-height:43px;padding:10px 22px;border:1px solid #ffffff35;border-radius:13px;background:linear-gradient(110deg,#ffc17b,#ffacd0 55%,#c6b2ff);color:#271a35}
-@media(max-width:380px){.journey{padding:15px 12px}.journey-title{font-size:11px}.journey-count{font-size:12px}.reward-dialog{padding:25px 16px 18px}}
-@media(prefers-reduced-motion:reduce){.journey-fill,.reward-overlay{transition:none!important}.journey-marker.is-unlocked .journey-pumpkin,.reward-pumpkin,.reward-message,.reward-final-title,.love-cloud span{animation:none!important}}
+/* TREND TRACKER */
+.trend-tracker{margin-top:20px;padding:17px 15px;text-align:left;background:#fff;border:1px solid var(--border);border-radius:18px}
+.trend-tracker-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.trend-tracker-title{color:var(--deep);font-size:12px;font-weight:700;letter-spacing:1px}
+.trend-refresh{width:auto;margin:0;padding:10px 14px;border-radius:12px;font-size:12px}
+.trend-refresh:disabled{opacity:.6}
+.trend-tracker-status{margin:12px 0;color:var(--muted);font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.trend-results{display:grid;gap:9px}
+.trend-empty{padding:14px;border:1px dashed var(--border);border-radius:12px;color:var(--muted);font-size:13px;line-height:1.6}
+.trend-table-wrap{overflow-x:auto}
+.trend-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+.trend-table th,.trend-table td{padding:10px 7px;border-bottom:1px solid #f7e1ec;text-align:left;vertical-align:top}
+.trend-table th{color:var(--muted);font-size:10px;letter-spacing:.5px}
+.trend-table td a{color:var(--deep);font-weight:700;text-decoration:none}
+.trend-keyword{overflow-wrap:anywhere;font-weight:700;color:var(--ink)}
+.trend-rank{white-space:nowrap;color:var(--muted)}
+.trend-meta{margin-top:10px;color:#ad8499;font-size:11px;line-height:1.6}
+.trend-history{margin-top:16px;padding-top:15px;border-top:1px solid #f7e1ec}
+.trend-history-title{font-size:12px;font-weight:700;color:var(--deep);letter-spacing:.7px;margin-bottom:8px}
+.trend-chart-wrap{width:100%;overflow-x:auto}
+.trend-chart{display:block;width:100%;min-width:320px;height:auto;background:#fffafd;border:1px solid #f6d6e6;border-radius:12px}
+.trend-peak-list{display:grid;gap:7px;margin-top:10px}
+.trend-peak{display:flex;justify-content:space-between;gap:12px;padding:9px 10px;background:var(--soft);border-radius:10px;font-size:12px}
+.trend-peak strong{color:var(--deep);white-space:nowrap}
 
 
-/* WINTER WONDERLAND THEME — visual layer only */
-:root{--bg:#eaf6ff;--card:#ffffff;--card2:#f4faff;--purple:#6b9bc7;--pink:#f3a9bd;--orange:#e9bd65;--text:#29445b;--muted:#6f879b;--border:#c8ddec;--green:#397d68;--red:#b64d67}
-html{background:#eaf6ff}
-body{background:linear-gradient(180deg,#cce8fa 0%,#eaf6ff 48%,#f9fcff 100%);color:var(--text);cursor:default}
-#magicCanvas{z-index:0}
-.brand h1{background:linear-gradient(100deg,#4c83ad,#78aeca,#d78fa8);background-clip:text;-webkit-background-clip:text}
-.decor{filter:drop-shadow(0 3px 5px #7098b855);font-size:30px}
-.card{border:1px solid #c6ddeb;background:rgba(255,255,255,.91);box-shadow:0 16px 45px #7399b52b,0 2px 8px #789db21c;backdrop-filter:blur(10px)}
-input{background:#f5fbff;color:#29445b;border-color:#c8ddec}
-input:focus{border-color:#79aacb;box-shadow:0 0 0 3px #79aacb26}
-.primary{color:#fff;background:linear-gradient(110deg,#75a9ce,#91c5dc 55%,#e5a9bc);box-shadow:0 7px 20px #78a9c533}
-.logout{border-color:#c8ddec;background:#f0f7fc;color:#607d93}
-.copy{border-color:#c5d9e8;background:#edf6fc;color:#527c9a}
-.counter{border-color:#c5dce9;background:linear-gradient(130deg,#e5f4fc,#f9fcff);}
-.counter-label{color:#66869e}.counter-number{color:#548eb5}
-.mail-box,.rules{border:1px solid #d6e5ef;background:#f6fbff;color:#617d92}
-.mail-label{color:#628aa6}.placeholder{color:#9aafbf}
-.notice.success{background:#e6f5ee;color:#397d68}.notice.error{background:#fff0f2;color:#b64d67}.notice.info{background:#eaf4fb;color:#527c9a}
-.journey{border:1px solid #c5dce9;background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(235,247,255,.98));box-shadow:inset 0 1px 0 #fff,0 8px 24px #789db21c}
-.journey-title{color:#5989aa}.journey-caption{color:#7891a4}.journey-count{color:#568caf}
-.journey-track{background:#e2eff7;border-color:#c6dce9}.journey-fill{background:linear-gradient(90deg,#9bc9e2,#c2dfee 55%,#e9b8c8);box-shadow:0 0 12px #9bc9e288}
-.journey-pumpkin{filter:grayscale(.2);opacity:.65}.journey-marker.is-unlocked .journey-pumpkin{filter:drop-shadow(0 0 6px #a6cfe5);opacity:1}.journey-marker.is-unlocked .journey-step{color:#4c83a6}.journey-step{color:#8ba2b3}.journey-status{color:#5d9c83}
-.footer{color:#7994a8}
-.reward-overlay{background:rgba(42,75,99,.55)}
-.reward-dialog{border-color:#c6e0ef;background:radial-gradient(ellipse at 50% 0%,#e5f5ff 0,transparent 58%),linear-gradient(150deg,#fff,#edf7fd 72%);box-shadow:0 0 35px #9dc9e655,0 24px 80px #29445b33}
-.reward-dialog.reward-100{border-color:#c7e3f2;box-shadow:0 0 28px #a9d3e866,0 24px 80px #29445b33}.reward-dialog.reward-500{border-color:#e8c8d4;box-shadow:0 0 38px #e8b9ca88,0 24px 80px #29445b33}.reward-dialog.reward-1000{border-color:#b7d8e9;box-shadow:0 0 55px #a9d4ec99,0 24px 90px #29445b44}
-.reward-close{border-color:#b9d3e4;background:#eaf5fc;color:#42647d}.reward-eyebrow{color:#648da8}.reward-pumpkin{filter:drop-shadow(0 0 14px #9fcce5)}.reward-message{background:linear-gradient(100deg,#568db3,#7bb8d1,#d28da7);background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:none}.reward-sub{color:#69859a}.reward-final-title{background:linear-gradient(100deg,#568db3,#83bfd5 48%,#d28da7);background-clip:text;-webkit-background-clip:text;color:transparent;text-shadow:0 0 25px #a9d4ec66}.love-cloud span{border-color:#c8ddec;background:#f2f9fd;color:#648aa4}.reward-close-cta{background:linear-gradient(110deg,#75a9ce,#91c5dc 55%,#e5a9bc);color:white}
-.snowman{position:fixed;z-index:0;left:max(10px,calc((100vw - 900px)/2));bottom:10px;font-size:clamp(44px,8vw,82px);filter:drop-shadow(0 5px 5px #7197ae44);pointer-events:none;user-select:none;opacity:.9}
-.winter-parade{position:fixed;z-index:2;left:-280px;bottom:16px;display:flex;align-items:flex-end;gap:8px;font-size:clamp(28px,5vw,48px);pointer-events:none;opacity:0;white-space:nowrap}
-.winter-parade.is-running{animation:paradeAcross 15s linear infinite;opacity:1}
-.parade-ducks{font-size:.72em;letter-spacing:-7px;transform:translateY(3px)}
-@keyframes paradeAcross{0%{transform:translateX(0)}100%{transform:translateX(calc(100vw + 560px))}}
-@media(max-width:600px){.snowman{left:5px;bottom:4px;font-size:48px}.winter-parade{bottom:8px}}
-@media(prefers-reduced-motion:reduce){.winter-parade.is-running{animation:none;left:12px;opacity:1}}
 
-/* Soft, storybook winter styling */
-:root{--text:#405d73;--muted:#8299aa;--border:#d7e8f1}
-body{background:radial-gradient(ellipse at 12% 8%,#fff 0,transparent 35%),radial-gradient(ellipse at 88% 72%,#fcecf2 0,transparent 32%),linear-gradient(180deg,#dff1fb 0%,#eff8fd 54%,#fff8fb 100%);font-family:"Nunito", "Trebuchet MS",ui-rounded,system-ui,sans-serif}
-.shell{max-width:480px}
-.brand{margin-bottom:22px}
-.brand h1{font-size:clamp(24px,5vw,30px);letter-spacing:-1px;font-weight:900;background:linear-gradient(100deg,#6b9fc1,#91c5d8 48%,#d99caf);background-clip:text;-webkit-background-clip:text}
-.brand p{color:#829bad}
-.decor{gap:22px;font-size:32px;filter:drop-shadow(0 5px 8px #9fc8dc55)}
-.card{padding:25px;border:1px solid #dcebf3;border-radius:30px;background:rgba(255,255,255,.82);box-shadow:0 18px 55px #8eb5ca25,0 4px 12px #9bbdd01c;backdrop-filter:blur(14px)}
-.card h2{color:#496b83;font-weight:900}
-.subheading{color:#8299aa}
-input{border-radius:17px;background:#f8fcff;border-color:#dceaf2;color:#45657d}
-input:focus{border-color:#a4cde0;box-shadow:0 0 0 4px #b8dceb35}
-.btn{border-radius:18px;min-height:50px}
-.primary{color:#fff;background:linear-gradient(110deg,#91c3df,#a8d5e5 52%,#e9b8c9);box-shadow:0 8px 20px #9bc9dd45}
-.primary:hover{filter:brightness(1.035)!important;box-shadow:0 10px 24px #9bc9dd55}
-.logout{border-radius:14px;background:#f4f9fc;border-color:#dceaf2;color:#708da2}
-.copy{border-radius:14px;background:#f0f8fc;border-color:#d5e8f2;color:#628ba5}
-.counter{border-radius:22px;border-color:#d6e8f1;background:linear-gradient(135deg,#edf8fd,#fff8fb);box-shadow:inset 0 1px #fff,0 8px 20px #9ebfd01c}
-.counter-number{color:#6eabc9;font-size:39px}
-.mail-box,.rules{border-radius:19px;border-color:#deebf2;background:#f8fcfe}
-.mail-label{color:#7298af}
-.journey{border-radius:22px;border-color:#d9e9f1;background:linear-gradient(145deg,#fff,#f0f8fc);box-shadow:0 8px 22px #9ebfd01c}
-.journey-title{color:#6c9db8;letter-spacing:.7px}
-.journey-caption{color:#8ba2b2}
-.journey-track{height:11px;background:#e7f2f8;border-color:#d7e8f1}
-.journey-fill{background:linear-gradient(90deg,#a8d4e7,#c8e6ee 55%,#efc9d6);box-shadow:0 0 13px #a8d4e788}
-.journey-marker .journey-pumpkin{filter:none;opacity:.8}
-.journey-marker.is-unlocked .journey-pumpkin{filter:drop-shadow(0 3px 7px #9fc9dd);}
-.footer{color:#8aa4b5}
-.snowman{filter:drop-shadow(0 7px 8px #82a9bd44);opacity:.78}
-.music-toggle{position:fixed;z-index:8;right:15px;top:14px;border:1px solid #d4e7f1;border-radius:999px;padding:10px 14px;background:#ffffffd9;color:#6489a2;box-shadow:0 5px 18px #7fa9bf30;font-size:12px;backdrop-filter:blur(8px)}
-.music-toggle[aria-pressed="true"]{background:#e9f6fb;color:#4d829e}
-.snow-bloom{position:fixed;z-index:20;pointer-events:none;width:0;height:0}
-.snow-bloom i{position:absolute;left:0;top:0;font-style:normal;font-size:20px;opacity:0;animation:snowBloom 1.15s cubic-bezier(.15,.75,.25,1) forwards;filter:drop-shadow(0 2px 5px #a6d2e4aa)}
-@keyframes snowBloom{0%{transform:translate(0,0) scale(.35) rotate(0);opacity:0}18%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(100deg);opacity:0}}
-@media(max-width:600px){.music-toggle{top:9px;right:9px;padding:8px 11px}}
-</style>
+/* SOFT PRINCESS PINK + PETAL EFFECTS */
+:root{--deep:#c85f91;--ink:#63364d;--muted:#a57990;--border:#f3c9dc;--soft:#fff7fb}
+body{background:radial-gradient(ellipse at 15% 5%,#fffafd 0%,transparent 38%),linear-gradient(145deg,#fff0f7,#ffe6f1 55%,#fff5fa)}
+.home-menu,.card{border-color:#f5cfe0;box-shadow:0 12px 36px #d78bb51c}
+.eyebrow{letter-spacing:2.5px;color:#c85f91}
+h1{color:#9f4d75;letter-spacing:.15px}
+.menu-choice{transition:background .2s ease,transform .2s ease,box-shadow .2s ease}
+.primary{background:#d875a3;box-shadow:0 4px 0 #b85c88,0 8px 18px #c34d861c}
+.primary:hover:not(:disabled){background:#c96596;box-shadow:0 6px 0 #b85c88,0 12px 22px #c34d8626}
+.back-button{color:#c85f91}
+/* Petals are small, brief and never intercept clicks. */
+.petal-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:9998}
+.petal{position:fixed;left:0;top:0;pointer-events:none;will-change:transform,opacity;font-size:15px;line-height:1;animation:petal-drift 1.15s ease-out forwards;filter:drop-shadow(0 2px 3px #d875a322)}
+.petal.bloom{font-size:19px;animation:bloom-pop .9s cubic-bezier(.16,.75,.25,1) forwards}
+@keyframes petal-drift{0%{opacity:0;transform:translate3d(0,0,0) rotate(0) scale(.55)}18%{opacity:.95}100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) rotate(var(--rot)) scale(1.1)}}
+@keyframes bloom-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(-25deg)}25%{opacity:1;transform:translate(calc(-50% + var(--dx)*.35),calc(-50% + var(--dy)*.35)) scale(1.2) rotate(12deg)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.8) rotate(45deg)}}
+.music-toggle{position:fixed;right:16px;bottom:16px;z-index:9999;display:flex;align-items:center;gap:8px;padding:11px 14px;border:1px solid #f0bfd5;border-radius:999px;background:#fff9fc;color:#ad527e;box-shadow:0 5px 20px #a94f7d20;font-size:12px;font-weight:700;backdrop-filter:blur(8px)}
+.music-toggle[aria-pressed="true"]{background:#f9dce9}
+.music-toggle .music-dot{width:7px;height:7px;border-radius:50%;background:#d875a3;box-shadow:0 0 0 3px #f7d6e5}
+@media(max-width:420px){.music-toggle{right:10px;bottom:10px;padding:10px 12px}.petal{font-size:13px}}
+@media(prefers-reduced-motion:reduce){.petal{display:none!important}.menu-choice{transition:none!important}}
+
+
+.event-link { margin: 10px 0 18px; text-align: center; }
+.event-link a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+\n</style>
 </head>
 <body>
-<canvas id="magicCanvas" aria-hidden="true"></canvas>
-<div class="snowman" aria-hidden="true">⛄</div>
-<div class="winter-parade" id="winterParade" aria-hidden="true"><span class="parade-fox">🦊</span><span class="parade-ducks">🐥 🐥 🐥 🐥 🐥</span></div>
-<button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" title="Bật/tắt nhạc mùa đông">♫ Nhạc mùa đông: Tắt</button>
-<main class="shell">
-  <header class="brand">
-    <div class="decor" aria-hidden="true"><span>🐥</span><span>🦊</span><span>❄️</span></div>
-    <h1>MAIL VOTE – SH TEAM</h1>
-    <p>A little winter wonderland for our voting team ✦</p>
-  </header>
+<div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
+<button class="music-toggle" id="musicToggle" type="button" aria-pressed="false" aria-label="Play princess music"><span class="music-dot"></span><span id="musicLabel">♫ PLAY PIANO</span></button>
 
-  <section class="card" id="loginPanel">
-    <h2>❄️ Đăng nhập</h2>
-    <p class="subheading">Nhập tên, số điện thoại và mật khẩu chung của team để tiếp tục.</p>
-    <div class="notice" id="loginNotice" role="status"></div>
-    <form id="loginForm">
-      <div class="field"><label for="nameInput">Tên</label><input id="nameInput" type="text" autocomplete="name" maxlength="100" placeholder="Nhập tên của bạn" required></div>
-      <div class="field"><label for="phoneInput">Số điện thoại</label><input id="phoneInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="Nhập số điện thoại" required></div>
-      <div class="field"><label for="teamPasswordInput">Mật khẩu team</label><input id="teamPasswordInput" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu" required></div>
-      <button class="btn primary" id="loginBtn" type="submit">Đăng nhập ✨</button>
-    </form>
-  </section>
+<section class="home-menu" id="homeView">
+  <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+  <h1>Seonghyeon Comment Helper</h1>
+  <p class="menu-intro">Choose a project to view its comment collection and related links.</p>
+  <button class="menu-choice" type="button" data-open-view="vogueView">
+    <strong>01 · VOGUE × LOUIS VUITTON × SEONGHYEON</strong>
+    <span>9 Instagram posts · Shared comments · Total copy counter</span>
+  </button>
+  <button class="menu-choice" type="button" data-open-view="massXView">
+    <strong>02 · MASS X</strong>
+    <span>X comment collection · Auto-next · Total copy counter</span>
+  </button>
+  <button class="menu-choice" type="button" data-open-view="massYtbView">
+    <strong>03 · MASS YTB</strong>
+    <span>YouTube comment collection · Auto-next · Total copy counter</span>
+  </button>
+  <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+</section>
 
-  <section class="card" id="appPanel" hidden>
-    <div class="topbar"><div><h2>❄️ Khu vực bình chọn</h2><div class="user-label">Đang đăng nhập: <strong id="nameDisplay"></strong></div></div><button class="logout" id="logoutBtn" type="button">Đăng xuất</button></div>
-    <div class="notice" id="appNotice" role="status"></div>
-    <div class="counter"><div class="counter-label">TOTAL EMAILS RECEIVED</div><div class="counter-number" id="counterDisplay">0</div><div class="counter-note">Số email đã nhận trên trình duyệt này</div></div>
-    <section class="journey" aria-label="Little Mystery Journey">
-      <div class="journey-head">
-        <div><div class="journey-title">❄️ LITTLE WINTER JOURNEY</div><div class="journey-caption">Mỗi lượt vote, tuyết lại phủ dày thêm một chút 🐥</div></div>
-        <div class="journey-count" id="journeyCount">0 / 1000</div>
-      </div>
-      <div class="journey-track-wrap">
-        <div class="journey-marker" data-step="100"><span class="journey-pumpkin" aria-hidden="true">❄️</span><span class="journey-step">100</span><span class="journey-status" id="journeyStatus100"></span></div>
-        <div class="journey-marker" data-step="500"><span class="journey-pumpkin" aria-hidden="true">❄️</span><span class="journey-step">500</span><span class="journey-status" id="journeyStatus500"></span></div>
-        <div class="journey-marker" data-step="1000"><span class="journey-pumpkin" aria-hidden="true">❄️</span><span class="journey-step">1000</span><span class="journey-status" id="journeyStatus1000"></span></div>
-        <div class="journey-track"><div class="journey-fill" id="journeyFill"></div></div>
+<!-- VOGUE -->
+<div class="view-shell" id="vogueView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+  <main class="card">
+    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+    <h1>VOGUE × LOUIS VUITTON × SEONGHYEON</h1>
+    <p class="subtitle">Celebrate Seonghyeon's unique charm, artistic vision and effortless style.</p>
+    <div id="vogueComment" class="comment" aria-live="polite">Loading comments…</div>
+    <button class="primary" id="vogueCopyBtn" type="button" disabled>Copy comment</button>
+    <p id="vogueCopyStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
+    <div class="vogue-counter">
+      <strong>TOTAL VOGUE COMMENTS COPIED</strong>
+      <div class="counter-number" id="vogueCopyCount">Loading…</div>
+    </div>
+    <section class="notice">
+      <div class="notice-title">VOGUE × LOUIS VUITTON — INSTAGRAM POSTS</div>
+      <p>Open any post below and leave a comment supporting Seonghyeon.</p>
+      <div class="vogue-posts">
+        <a href="https://www.instagram.com/p/DeTzYFQCae5/?img_index=1" target="_blank" rel="noopener noreferrer">POST 01 ↗</a>
+        <a href="https://www.instagram.com/p/DeTtyNcCZV7/?img_index=1" target="_blank" rel="noopener noreferrer">POST 02 ↗</a>
+        <a href="https://www.instagram.com/p/DeTtpdUidzW/?img_index=1" target="_blank" rel="noopener noreferrer">POST 03 ↗</a>
+        <a href="https://www.instagram.com/p/DeTuvmOpwqA/" target="_blank" rel="noopener noreferrer">POST 04 ↗</a>
+        <a href="https://www.instagram.com/p/DeTujfYpHtD/" target="_blank" rel="noopener noreferrer">POST 05 ↗</a>
+        <a href="https://www.instagram.com/p/DeTuM3GJxRP/" target="_blank" rel="noopener noreferrer">POST 06 ↗</a>
+        <a href="https://www.instagram.com/p/DeTLN7LpHBC/" target="_blank" rel="noopener noreferrer">POST 07 ↗</a>
+        <a href="https://www.instagram.com/p/DejJ1W7pFfq/" target="_blank" rel="noopener noreferrer">POST 08 ↗</a>
+        <a href="https://www.instagram.com/p/DejGUn9p8M2/" target="_blank" rel="noopener noreferrer">POST 09 ↗</a>
       </div>
     </section>
+    <p class="note">This tool copies comments only. It does not post to Instagram automatically.</p>
+    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+  </main>
+</div>
 
-    <div class="mail-box"><div class="mail-label">✉ Email</div><div class="mail-value placeholder" id="emailDisplay">Chưa có email. Bấm nút bên dưới để nhận mail.</div><button class="copy" id="copyEmailValueBtn" type="button" hidden>✦ Copy email</button></div>
-    <div class="mail-box"><div class="mail-label">🔑 Mật khẩu email</div><div class="mail-value placeholder" id="passwordDisplay">Mật khẩu sẽ hiển thị sau khi nhận email.</div><button class="copy" id="copyPasswordBtn" type="button" disabled>✦ Copy mật khẩu</button></div>
-    <button class="btn primary" id="copyEmailBtn" type="button">🐥 Copy email · Nhận mail mới</button>
-    <div class="rules"><strong>🌙 Lưu ý</strong><br>• Mail được cấp theo thứ tự trong danh sách.<br>• Mail đã cấp sẽ không được cấp lại.<br>• Đăng xuất không đưa mail đã nhận trở lại kho.<br>• Khi hết mail, hệ thống sẽ dừng cấp mail.</div>
-  </section>
-  <footer class="footer">MAIL VOTE – SH TEAM<br>❄️ Let it snow · 🦊 🐥</footer>
-</main>
-
-<div class="reward-overlay" id="rewardOverlay" aria-hidden="true">
-  <canvas class="reward-canvas" id="rewardCanvas" aria-hidden="true"></canvas>
-  <section class="reward-dialog" id="rewardDialog" role="dialog" aria-modal="true" aria-labelledby="rewardMessage">
-    <button class="reward-close" id="rewardClose" type="button" aria-label="Đóng popup">×</button>
-    <div class="reward-eyebrow" id="rewardEyebrow">MILESTONE UNLOCKED</div>
-    <div class="reward-pumpkin" id="rewardPumpkin" aria-hidden="true">🎃</div>
-    <div class="reward-message" id="rewardMessage"></div>
-    <p class="reward-sub" id="rewardSub"></p>
-    <div class="reward-final-title" id="rewardFinalTitle" hidden>NOONA SARANGHAE</div>
-    <div class="love-cloud" id="loveCloud" hidden>
-      <span>I LOVE YOU</span><span>사랑해</span><span>愛してる</span><span>我愛你</span><span>JE T'AIME</span><span>TE AMO</span><span>TI AMO</span><span>ICH LIEBE DICH</span><span>Я ТЕБЯ ЛЮБЛЮ</span>
+<!-- MASS X -->
+<div class="view-shell" id="massXView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+  <main class="card">
+    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+    <h1>MASS X</h1>
+    <p class="subtitle">Support Seonghyeon with your comments on X.</p>
+    <div id="massXComment" class="comment" aria-live="polite">Loading comments…</div>
+    <button class="primary" id="massXCopyBtn" type="button" disabled>Copy comment</button>
+    <p id="massXStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
+    <div class="counter">
+      <div class="counter-label">TOTAL COPIES</div>
+      <div class="counter-number" id="massXTotalCopies">Loading…</div>
     </div>
-    <p class="reward-final-note" id="rewardFinalNote" hidden>To the sweetest journey, with all my love ✨</p>
-    <button class="reward-close-cta" id="rewardCloseCta" type="button">Đóng ✨</button>
+
+    <section class="trend-tracker" id="trendTracker">
+      <div class="trend-tracker-head">
+        <div class="trend-tracker-title">TRENDS24 · TREND TRACKER</div>
+        <button class="primary trend-refresh" id="trendRefreshBtn" type="button">↻ Refresh</button>
+      </div>
+      <p class="trend-tracker-status" id="trendTrackerStatus" aria-live="polite">
+        Ready to check public Trends24 pages.
+      </p>
+      <div class="trend-results" id="trendTrackerResults">
+        <div class="trend-empty">Bấm Refresh để kiểm tra từ khóa trong Trending Topics mới nhất.</div>
+      </div>
+      <p class="trend-meta" id="trendTrackerCheckedAt">
+        Checks Worldwide and selected country pages. Only verified matches are displayed.
+      </p>
+      <div class="trend-history">
+        <div class="trend-history-title">HISTORICAL PEAK & RANK MOVEMENT</div>
+        <p class="trend-meta" id="trendHistoryNote">Lịch sử sẽ được ghi nhận mỗi lần Refresh trên trình duyệt này.</p>
+        <div class="trend-chart-wrap" id="trendChartWrap"><div class="trend-empty">Refresh để bắt đầu ghi lịch sử và vẽ biểu đồ.</div></div>
+        <div class="trend-peak-list" id="trendPeakList"></div>
+      </div>
+      <p class="trend-meta">
+        Nguồn: <a href="https://trends24.in/" target="_blank" rel="noopener noreferrer">Trends24.in</a>.
+        Vì trình duyệt có thể chặn đọc chéo miền (CORS), công cụ dùng proxy công khai để đọc HTML; proxy có thể giới hạn tốc độ hoặc tạm thời không khả dụng.
+      </p>
+    </section>
+
+    <p class="note">This tool copies comments only. It does not post to X automatically. Follow X's rules and avoid repetitive comments too rapidly.</p>
+    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+  </main>
+</div>
+
+
+
+<!-- MASS YTB -->
+<div class="view-shell" id="massYtbView" hidden>
+  <button class="back-button" type="button" data-go-home>← BACK TO PROJECTS</button>
+  <main class="card">
+    <div class="eyebrow">ONE AND ONLY SEONGHYEON</div>
+    <h1>MASS YTB</h1>
+    <p class="subtitle">Support Seonghyeon with your comments on YouTube.</p>
+    <p class="event-link"><a href="https://www.youtube.com/watch?v=WEwdaxKOAuY" target="_blank" rel="noopener noreferrer">OPEN YOUTUBE POST ↗</a></p>
+    <div id="massYtbComment" class="comment is-clickable" role="button" tabindex="0" aria-label="Click to view the full comment" aria-live="polite">Loading comments…</div>
+    <p class="comment-hint">Long comment? Tap the text to view the full version.</p>
+    <button class="primary" id="massYtbCopyBtn" type="button" disabled>Copy comment</button>
+    <p id="massYtbStatus" class="status" aria-live="polite">Connecting to Supabase…</p>
+    <div class="counter">
+      <div class="counter-label">TOTAL MASS YTB COPIES</div>
+      <div class="counter-number" id="massYtbTotalCopies">Loading…</div>
+    </div>
+    <p class="note">This tool copies comments only. It does not post to YouTube automatically.</p>
+    <footer class="footer">Created &amp; managed by EomLand · All rights reserved.</footer>
+  </main>
+</div>
+
+<div class="full-comment-modal" id="fullCommentModal" hidden>
+  <section class="full-comment-panel" role="dialog" aria-modal="true" aria-labelledby="fullCommentTitle">
+    <div class="eyebrow" id="fullCommentTitle">FULL COMMENT</div>
+    <div class="full-comment-text" id="fullCommentText"></div>
+    <div class="full-comment-actions">
+      <button type="button" id="modalCopyBtn">Copy full comment</button>
+      <button type="button" id="modalCloseBtn">Close</button>
+    </div>
   </section>
 </div>
 
 <script>
 "use strict";
 
-const SUPABASE_URL = "https://ourvsebizerkxkyezeay.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_kXy4RCQliWWietdV5jKMYg_latzzh_I";
-const API_URL = `${SUPABASE_URL}/functions/v1/sh-team-login`;
-const STORAGE = {token:"sh_team_token",name:"sh_team_name",phone:"sh_team_phone",mail:"sh_team_current_mail",count:"sh_team_mail_count"};
-const REWARD_STORAGE_KEY = "sh_team_little_mystery_journey_v1";
-const REWARD_MILESTONES = [100,500,1000];
-const $ = id => document.getElementById(id);
+// Small tactile bounce on button taps. Keeps the effect independent of network requests.
+document.querySelectorAll("button").forEach(button => {
+  button.addEventListener("click", () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Web Animations API avoids forcing a synchronous layout on every click.
+    if (typeof button.animate !== "function") return;
+    button.getAnimations().forEach(animation => animation.cancel());
+    button.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(.975)", offset: 0.32 },
+        { transform: "scale(1.018)", offset: 0.68 },
+        { transform: "scale(1)" }
+      ],
+      { duration: 260, easing: "cubic-bezier(.2,.75,.25,1)" }
+    );
+  });
+});
 
-let token = localStorage.getItem(STORAGE.token) || "";
-let phoneNumber = localStorage.getItem(STORAGE.phone) || "";
-let personName = localStorage.getItem(STORAGE.name) || "";
-let currentMail = readStoredMail();
-let mailCount = readStoredCount();
-let busy = false;
 
-function readStoredMail(){
-  try{
-    const v=JSON.parse(localStorage.getItem(STORAGE.mail)||"null");
-    if(v&&typeof v.email==="string"&&typeof v.password==="string")return v;
-  }catch(_){}
-  return null;
-}
-function readStoredCount(){
-  const n=Number(localStorage.getItem(STORAGE.count)||0);
-  return Number.isFinite(n)&&n>=0?Math.floor(n):0;
-}
 
-// Bộ đếm theo ngày: tự reset lúc 22:00 theo múi giờ Việt Nam.
-const DAILY_COUNTER_KEY = "sh_team_counter_day_vn";
-let dailyResetTimer = null;
-
-function vietnamDateParts(date = new Date()){
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Ho_Chi_Minh",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    hourCycle: "h23"
-  }).formatToParts(date);
-  return Object.fromEntries(parts.map(part => [part.type, part.value]));
-}
-
-function getVietnamCounterDay(date = new Date()){
-  const p = vietnamDateParts(date);
-  let year = Number(p.year), month = Number(p.month), day = Number(p.day);
-  if (Number(p.hour) < 22) {
-    const previous = new Date(Date.UTC(year, month - 1, day) - 86400000);
-    year = previous.getUTCFullYear();
-    month = previous.getUTCMonth() + 1;
-    day = previous.getUTCDate();
-  }
-  return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-}
-
-function msUntilNextVietnamReset(){
-  const p = vietnamDateParts();
-  const year = Number(p.year), month = Number(p.month), day = Number(p.day);
-  const hour = Number(p.hour);
-  const targetUtc = Date.UTC(year, month - 1, day, 15, 0, 0, 0)
-    + (hour >= 22 ? 86400000 : 0);
-  return Math.max(1000, targetUtc - Date.now());
-}
-
-function resetDailyCounter(){
-  mailCount = 0;
-  saveCount();
-  rewardState = {
-    unlocked: {100:false, 500:false, 1000:false},
-    pending: []
-  };
-  saveRewardState();
-  // Chỉ reset bộ đếm và mốc thưởng; giữ nguyên mail đang hiển thị/đã nhận.
-  if (rewardActive) closeReward();
-  render();
-}
-
-function checkDailyCounterReset(){
-  const currentDay = getVietnamCounterDay();
-  const savedDay = localStorage.getItem(DAILY_COUNTER_KEY);
-  if (savedDay !== currentDay) {
-    localStorage.setItem(DAILY_COUNTER_KEY, currentDay);
-    resetDailyCounter();
+/* PETALS: light trail while moving; flower burst when either Copy button is used. */
+const petalLayer = document.getElementById("petalLayer");
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+let lastPetalAt = 0;
+function sprinklePetals(x, y, count = 3, burst = false) {
+  if (reduceMotion.matches || !petalLayer) return;
+  const symbols = burst ? ["🌸", "✿", "🌷", "♡"] : ["🌸", "✿", "❀"];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("span");
+    el.className = "petal" + (burst ? " bloom" : "");
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    const angle = Math.random() * Math.PI * 2;
+    const distance = burst ? 28 + Math.random() * 62 : 10 + Math.random() * 28;
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.style.setProperty("--dx", Math.cos(angle) * distance + "px");
+    el.style.setProperty("--dy", (Math.sin(angle) * distance + (burst ? 10 : 22)) + "px");
+    el.style.setProperty("--rot", (Math.random() * 180 - 90) + "deg");
+    petalLayer.appendChild(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
+    setTimeout(() => el.remove(), 1500);
   }
 }
-
-function scheduleDailyCounterReset(){
-  if (dailyResetTimer !== null) clearTimeout(dailyResetTimer);
-  dailyResetTimer = window.setTimeout(() => {
-    checkDailyCounterReset();
-    scheduleDailyCounterReset();
-  }, msUntilNextVietnamReset() + 250);
+document.addEventListener("pointermove", event => {
+  if (event.pointerType === "touch") return;
+  const now = performance.now();
+  if (now - lastPetalAt < 75) return;
+  lastPetalAt = now;
+  sprinklePetals(event.clientX, event.clientY, 1, false);
+}, { passive: true });
+function bloomAtButton(button) {
+  if (!button) return;
+  const rect = button.getBoundingClientRect();
+  sprinklePetals(rect.left + rect.width / 2, rect.top + rect.height / 2, 13, true);
 }
 
-function readRewardState(){
-  const empty={unlocked:{100:false,500:false,1000:false},pending:[]};
-  try{
-    const saved=JSON.parse(localStorage.getItem(REWARD_STORAGE_KEY)||"null");
-    if(!saved||typeof saved!=="object")return empty;
-    const unlocked=saved.unlocked&&typeof saved.unlocked==="object"?saved.unlocked:{};
-    const pending=Array.isArray(saved.pending)?saved.pending.filter(n=>REWARD_MILESTONES.includes(Number(n))).map(Number):[];
-    return {unlocked:{100:!!unlocked[100],500:!!unlocked[500],1000:!!unlocked[1000]},pending:[...new Set(pending)]};
-  }catch(_){return empty}
-}
-let rewardState=readRewardState();
-let rewardActive=false;
-let rewardTimers=[];
-let rewardAnimationFrame=0;
-let rewardResizeHandler=null;
-
-function saveRewardState(){
-  try{localStorage.setItem(REWARD_STORAGE_KEY,JSON.stringify(rewardState))}catch(_){}
-}
-function renderRewards(){
-  const parade=$("winterParade");
-  if(parade)parade.classList.toggle("is-running",mailCount>=1000);
-  const progress=Math.min(100,Math.max(0,mailCount/1000*100));
-  $("journeyCount").textContent=`${mailCount} / 1000`;
-  $("journeyFill").style.width=progress+"%";
-  REWARD_MILESTONES.forEach(step=>{
-    const marker=document.querySelector(`.journey-marker[data-step="${step}"]`);
-    const reached=mailCount>=step||rewardState.unlocked[step]||rewardState.pending.includes(step);
-    marker.classList.toggle("is-unlocked",reached);
-    $("journeyStatus"+step).textContent=reached?"UNLOCKED":"";
+/* Gentle, legato princess piano loop. Schedule notes ahead to avoid timer jitter. */
+const musicToggle = document.getElementById("musicToggle");
+const musicLabel = document.getElementById("musicLabel");
+let musicContext = null;
+let musicTimer = null;
+let musicStep = 0;
+let musicOn = false;
+let nextNoteTime = 0;
+const tempoBeat = 0.92;
+// A slow, flowing fairytale melody in C major, with soft broken-chord accompaniment.
+const musicNotes = [
+  [523.25, 1], [659.25, 1], [783.99, 1.5], [659.25, 0.5],
+  [698.46, 1], [783.99, 1], [880.00, 1.5], [783.99, 0.5],
+  [659.25, 1], [783.99, 1], [1046.50, 2], [880.00, 1],
+  [783.99, 1], [698.46, 1], [659.25, 1.5], [587.33, 0.5],
+  [523.25, 1], [587.33, 1], [659.25, 1.5], [523.25, 0.5],
+  [587.33, 1], [698.46, 1], [783.99, 2], [659.25, 2]
+];
+function playPianoNote(frequency, duration, when, volume = 0.12) {
+  // Rounded harmonics + gentle attack/release approximate a warm, soft piano tone.
+  const voice = musicContext.createGain();
+  voice.gain.setValueAtTime(0.0001, when);
+  voice.gain.exponentialRampToValueAtTime(volume, when + 0.075);
+  voice.gain.setTargetAtTime(0.0001, when + Math.max(0.12, duration * 0.62), Math.max(0.12, duration * 0.22));
+  voice.connect(musicContext.destination);
+  [[1, 1], [2, 0.055], [3, 0.008]].forEach(([partial, level]) => {
+    const osc = musicContext.createOscillator();
+    const gain = musicContext.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(frequency * partial, when);
+    gain.gain.value = level;
+    osc.connect(gain).connect(voice);
+    osc.start(when);
+    osc.stop(when + duration + 1.2);
   });
 }
-function queueReachedRewards(){
-  let changed=false;
-  REWARD_MILESTONES.forEach(step=>{
-    if(mailCount>=step&&!rewardState.unlocked[step]&&!rewardState.pending.includes(step)){
-      rewardState.pending.push(step);changed=true;
+function schedulePianoStep() {
+  if (!musicOn || !musicContext) return;
+  const lookAhead = 0.32;
+  while (nextNoteTime < musicContext.currentTime + lookAhead) {
+    const [frequency, beats] = musicNotes[musicStep % musicNotes.length];
+    const duration = beats * tempoBeat;
+    const at = nextNoteTime;
+    playPianoNote(frequency * 0.75, duration * 1.32, at, 0.026);
+    // Low, quiet chord tones on alternating beats for a flowing storybook feel.
+    if (musicStep % 2 === 0) {
+      playPianoNote(frequency * 0.375, duration * 1.55, at, 0.010);
+      playPianoNote(frequency * 0.94, duration * 1.15, at + duration * 0.52, 0.006);
     }
+    nextNoteTime += duration;
+    musicStep++;
+  }
+  musicTimer = setTimeout(schedulePianoStep, 45);
+}
+async function startPrincessMusic() {
+  if (!musicContext) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error("Audio is not supported by this browser.");
+    musicContext = new AudioContextClass();
+  }
+  await musicContext.resume();
+  if (musicOn) return;
+  musicOn = true;
+  nextNoteTime = musicContext.currentTime + 0.08;
+  musicToggle.setAttribute("aria-pressed", "true");
+  musicToggle.setAttribute("aria-label", "Pause princess piano music");
+  musicLabel.textContent = "♫ PIANO ON";
+  schedulePianoStep();
+}
+async function toggleMusic() {
+  try {
+    if (musicOn) {
+      musicOn = false;
+      clearTimeout(musicTimer);
+      if (musicContext) await musicContext.suspend();
+      musicToggle.setAttribute("aria-pressed", "false");
+      musicToggle.setAttribute("aria-label", "Play princess piano music");
+      musicLabel.textContent = "♫ PLAY PIANO";
+    } else {
+      await startPrincessMusic();
+    }
+  } catch (error) {
+    musicLabel.textContent = "MUSIC UNAVAILABLE";
+    console.warn("Music playback could not start:", error);
+  }
+}
+musicToggle.addEventListener("click", toggleMusic);
+async function tryPrincessAutoplay() {
+  try { await startPrincessMusic(); } catch (_) { /* Browser autoplay may be blocked. */ }
+}
+window.addEventListener("load", tryPrincessAutoplay, { once: true });
+const startMusicOnFirstGesture = () => {
+  if (!musicOn) tryPrincessAutoplay();
+  window.removeEventListener("pointerdown", startMusicOnFirstGesture);
+  window.removeEventListener("keydown", startMusicOnFirstGesture);
+};
+window.addEventListener("pointerdown", startMusicOnFirstGesture, { once: true });
+window.addEventListener("keydown", startMusicOnFirstGesture, { once: true });
+
+const SUPABASE_URL = "https://kzmlgjxlzkdttnisklxk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_NP8pGC--NIk_GA7y7ZYHiw_12bmutIE";
+const API = SUPABASE_URL.replace(/\/+$/, "");
+
+function headers() {
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: "Bearer " + SUPABASE_KEY,
+    "Content-Type": "application/json"
+  };
+}
+
+async function fetchJSON(url, options = {}) {
+  const response = await fetch(url, {
+    ...options,
+    headers: { ...headers(), ...(options.headers || {}) },
+    cache: "no-store"
   });
-  if(changed){rewardState.pending.sort((a,b)=>a-b);saveRewardState()}
-  renderRewards();
-  if(token&&rewardState.pending.length)window.setTimeout(processRewardQueue,120);
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    throw new Error("Supabase request failed (" + response.status + ")" +
+      (details ? ": " + details.slice(0, 180) : ""));
+  }
+  return response.json();
 }
-function clearRewardTimers(){
-  rewardTimers.forEach(id=>clearTimeout(id));rewardTimers=[];
-  if(rewardAnimationFrame){cancelAnimationFrame(rewardAnimationFrame);rewardAnimationFrame=0}
-  const canvas=$("rewardCanvas"),ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  if(rewardResizeHandler){window.removeEventListener("resize",rewardResizeHandler);rewardResizeHandler=null}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
 }
-function closeReward(){
-  clearRewardTimers();
-  $("rewardOverlay").classList.remove("is-visible");
-  $("rewardOverlay").setAttribute("aria-hidden","true");
-  $("rewardDialog").className="reward-dialog";
-  rewardActive=false;
-  if(token&&rewardState.pending.length)window.setTimeout(processRewardQueue,180);
-}
-function processRewardQueue(){
-  if(rewardActive||!token||!rewardState.pending.length)return;
-  const step=rewardState.pending.shift();
-  rewardState.unlocked[step]=true;
-  saveRewardState();
-  renderRewards();
-  showReward(step);
-}
-function showReward(step){
-  rewardActive=true;
-  const overlay=$("rewardOverlay"),dialog=$("rewardDialog");
-  dialog.className="reward-dialog reward-"+step;
-  $("rewardEyebrow").textContent=step===1000?"THE FINAL MILESTONE":"MILESTONE "+step+" UNLOCKED";
-  $("rewardPumpkin").hidden=false;
-  $("rewardPumpkin").textContent="🎃";
-  $("rewardMessage").hidden=false;
-  $("rewardFinalTitle").hidden=true;
-  $("loveCloud").hidden=true;
-  $("rewardFinalNote").hidden=true;
-  $("rewardSub").hidden=false;
-  $("rewardFinalTitle").textContent="NOONA SARANGHAE";
-  $("rewardMessage").textContent=step===100?`EM CHÍP CẢM ƠN XỊ ${personName}`:step===500?`EM LÚM YÊU XỊ ${personName}`:"";
-  $("rewardSub").textContent=step===100?"Một chiếc ôm thật to dành cho bạn 💗":step===500?"Cảm ơn vì đã cùng nhau đi đến đây ✨":"The sweetest surprise is finally here.";
-  overlay.classList.add("is-visible");
-  overlay.setAttribute("aria-hidden","false");
-  if(step===100||step===500){
-    startRewardCelebration(step===100?2600:4200,step===100?90:180);
+
+async function copyText(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
     return;
   }
-  $("rewardEyebrow").textContent="YOU MADE IT · 1000 EMAILS";
-  $("rewardSub").hidden=true;
-  const pumpkin=$("rewardPumpkin");
-  rewardTimers.push(setTimeout(()=>{
-    pumpkin.hidden=true;
-    $("rewardMessage").hidden=true;
-    $("rewardFinalTitle").hidden=false;
-    $("loveCloud").hidden=false;
-    $("rewardFinalNote").hidden=false;
-    startRewardCelebration(10000,520);
-  },1450));
+  const area = document.createElement("textarea");
+  area.value = text;
+  area.style.position = "fixed";
+  area.style.opacity = "0";
+  document.body.appendChild(area);
+  area.select();
+  const ok = document.execCommand("copy");
+  area.remove();
+  if (!ok) throw new Error("Clipboard access failed");
 }
-$("rewardClose").addEventListener("click",closeReward);
-$("rewardCloseCta").addEventListener("click",closeReward);
-$("rewardOverlay").addEventListener("click",event=>{
-  if(event.target===$("rewardOverlay"))closeReward();
-});
-document.addEventListener("keydown",event=>{
-  if(event.key==="Escape"&&rewardActive)closeReward();
-});
 
-function startRewardCelebration(duration,particleLimit){
-  const canvas=$("rewardCanvas"),ctx=canvas.getContext("2d",{alpha:true});
-  const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(reduced)return;
-  let width=0,height=0,dpr=1,last=0,elapsed=0,lastBurst=0;
-  const particles=[];
-  const palette=["#ff9ecb","#ffc66e","#c5adff","#fff2a8","#9ce7bd","#ff795f","#ffffff"];
-  function resize(){
-    dpr=Math.min(window.devicePixelRatio||1,1.5);
-    width=window.innerWidth;height=window.innerHeight;
-    canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
-    canvas.style.width=width+"px";canvas.style.height=height+"px";
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-  resize();rewardResizeHandler=resize;
-  window.addEventListener("resize",resize,{passive:true});
-  function burst(x,y,amount){
-    for(let i=0;i<amount&&particles.length<particleLimit;i++){
-      const angle=Math.random()*Math.PI*2,speed=1.2+Math.random()*4.2;
-      particles.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,decay:.009+Math.random()*.009,size:1.2+Math.random()*2.8,color:palette[(Math.random()*palette.length)|0],confetti:Math.random()<.38,heart:Math.random()<.12,rotation:Math.random()*Math.PI,spin:(Math.random()-.5)*.16});
+/* NAVIGATION */
+const homeView = document.getElementById("homeView");
+const views = {
+  vogueView: document.getElementById("vogueView"),
+  massXView: document.getElementById("massXView"),
+  massYtbView: document.getElementById("massYtbView")
+};
+const initialized = { vogueView: false, massXView: false, massYtbView: false };
+
+function openView(id) {
+  homeView.hidden = true;
+  Object.entries(views).forEach(([key, el]) => el.hidden = key !== id);
+  window.scrollTo(0, 0);
+  if (!initialized[id]) {
+    initialized[id] = true;
+    if (id === "vogueView") initializeVogue();
+    if (id === "massXView") initializeMassX();
+    if (id === "massYtbView") {
+      loadMassYtbComments();
+      refreshMassYtbCount();
     }
   }
-  function frame(now){
-    if(!last)last=now;
-    const delta=Math.min(40,now-last);last=now;elapsed+=delta;
-    ctx.clearRect(0,0,width,height);
-    if(elapsed<duration&&elapsed-lastBurst>360){
-      lastBurst=elapsed;
-      const rounds=duration>5000?2:1;
-      for(let j=0;j<rounds;j++)burst(width*(.12+Math.random()*.76),height*(.12+Math.random()*.66),duration>5000?30:22);
-      if(duration>5000){
-        for(let i=0;i<18&&particles.length<particleLimit;i++){
-          particles.push({x:Math.random()*width,y:-10-Math.random()*height*.25,vx:(Math.random()-.5)*.8,vy:1.1+Math.random()*1.8,life:1,decay:.004+Math.random()*.003,size:3+Math.random()*4,color:palette[(Math.random()*palette.length)|0],confetti:true,rotation:Math.random()*6,spin:(Math.random()-.5)*.12});
+}
+
+document.querySelectorAll("[data-open-view]").forEach(button => {
+  button.addEventListener("click", () => openView(button.dataset.openView));
+});
+document.querySelectorAll("[data-go-home]").forEach(button => {
+  button.addEventListener("click", () => {
+    Object.values(views).forEach(el => el.hidden = true);
+    homeView.hidden = false;
+    window.scrollTo(0, 0);
+  });
+});
+
+/* VOGUE: one shared pool, one shared displayed counter */
+// Extra varied comments prevent the feed from feeling stuck on one "visuals" theme.
+// These are merged with active Supabase comments and de-duplicated at load time.
+const VOGUE_VARIETY_COMMENTS = [
+  "Seonghyeon brings such a refined energy to this Louis Vuitton moment.",
+  "The styling feels timeless, modern, and effortlessly confident.",
+  "He carries the whole concept with so much grace.",
+  "Every detail in this campaign feels carefully considered.",
+  "Seonghyeon's expression adds a beautiful story to the frame.",
+  "That quiet confidence makes this look unforgettable.",
+  "The Louis Vuitton pieces suit his personal aura so well.",
+  "A perfect balance of sophistication and youthful charm.",
+  "His presence gives this editorial a distinct point of view.",
+  "The pose, styling, and mood come together beautifully.",
+  "Seonghyeon makes high fashion feel natural and approachable.",
+  "The composition is elegant without trying too hard.",
+  "Love how the textures and accessories complement the whole look.",
+  "He has a talent for making a simple moment feel cinematic.",
+  "This concept highlights his versatility as an artist and model.",
+  "The atmosphere here is polished, bold, and full of character.",
+  "His expressions shift the mood in the most interesting way.",
+  "A memorable campaign moment with such a clear identity.",
+  "Seonghyeon brings warmth to an otherwise sharp editorial style.",
+  "The silhouette and styling are so well put together.",
+  "He looks completely at ease in this fashion world.",
+  "The creative direction and his energy work perfectly together.",
+  "There is something magnetic about his calm confidence.",
+  "The details deserve a closer look; everything feels intentional.",
+  "He makes this luxury styling feel fresh rather than predictable.",
+  "Such a strong editorial mood from Seonghyeon.",
+  "The contrast between the outfit and the setting works beautifully.",
+  "His natural charisma gives the campaign extra personality.",
+  "This is the kind of styling that stays in your mind.",
+  "Seonghyeon has a lovely way of balancing elegance with edge.",
+  "The whole frame feels like a page from a fashion story.",
+  "I love the restraint in the styling and the confidence in his pose.",
+  "A sophisticated look with just the right amount of attitude.",
+  "His versatility keeps every concept interesting.",
+  "The mood is subtle, but his presence speaks loudly.",
+  "This collaboration feels like a natural match for his style.",
+  "The accessories add character without overpowering the look.",
+  "Seonghyeon gives this editorial a distinct sense of movement.",
+  "The overall styling feels luxurious, clean, and contemporary.",
+  "He communicates so much through a small change in expression.",
+  "A beautiful example of fashion storytelling through mood and detail.",
+  "The look is bold, but he wears it with effortless ease.",
+  "His charm comes through even in the most minimal styling.",
+  "This editorial shows another side of Seonghyeon's style.",
+  "The color palette and textures create such a cohesive look.",
+  "He brings a distinctive character to every concept he takes on.",
+  "The result feels polished while still feeling uniquely him.",
+  "A graceful, confident, and very memorable fashion moment."
+];
+let vogueComments = [];
+let vogueDeck = [];
+let vogueCurrent = "";
+let vogueBusy = false;
+
+const vogueComment = document.getElementById("vogueComment");
+const vogueCopyBtn = document.getElementById("vogueCopyBtn");
+const vogueStatus = document.getElementById("vogueCopyStatus");
+const vogueCount = document.getElementById("vogueCopyCount");
+
+function showVogueComment(text) {
+  vogueComment.textContent = text;
+}
+
+function vogueNormalize(text) {
+  return String(text)
+    .normalize("NFKC")
+    .toLocaleLowerCase()
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function voguePatternKey(text) {
+  // Catch repeated openings and common templated phrases.
+  const normalized = vogueNormalize(text);
+  return normalized.split(" ").slice(0, 4).join(" ");
+}
+
+function vogueTheme(text) {
+  const t = vogueNormalize(text);
+  if (/visual|face|features|beauty|handsome|gorgeous|pretty|look/.test(t)) return "appearance";
+  if (/outfit|styling|style|fashion|clothes|silhouette|wear|accessor|texture|color palette/.test(t)) return "fashion";
+  if (/expression|smile|eyes|gaze|pose|charisma|charm|confidence|personality|energy|presence|aura/.test(t)) return "presence";
+  if (/campaign|editorial|concept|creative direction|frame|composition|photograph|shot|story|mood|atmosphere/.test(t)) return "editorial";
+  if (/louis vuitton|luxury|brand|collection|collaboration|piece|detail/.test(t)) return "brand-details";
+  return "general";
+}
+
+function makeVogueDeck() {
+  const remaining = shuffle([...vogueComments]);
+  const deck = [];
+  let previous = vogueCurrent;
+  let previousTheme = vogueCurrent ? vogueTheme(vogueCurrent) : "";
+  let previousOpening = vogueCurrent ? voguePatternKey(vogueCurrent) : "";
+
+  // Spread themes as well as openings. Every comment is used once per deck.
+  while (remaining.length) {
+    const ranked = remaining.map((text, index) => ({
+      text, index,
+      theme: vogueTheme(text),
+      opening: voguePatternKey(text),
+      score: (vogueTheme(text) === previousTheme ? 3 : 0) +
+        (voguePatternKey(text) === previousOpening ? 5 : 0)
+    }));
+    const bestScore = Math.min(...ranked.map(item => item.score));
+    const candidates = ranked.filter(item => item.score === bestScore);
+    const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+    deck.push(chosen.text);
+    remaining.splice(chosen.index, 1);
+    previous = chosen.text;
+    previousTheme = chosen.theme;
+    previousOpening = chosen.opening;
+  }
+
+  // nextVogueComment() pops from the end, so reverse the prepared sequence.
+  return deck.reverse();
+}
+
+function nextVogueComment() {
+  if (!vogueComments.length) return;
+  if (!vogueDeck.length) vogueDeck = makeVogueDeck();
+  vogueCurrent = vogueDeck.pop();
+  showVogueComment(vogueCurrent);
+  vogueCopyBtn.disabled = false;
+}
+
+async function incrementVogueCount() {
+  const result = await fetchJSON(
+    API + "/rest/v1/rpc/increment_vogue_copy_count",
+    { method: "POST", body: "{}" }
+  );
+  if (typeof result === "number") {
+    vogueCount.textContent = result.toLocaleString("en-US");
+  } else {
+    await refreshVogueCount();
+  }
+}
+
+async function refreshVogueCount() {
+  try {
+    const rows = await fetchJSON(
+      API + "/rest/v1/vogue_copy_stats?select=id,copy_count"
+    );
+    const total = rows.reduce((sum, row) => sum + Number(row.copy_count || 0), 0);
+    vogueCount.textContent = total.toLocaleString("en-US");
+  } catch (error) {
+    vogueCount.textContent = "Unavailable";
+    vogueStatus.textContent = "Counter error: " + error.message;
+  }
+}
+
+async function loadVogueComments() {
+  vogueCopyBtn.disabled = true;
+  // Show a usable comment immediately so the page never feels frozen while
+  // the database responds. The shared database pool replaces this starter deck
+  // as soon as it arrives.
+  vogueComments = [...VOGUE_VARIETY_COMMENTS];
+  vogueDeck = makeVogueDeck();
+  nextVogueComment();
+  vogueCopyBtn.disabled = false;
+  vogueStatus.textContent = "Ready — syncing shared comments…";
+
+  try {
+    // A bounded request avoids pulling the entire table on every visit.
+    const rows = await fetchJSON(
+      API + "/rest/v1/vogue_comments?select=id,content&is_active=eq.true&order=id.asc&limit=500"
+    );
+    const seenVogueContent = new Set();
+    const merged = [...rows.map(row => row.content), ...VOGUE_VARIETY_COMMENTS]
+      .filter(content => typeof content === "string" && content.trim())
+      .map(content => content.trim())
+      .filter(content => {
+        const key = vogueNormalize(content);
+        if (!key || seenVogueContent.has(key)) return false;
+        seenVogueContent.add(key);
+        return true;
+      });
+
+    if (merged.length) {
+      vogueComments = merged;
+      vogueDeck = makeVogueDeck();
+      nextVogueComment();
+      vogueStatus.textContent = vogueComments.length.toLocaleString() +
+        " unique comments ready (shared comments synced).";
+    }
+  } catch (error) {
+    // Local comments remain usable even if the network/database is slow.
+    vogueStatus.textContent = "Using quick comments while shared comments are unavailable.";
+  } finally {
+    vogueCopyBtn.disabled = !vogueCurrent;
+  }
+}
+
+vogueCopyBtn.addEventListener("click", async () => {
+  if (!vogueCurrent || vogueBusy) return;
+  vogueBusy = true;
+  vogueCopyBtn.disabled = true;
+
+  try {
+    await copyText(vogueCurrent);
+    bloomAtButton(vogueCopyBtn);
+
+    /*
+     * Keep the UI responsive: show the next comment immediately.
+     * Refresh the shared counter in the background; do not make Copy wait.
+     */
+    nextVogueComment();
+    vogueStatus.textContent = "Copied successfully. Next comment is ready.";
+    // Increment the shared database counter in the background so copying stays responsive.
+    void incrementVogueCount().catch(error => {
+      vogueStatus.textContent =
+        "Copied successfully, but the counter could not update. Run the Vogue counter SQL setup.";
+      console.error("Vogue counter update failed:", error);
+    });
+  } catch (error) {
+    vogueStatus.textContent = "Copy failed: " + error.message;
+  } finally {
+    vogueBusy = false;
+    vogueCopyBtn.disabled = !vogueCurrent;
+  }
+});
+
+function initializeVogue() {
+  loadVogueComments();
+  refreshVogueCount();
+}
+
+/* MASS X: paginated comments, shuffle, auto-next, existing RPC */
+let massXComments = [];
+let massXIndex = 0;
+let massXBusy = false;
+
+const massXComment = document.getElementById("massXComment");
+const massXCopyBtn = document.getElementById("massXCopyBtn");
+const massXStatus = document.getElementById("massXStatus");
+const massXCount = document.getElementById("massXTotalCopies");
+
+async function refreshMassXCount() {
+  try {
+    const rows = await fetchJSON(
+      API + "/rest/v1/mass_x_copy_stats?select=copy_count&id=eq.1"
+    );
+    if (!rows.length) throw new Error("Counter row id=1 was not found");
+    const total = Number(rows[0].copy_count);
+    if (!Number.isFinite(total)) throw new Error("copy_count is not numeric");
+    massXCount.textContent = total.toLocaleString("en-US");
+    return total;
+  } catch (error) {
+    massXCount.textContent = "Unavailable";
+    console.error("MASS X counter read failed:", error);
+    throw error;
+  }
+}
+
+async function incrementMassXCount() {
+  const result = await fetchJSON(
+    API + "/rest/v1/rpc/increment_mass_x_copy_count",
+    { method: "POST", body: "{}" }
+  );
+
+  // PostgREST may return a scalar, a one-item array, or an object depending
+  // on how the SQL function is declared. Handle these response shapes safely.
+  let total = null;
+  if (typeof result === "number") total = result;
+  else if (Array.isArray(result) && result.length === 1) {
+    const first = result[0];
+    if (typeof first === "number") total = first;
+    else if (first && typeof first === "object") {
+      const value = Object.values(first).find(v => Number.isFinite(Number(v)));
+      if (value !== undefined) total = Number(value);
+    }
+  } else if (result && typeof result === "object") {
+    const value = Object.values(result).find(v => Number.isFinite(Number(v)));
+    if (value !== undefined) total = Number(value);
+  }
+
+  if (Number.isFinite(total)) {
+    // Avoid the displayed total moving backwards if simultaneous RPC replies
+    // arrive out of order in this browser.
+    const currentlyShown = Number(String(massXCount.textContent).replace(/,/g, ""));
+    massXCount.textContent = Math.max(
+      Number.isFinite(currentlyShown) ? currentlyShown : 0,
+      total
+    ).toLocaleString("en-US");
+  } else {
+    await refreshMassXCount();
+  }
+}
+
+function showMassXComment() {
+  if (massXComments.length) {
+    massXComment.textContent = massXComments[massXIndex];
+  }
+}
+
+async function loadMassXComments() {
+  massXCopyBtn.disabled = true;
+  massXStatus.textContent = "Loading comments…";
+
+  try {
+    const allRows = [];
+    const pageSize = 1000;
+    const parallelPages = 4;
+    let start = 0;
+    let reachedEnd = false;
+
+    // Fetch up to four pages at once instead of waiting for every page
+    // sequentially. This reduces startup time for large comment pools.
+    while (!reachedEnd) {
+      const starts = Array.from(
+        { length: parallelPages },
+        (_, index) => start + index * pageSize
+      );
+
+      const pageResults = await Promise.all(starts.map(async pageStart => {
+        const response = await fetch(
+          API + "/rest/v1/mass_x_comments?select=content&is_active=eq.true&order=id.asc",
+          {
+            headers: {
+              ...headers(),
+              Range: `${pageStart}-${pageStart + pageSize - 1}`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Supabase request failed (" + response.status + ")");
+        }
+        return response.json();
+      }));
+
+      for (const rows of pageResults) {
+        allRows.push(...rows);
+        if (rows.length < pageSize) {
+          reachedEnd = true;
+          break;
         }
       }
+
+      start += parallelPages * pageSize;
+      massXStatus.textContent =
+        "Loading comments… " + allRows.length.toLocaleString() + " loaded";
     }
-    for(let i=particles.length-1;i>=0;i--){
-      const p=particles[i];p.x+=p.vx;p.y+=p.vy;p.vy+=p.confetti?.025:.012;p.vx*=.994;p.rotation+=p.spin;p.life-=p.decay;
-      if(p.life<=0||p.y>height+30){particles.splice(i,1);continue}
-      ctx.globalAlpha=Math.max(0,Math.min(1,p.life));
-      ctx.fillStyle=p.color;
-      if(p.heart){
-        ctx.font=`${Math.max(9,p.size*4)}px system-ui, sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("♥",p.x,p.y);
-      }else if(p.confetti){
-        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rotation);ctx.fillRect(-p.size/2,-p.size/3,p.size,p.size*.65);ctx.restore();
-      }else{
-        ctx.beginPath();ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);ctx.fill();
+
+    massXComments = shuffle([...new Set(
+      allRows.map(row => row.content)
+        .filter(content => typeof content === "string" && content.trim())
+        .map(content => content.trim())
+    )]);
+
+    massXIndex = 0;
+
+    if (!massXComments.length) {
+      massXComment.textContent = "No active comments found.";
+      massXStatus.textContent = "Check mass_x_comments and its read policy.";
+      return;
+    }
+
+    showMassXComment();
+    massXStatus.textContent =
+      massXComments.length.toLocaleString() + " unique comments loaded.";
+    massXCopyBtn.disabled = false;
+  } catch (error) {
+    massXComment.textContent = "Unable to load comments.";
+    massXStatus.textContent = error.message;
+  }
+}
+
+function nextMassXComment() {
+  if (!massXComments.length) return false;
+  massXIndex++;
+  let restartedRound = false;
+  if (massXIndex >= massXComments.length) {
+    const lastComment = massXComments[massXIndex - 1];
+    massXComments = shuffle([...massXComments]);
+    // Avoid showing the exact same comment twice across the round boundary.
+    if (massXComments.length > 1 && massXComments[0] === lastComment) {
+      const swapIndex = 1 + Math.floor(Math.random() * (massXComments.length - 1));
+      [massXComments[0], massXComments[swapIndex]] =
+        [massXComments[swapIndex], massXComments[0]];
+    }
+    massXIndex = 0;
+    restartedRound = true;
+  }
+  showMassXComment();
+  return restartedRound;
+}
+
+massXCopyBtn.addEventListener("click", async () => {
+  if (!massXComments.length || massXBusy) return;
+  massXBusy = true;
+  massXCopyBtn.disabled = true;
+
+  try {
+    await copyText(massXComments[massXIndex]);
+    bloomAtButton(massXCopyBtn);
+
+    // Advance and unlock the button immediately after the clipboard succeeds.
+    const restartedRound = nextMassXComment();
+    massXStatus.textContent = restartedRound
+      ? "All comments used. A new random round has started!"
+      : "Copied successfully. Next comment is ready.";
+
+    // Update the database counter in the background so network latency
+    // does not block the next copy.
+    void incrementMassXCount().catch(async error => {
+      // Keep copying responsive, but do not silently hide a broken counter.
+      console.error("MASS X counter increment failed:", error);
+      massXStatus.textContent =
+        "Copied successfully, but the total counter did not update: " +
+        (error && error.message ? error.message : "unknown error") +
+        ". Check the increment_mass_x_copy_count RPC and Supabase permissions.";
+      try {
+        await refreshMassXCount();
+      } catch (_) {
+        // refreshMassXCount already displays Unavailable.
+      }
+    });
+  } catch (error) {
+    massXStatus.textContent = "Copy failed: " + error.message;
+  } finally {
+    massXBusy = false;
+    massXCopyBtn.disabled = !massXComments.length;
+  }
+});
+
+
+/* MASS YTB: independent comment table and independent counter */
+let massYtbComments = [];
+let massYtbIndex = 0;
+let massYtbBusy = false;
+const massYtbComment = document.getElementById("massYtbComment");
+const massYtbCopyBtn = document.getElementById("massYtbCopyBtn");
+const massYtbStatus = document.getElementById("massYtbStatus");
+const massYtbCount = document.getElementById("massYtbTotalCopies");
+const fullCommentModal = document.getElementById("fullCommentModal");
+const fullCommentText = document.getElementById("fullCommentText");
+
+function renderMassYtbComment() {
+  if (!massYtbComments.length) return;
+  const full = massYtbComments[massYtbIndex];
+  const limit = 300;
+  massYtbComment.textContent = full.length > limit ? full.slice(0, limit).trimEnd() + "..." : full;
+  massYtbComment.dataset.fullComment = full;
+}
+function openFullMassYtbComment() {
+  if (!massYtbComments.length) return;
+  fullCommentText.textContent = massYtbComments[massYtbIndex];
+  fullCommentModal.hidden = false;
+}
+massYtbComment.addEventListener("click", openFullMassYtbComment);
+massYtbComment.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    openFullMassYtbComment();
+  }
+});
+document.getElementById("modalCloseBtn").addEventListener("click", () => fullCommentModal.hidden = true);
+fullCommentModal.addEventListener("click", event => {
+  if (event.target === fullCommentModal) fullCommentModal.hidden = true;
+});
+document.getElementById("modalCopyBtn").addEventListener("click", async () => {
+  try {
+    await copyText(fullCommentText.textContent);
+    document.getElementById("modalCopyBtn").textContent = "Copied!";
+  } catch (error) {
+    document.getElementById("modalCopyBtn").textContent = "Copy failed";
+  }
+});
+async function refreshMassYtbCount() {
+  try {
+    const rows = await fetchJSON(API + "/rest/v1/mass_ytb_copy_counter?select=total&id=eq.1");
+    if (!rows.length) throw new Error("Counter row id=1 was not found");
+    massYtbCount.textContent = Number(rows[0].total).toLocaleString("en-US");
+  } catch (error) {
+    massYtbCount.textContent = "Unavailable";
+    console.error("MASS YTB counter read failed:", error);
+  }
+}
+async function incrementMassYtbCount() {
+  const result = await fetchJSON(API + "/rest/v1/rpc/increment_mass_ytb_copy_count", {method:"POST", body:"{}"});
+  let total = null;
+  if (typeof result === "number") total = result;
+  else if (Array.isArray(result) && result.length) total = Number(result[0]);
+  else if (result && typeof result === "object") total = Number(Object.values(result)[0]);
+  if (Number.isFinite(total)) massYtbCount.textContent = total.toLocaleString("en-US");
+  else await refreshMassYtbCount();
+}
+async function loadMassYtbComments() {
+  massYtbCopyBtn.disabled = true;
+  try {
+    const rows = await fetchJSON(API + "/rest/v1/mass_ytb_comments?select=content&is_active=eq.true&event=eq.MASS%20YTB&order=id.asc");
+    massYtbComments = rows.map(row => row.content).filter(text => typeof text === "string" && text.trim()).map(text => text.trim());
+    if (!massYtbComments.length) {
+      massYtbComment.textContent = "No active comments found yet.";
+      massYtbStatus.textContent = "Import the MASS YTB comments into mass_ytb_comments.";
+      return;
+    }
+    massYtbIndex = Math.floor(Math.random() * massYtbComments.length);
+    renderMassYtbComment();
+    massYtbStatus.textContent = massYtbComments.length + " comments loaded.";
+    massYtbCopyBtn.disabled = false;
+  } catch (error) {
+    massYtbComment.textContent = "Unable to load comments.";
+    massYtbStatus.textContent = error.message;
+  }
+}
+massYtbCopyBtn.addEventListener("click", async () => {
+  if (!massYtbComments.length || massYtbBusy) return;
+  massYtbBusy = true;
+  massYtbCopyBtn.disabled = true;
+  try {
+    await copyText(massYtbComments[massYtbIndex]);
+    massYtbIndex = (massYtbIndex + 1) % massYtbComments.length;
+    renderMassYtbComment();
+    massYtbStatus.textContent = "Copied successfully. Next comment is ready.";
+    void incrementMassYtbCount().catch(error => {
+      console.error("MASS YTB counter increment failed:", error);
+      massYtbStatus.textContent = "Copied, but the counter could not update. Check the MASS YTB SQL setup.";
+    });
+  } catch (error) {
+    massYtbStatus.textContent = "Copy failed: " + error.message;
+  } finally {
+    massYtbBusy = false;
+    massYtbCopyBtn.disabled = !massYtbComments.length;
+  }
+});
+/* MASS YTB data is loaded when its section is opened. */
+
+/* TRENDS24 TREND TRACKER: only display exact matches read from public topic lists. */
+const TREND_KEYWORDS = [
+  "#SEONGHYEON",
+  "#성현"
+];
+
+// Worldwide is always checked first. Other locations are a practical, editable subset
+// of public Trends24 country pages; unavailable pages are reported and never fabricated.
+const TREND_LOCATIONS = [
+  { name: "Worldwide", url: "https://trends24.in/" },
+  { name: "Brazil", url: "https://trends24.in/brazil/" },
+  { name: "India", url: "https://trends24.in/india/" },
+  { name: "Indonesia", url: "https://trends24.in/indonesia/" },
+  { name: "Japan", url: "https://trends24.in/japan/" },
+  { name: "Malaysia", url: "https://trends24.in/malaysia/" },
+  { name: "Mexico", url: "https://trends24.in/mexico/" },
+  { name: "Philippines", url: "https://trends24.in/philippines/" },
+  { name: "Singapore", url: "https://trends24.in/singapore/" },
+  { name: "South Korea", url: "https://trends24.in/south-korea/" },
+  { name: "Taiwan", url: "https://trends24.in/taiwan/" },
+  { name: "Thailand", url: "https://trends24.in/thailand/" },
+  { name: "United Kingdom", url: "https://trends24.in/united-kingdom/" },
+  { name: "United States", url: "https://trends24.in/united-states/" },
+  { name: "Vietnam", url: "https://trends24.in/vietnam/" }
+];
+
+const trendRefreshBtn = document.getElementById("trendRefreshBtn");
+const trendTrackerStatus = document.getElementById("trendTrackerStatus");
+const trendTrackerResults = document.getElementById("trendTrackerResults");
+const trendTrackerCheckedAt = document.getElementById("trendTrackerCheckedAt");
+let trendTrackerBusy = false;
+const TREND_HISTORY_KEY = "eomland_trends24_history_v1";
+const TREND_HISTORY_LIMIT = 60;
+const trendChartWrap = document.getElementById("trendChartWrap");
+const trendPeakList = document.getElementById("trendPeakList");
+const trendHistoryNote = document.getElementById("trendHistoryNote");
+
+function readTrendHistory() {
+  try {
+    const value = JSON.parse(localStorage.getItem(TREND_HISTORY_KEY) || "[]");
+    return Array.isArray(value) ? value.filter(row => row && row.at && Array.isArray(row.matches)) : [];
+  } catch { return []; }
+}
+
+function saveTrendSnapshot(matches, checkedAt) {
+  const history = readTrendHistory();
+  // Keep the latest snapshot per minute to avoid duplicates from rapid refreshes.
+  const stamp = checkedAt.toISOString().slice(0, 16);
+  const snapshot = {
+    at: checkedAt.toISOString(),
+    matches: matches.map(item => ({ region: item.region, keyword: item.keyword, rank: item.rank }))
+  };
+  const existing = history.findIndex(row => String(row.at).slice(0, 16) === stamp);
+  if (existing >= 0) history[existing] = snapshot;
+  else history.push(snapshot);
+  history.sort((a, b) => new Date(a.at) - new Date(b.at));
+  try { localStorage.setItem(TREND_HISTORY_KEY, JSON.stringify(history.slice(-TREND_HISTORY_LIMIT))); }
+  catch (error) { console.warn("Unable to save trend history locally:", error); }
+  renderTrendHistory(readTrendHistory());
+}
+
+function renderTrendHistory(history) {
+  trendPeakList.replaceChildren();
+  if (!history.length) {
+    trendChartWrap.innerHTML = '<div class="trend-empty">Chưa có lịch sử. Bấm Refresh để ghi nhận điểm dữ liệu đầu tiên.</div>';
+    trendHistoryNote.textContent = "Lịch sử bắt đầu từ lần Refresh đầu tiên trên trình duyệt này; không thể tự khôi phục dữ liệu trước đó.";
+    return;
+  }
+  const keys = TREND_KEYWORDS;
+  const series = keys.map(keyword => ({ keyword, points: history.map(row => {
+    const found = row.matches.filter(m => m.keyword === keyword && Number.isFinite(m.rank) && m.rank > 0);
+    return found.length ? Math.min(...found.map(m => m.rank)) : null;
+  }) })).filter(item => item.points.some(v => v !== null));
+  const width = Math.max(320, history.length * 22), height = 190, padL = 34, padR = 12, padT = 18, padB = 32;
+  const vals = series.flatMap(s => s.points.filter(v => v !== null));
+  const minRank = vals.length ? Math.max(1, Math.min(...vals)) : 1;
+  const maxRank = vals.length ? Math.max(...vals) : 10;
+  const x = i => padL + (history.length <= 1 ? 0 : i * (width - padL - padR) / (history.length - 1));
+  const y = v => padT + ((v - minRank) / Math.max(1, maxRank - minRank)) * (height - padT - padB);
+  const colors = ["#c34d86", "#4777b8", "#2a9d8f", "#d18a2e"];
+  let svg = `<svg class="trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-label="Biểu đồ biến động thứ hạng từ các lần kiểm tra đã lưu">`;
+  for (let i = 0; i < 4; i++) {
+    const yy = padT + i * (height - padT - padB) / 3;
+    const label = Math.round(minRank + i * (maxRank - minRank) / 3);
+    svg += `<line x1="${padL}" y1="${yy}" x2="${width-padR}" y2="${yy}" stroke="#f1d7e4" stroke-dasharray="3 3"/><text x="${padL-7}" y="${yy+4}" text-anchor="end" font-size="10" fill="#96677f">#${label}</text>`;
+  }
+  series.forEach((s, si) => {
+    let segment = [];
+    const flush = () => { if (segment.length > 1) svg += `<polyline fill="none" stroke="${colors[si%colors.length]}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="${segment.map(p=>`${p.x},${p.y}`).join(" ")}"/>`; for (const p of segment) svg += `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${colors[si%colors.length]}"/>`; segment=[]; };
+    s.points.forEach((v,i) => { if (v === null) { flush(); return; } segment.push({x:x(i), y:y(v)}); }); flush();
+  });
+  const firstLabel = new Date(history[0].at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  const lastLabel = new Date(history[history.length-1].at).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+  svg += `<text x="${padL}" y="${height-10}" font-size="10" fill="#96677f">${firstLabel}</text><text x="${width-padR}" y="${height-10}" text-anchor="end" font-size="10" fill="#96677f">${lastLabel}</text></svg>`;
+  trendChartWrap.innerHTML = svg;
+  trendHistoryNote.textContent = `Đã lưu ${history.length} lần kiểm tra gần nhất trên trình duyệt này. Hạng càng gần #1 càng tốt; khoảng trống nghĩa là lần đó không có hạng đọc được.`;
+  const peaks = TREND_KEYWORDS.map(keyword => {
+    const ranked = history.flatMap(row => row.matches.filter(m => m.keyword === keyword && Number.isFinite(m.rank) && m.rank > 0).map(m => ({...m, at: row.at})));
+    if (!ranked.length) return null;
+    const best = ranked.reduce((a,b) => b.rank < a.rank ? b : a);
+    return {keyword, ...best};
+  }).filter(Boolean).sort((a,b)=>a.rank-b.rank);
+  for (const peak of peaks) {
+    const item = document.createElement("div"); item.className = "trend-peak";
+    const name = document.createElement("span"); name.textContent = `${peak.keyword} · ${peak.region}`;
+    const rank = document.createElement("strong"); rank.textContent = `Best #${peak.rank}`;
+    item.append(name,rank); trendPeakList.appendChild(item);
+  }
+  if (!peaks.length) trendPeakList.innerHTML = '<div class="trend-empty">Chưa ghi nhận được hạng số nào cho các từ khóa.</div>';
+}
+renderTrendHistory(readTrendHistory());
+
+function normalizeTrendText(value) {
+  return String(value || "")
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase();
+}
+
+function findTrendMatches(topicItems, location) {
+  const matches = [];
+  for (const item of topicItems) {
+    const topic = String(item.topic || "").trim();
+    if (!topic) continue;
+    const normalizedTopic = normalizeTrendText(topic);
+    for (const keyword of TREND_KEYWORDS) {
+      if (normalizedTopic === normalizeTrendText(keyword)) {
+        matches.push({
+          region: location.name,
+          url: location.url,
+          keyword,
+          rank: Number.isFinite(item.rank) && item.rank > 0 ? item.rank : null
+        });
       }
     }
-    ctx.globalAlpha=1;
-    if(elapsed<duration||particles.length){
-      rewardAnimationFrame=requestAnimationFrame(frame);
-    }else{
-      rewardAnimationFrame=0;ctx.clearRect(0,0,width,height);
-      if(rewardResizeHandler){window.removeEventListener("resize",rewardResizeHandler);rewardResizeHandler=null}
+  }
+  return matches;
+}
+
+function parseTrends24Page(markup, location) {
+  const doc = new DOMParser().parseFromString(markup, "text/html");
+  const heading = [...doc.querySelectorAll("h1,h2,h3,h4,h5")]
+    .find(el => /Twitter Trends Timeline for last 24 hours/i.test(el.textContent || ""));
+
+  if (!heading) {
+    throw new Error("Không tìm thấy mục Trending Topics trên trang.");
+  }
+
+  const followsHeading = node =>
+    Boolean(heading.compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING);
+
+  // Prefer the first ordered/unordered topic list after the timeline heading.
+  // The list's displayed order supplies a rank when the source does not print one.
+  const lists = [...doc.querySelectorAll("ol,ul")]
+    .filter(followsHeading)
+    .map(list => ({
+      list,
+      items: [...list.querySelectorAll(":scope > li")]
+    }))
+    .filter(entry => entry.items.length >= 5 && entry.items.length <= 100);
+
+  if (lists.length) {
+    const items = lists[0].items.map((li, index) => {
+      const links = [...li.querySelectorAll("a")]
+        .map(a => (a.textContent || "").trim())
+        .filter(Boolean);
+      const topic = links.length ? links[0] : (li.textContent || "").trim();
+      return { topic, rank: index + 1 };
+    }).filter(item => item.topic);
+    if (items.length) {
+      return {
+        matches: findTrendMatches(items, location),
+        parsedTopics: items.length
+      };
     }
   }
-  rewardAnimationFrame=requestAnimationFrame(frame);
-}
 
-function saveMail(){
-  if(currentMail)localStorage.setItem(STORAGE.mail,JSON.stringify(currentMail));
-  else localStorage.removeItem(STORAGE.mail);
-}
-function saveCount(){localStorage.setItem(STORAGE.count,String(mailCount))}
-function showNotice(id,message,type="info"){
-  const e=$(id);e.textContent=message;e.className=`notice show ${type}`;
-}
-function hideNotice(id){const e=$(id);e.textContent="";e.className="notice"}
+  // Fallback for a layout change: inspect only the newest snapshot in the visible
+  // timeline text. If a keyword is present but its rank is not parseable, keep it.
+  const lines = (doc.body.innerText || doc.body.textContent || "")
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+  const headingIndex = lines.findIndex(line => /Twitter Trends Timeline for last 24 hours/i.test(line));
+  if (headingIndex < 0) throw new Error("Không đọc được nội dung timeline.");
 
-function setBusy(value){
-  busy=value;
-  $("loginBtn").disabled=value;
-  $("copyEmailBtn").disabled=value||!token;
-  $("copyPasswordBtn").disabled=value||!currentMail;
-  $("copyEmailValueBtn").disabled=value||!currentMail;
-  $("logoutBtn").disabled=value;
-  $("loginBtn").classList.toggle("is-loading",value);
-  $("copyEmailBtn").classList.toggle("is-loading",value);
-  $("loginBtn").textContent=value?"Đang đăng nhập":"Đăng nhập ✨";
-  $("copyEmailBtn").textContent=value?"Đang lấy mail":"🐥 Copy email · Nhận mail mới";
-}
-function render(){
-  const loggedIn=Boolean(token);
-  $("loginPanel").hidden=loggedIn;
-  $("appPanel").hidden=!loggedIn;
-  $("nameDisplay").textContent=personName;
-  $("counterDisplay").textContent=String(mailCount);
-  renderRewards();
-  if(loggedIn&&rewardState.pending.length&&!rewardActive)window.setTimeout(processRewardQueue,150);
-  if(currentMail){
-    $("emailDisplay").textContent=currentMail.email;
-    $("emailDisplay").classList.remove("placeholder");
-    $("passwordDisplay").textContent=currentMail.password;
-    $("passwordDisplay").classList.remove("placeholder");
-    $("copyEmailValueBtn").hidden=false;
-  }else{
-    $("emailDisplay").textContent="Chưa có email. Bấm nút bên dưới để nhận mail.";
-    $("emailDisplay").classList.add("placeholder");
-    $("passwordDisplay").textContent="Mật khẩu sẽ hiển thị sau khi nhận email.";
-    $("passwordDisplay").classList.add("placeholder");
-    $("copyEmailValueBtn").hidden=true;
+  const dateLine = /^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+[A-Z][a-z]{2}\s+\d{1,2}\s+\d{4}/i;
+  const firstDate = lines.findIndex((line, i) => i > headingIndex && dateLine.test(line));
+  if (firstDate < 0) throw new Error("Không xác định được danh sách trend mới nhất.");
+
+  let end = lines.findIndex((line, i) => i > firstDate && dateLine.test(line));
+  if (end < 0) end = Math.min(lines.length, firstDate + 80);
+  const snapshot = lines.slice(firstDate + 1, end);
+  const items = [];
+
+  for (const line of snapshot) {
+    const ranked = line.match(/^(\d{1,2})[.)]?\s+(.+)$/);
+    items.push({
+      topic: ranked ? ranked[2].trim() : line,
+      rank: ranked ? Number(ranked[1]) : null
+    });
   }
-  $("copyEmailBtn").disabled=busy||!token;
-  $("copyPasswordBtn").disabled=busy||!currentMail;
-  $("copyEmailValueBtn").disabled=busy||!currentMail;
-  $("logoutBtn").disabled=busy;
-}
-async function api(action,payload={}){
-  const headers={"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY,"Authorization":`Bearer ${SUPABASE_PUBLISHABLE_KEY}`};
-  const body={action,...payload};
-  if(action!=="login"&&token)body.token=token;
-  const response=await fetch(API_URL,{method:"POST",headers,body:JSON.stringify(body)});
-  let result;
-  try{result=await response.json()}catch(_){throw new Error("Máy chủ trả về phản hồi không hợp lệ.")}
-  if(!response.ok||result.error)throw new Error(result.error||result.message||`Yêu cầu thất bại (${response.status}).`);
-  return result;
-}
-async function copyText(value){
-  if(typeof value!=="string"||!value.length)throw new Error("Không có nội dung để copy.");
-  // Clipboard API là đường chính trên HTTPS; nếu bị trình duyệt từ chối thì thử fallback ngay.
-  if(navigator.clipboard&&window.isSecureContext){
-    try{await navigator.clipboard.writeText(value);return}
-    catch(_){/* tiếp tục bằng execCommand */}
+
+  const matches = findTrendMatches(items, location);
+  if (!matches.length && !items.length) {
+    throw new Error("Trang đã mở nhưng không đọc được danh sách trend.");
   }
-  const el=document.createElement("textarea");
-  el.value=value;el.setAttribute("readonly","");
-  el.style.cssText="position:fixed;left:0;top:0;width:1px;height:1px;padding:0;border:0;opacity:0;font-size:16px";
-  document.body.appendChild(el);
-  el.focus({preventScroll:true});el.select();
-  let ok=false;
-  try{ok=document.execCommand("copy")}finally{el.remove()}
-  if(!ok)throw new Error("Trình duyệt không cho phép sao chép tự động. Vui lòng sao chép thủ công nội dung đang hiển thị.");
-}
-// Snowflake bloom when a copy action succeeds.
-function snowflakeBloom(origin){
-  const rect=origin?.getBoundingClientRect?.();
-  const x=rect?rect.left+rect.width/2:window.innerWidth/2;
-  const y=rect?rect.top+rect.height/2:window.innerHeight/2;
-  const wrap=document.createElement("span");wrap.className="snow-bloom";wrap.style.left=x+"px";wrap.style.top=y+"px";
-  const symbols=["❄","✧","❅","✦","❄","❆","✧","❄"];
-  symbols.forEach((symbol,i)=>{const bit=document.createElement("i");bit.textContent=symbol;const angle=(Math.PI*2*i)/symbols.length;const distance=34+Math.random()*28;bit.style.setProperty("--dx",Math.cos(angle)*distance+"px");bit.style.setProperty("--dy",Math.sin(angle)*distance-12+"px");bit.style.animationDelay=(Math.random()*.08)+"s";wrap.appendChild(bit)});
-  document.body.appendChild(wrap);window.setTimeout(()=>wrap.remove(),1400);
+  return { matches, parsedTopics: items.length };
 }
 
-// Original, softly synthesized winter lullaby; starts only after the visitor taps the music button.
-(()=>{
-  const button=$("musicToggle");let audio=null,timer=null,step=0,playing=false;
-  const notes=[659.25,783.99,880,783.99,659.25,587.33,523.25,587.33,659.25,783.99,659.25,587.33];
-  function playNote(){if(!audio||!playing)return;const now=audio.currentTime;const freq=notes[step++%notes.length];
-    const osc=audio.createOscillator(),gain=audio.createGain();osc.type="sine";osc.frequency.setValueAtTime(freq,now);
-    gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.035,now+.12);gain.gain.exponentialRampToValueAtTime(.0001,now+1.05);
-    osc.connect(gain);gain.connect(audio.destination);osc.start(now);osc.stop(now+1.08);
-    if(step%4===0){const pad=audio.createOscillator(),pg=audio.createGain();pad.type="sine";pad.frequency.value=freq/2;pg.gain.setValueAtTime(.0001,now);pg.gain.exponentialRampToValueAtTime(.009,now+.25);pg.gain.exponentialRampToValueAtTime(.0001,now+1.7);pad.connect(pg);pg.connect(audio.destination);pad.start(now);pad.stop(now+1.75)}
-  }
-  async function toggle(){
-    if(!playing){const AudioContextClass=window.AudioContext||window.webkitAudioContext;if(!AudioContextClass){button.textContent="♫ Nhạc không hỗ trợ";return}
-      audio=audio||new AudioContextClass();if(audio.state==="suspended")await audio.resume();playing=true;playNote();timer=window.setInterval(playNote,720);button.textContent="♫ Nhạc mùa đông: Bật";button.setAttribute("aria-pressed","true");
-    }else{playing=false;window.clearInterval(timer);timer=null;if(audio&&audio.state==="running")await audio.suspend();button.textContent="♫ Nhạc mùa đông: Tắt";button.setAttribute("aria-pressed","false")}
-  }
-  button.addEventListener("click",()=>toggle().catch(()=>{button.textContent="♫ Không phát được nhạc"}));
-})();
+async function fetchTrendPage(location) {
+  const proxies = [
+    url => "https://api.allorigins.win/raw?url=" + encodeURIComponent(url),
+    url => "https://corsproxy.io/?url=" + encodeURIComponent(url)
+  ];
+  let lastError = null;
 
-function clearSession(){
-  token="";personName="";phoneNumber="";currentMail=null;
-  localStorage.removeItem(STORAGE.token);
-  localStorage.removeItem(STORAGE.name);
-  localStorage.removeItem(STORAGE.phone);
-  localStorage.removeItem(STORAGE.mail);
-  hideNotice("appNotice");hideNotice("loginNotice");render();
-}
-
-$("loginForm").addEventListener("submit",async event=>{
-  event.preventDefault();if(busy)return;
-  hideNotice("loginNotice");
-  const name=$("nameInput").value.trim();
-  const phone=$("phoneInput").value.trim();
-  const teamPassword=$("teamPasswordInput").value;
-  if(!name||!phone||!teamPassword){showNotice("loginNotice","Vui lòng nhập đầy đủ tên, số điện thoại và mật khẩu nhóm.","error");return}
-  const previousPhone=phoneNumber;setBusy(true);
-  try{
-    const result=await api("login",{name,phone_number:phone,team_password:teamPassword});
-    if(!result.token)throw new Error("Máy chủ chưa trả về phiên đăng nhập.");
-    token=result.token;personName=result.name||name;phoneNumber=result.phone_number||phone;
-    localStorage.setItem(STORAGE.token,token);localStorage.setItem(STORAGE.name,personName);localStorage.setItem(STORAGE.phone,phoneNumber);
-    if(previousPhone&&previousPhone!==phoneNumber){currentMail=null;saveMail()}
-    $("teamPasswordInput").value="";hideNotice("loginNotice");render();
-  }catch(error){showNotice("loginNotice",error.message||"Đăng nhập thất bại.","error")}
-  finally{setBusy(false);render()}
-});
-
-$("copyEmailBtn").addEventListener("click",async()=>{
-  if(!token||busy)return;
-  hideNotice("appNotice");setBusy(true);
-  try{
-    const result=await api("claim",{name:personName});
-    const mail=result.mail||result;
-    if(mail.id==null||typeof mail.email!=="string"||typeof mail.password!=="string")
-      throw new Error("Máy chủ không trả về email và mật khẩu hợp lệ.");
-    currentMail={id:Number(mail.id),email:mail.email,password:mail.password};
-    saveMail();mailCount+=1;saveCount();render();
-    queueReachedRewards();
-    launchFireworks();
-    try{
-      await copyText(currentMail.email);
-      snowflakeBloom($("copyEmailBtn"));
-      showNotice("appNotice","Đã nhận mail mới và copy email. Mật khẩu đã được cập nhật theo mail này.","success");
-    }catch(_){
-      showNotice("appNotice","Email đã được cấp và hiển thị. Trình duyệt chưa thể sao chép tự động; bạn có thể sao chép email đang hiển thị.","info");
+  for (const makeProxyUrl of proxies) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 18000);
+      let response;
+      try {
+        response = await fetch(makeProxyUrl(location.url), {
+          method: "GET",
+          cache: "no-store",
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeoutId);
+      }
+      if (!response.ok) throw new Error("HTTP " + response.status + " từ proxy");
+      const markup = await response.text();
+      if (!markup || !/<html|<!doctype/i.test(markup)) {
+        throw new Error("Proxy không trả về HTML đọc được");
+      }
+      return parseTrends24Page(markup, location);
+    } catch (error) {
+      lastError = error;
     }
-  }catch(error){
-    const message=error.message||"Không thể nhận mail.";
-    if(/no mail|no available|out of mail|hết mail|không còn mail/i.test(message))
-      showNotice("appNotice","Kho mail đã hết. Hệ thống sẽ không quay lại cấp các mail cũ.","info");
-    else showNotice("appNotice",message,"error");
-  }finally{setBusy(false);render()}
-});
-
-$("copyEmailValueBtn").addEventListener("click",async()=>{
-  if(!currentMail?.email){showNotice("appNotice","Chưa có email để copy.","error");return}
-  try{await copyText(currentMail.email);snowflakeBloom($("copyEmailValueBtn"));showNotice("appNotice","Đã copy email đang hiển thị.","success")}
-  catch(error){showNotice("appNotice",error.message,"error")}
-});
-$("copyPasswordBtn").addEventListener("click",async()=>{
-  if(!currentMail||!currentMail.password){showNotice("appNotice","Chưa có mật khẩu để copy.","error");return}
-  try{await copyText(currentMail.password);snowflakeBloom($("copyPasswordBtn"));showNotice("appNotice","Đã copy mật khẩu!","success")}
-  catch(error){showNotice("appNotice",error.message,"error")}
-});
-$("logoutBtn").addEventListener("click",async()=>{
-  if(busy)return;
-  const oldToken=token;setBusy(true);
-  try{await api("logout")}catch(_){}
-  finally{if(token===oldToken)clearSession();setBusy(false);render()}
-});
-// Kiểm tra bộ đếm khi mở trang và tự hẹn giờ reset lúc 22:00 mỗi ngày.
-checkDailyCounterReset();
-scheduleDailyCounterReset();
-window.addEventListener("focus", checkDailyCounterReset);
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) checkDailyCounterReset();
-});
-
-render();
-if(token&&rewardState.pending.length)window.setTimeout(processRewardQueue,250);
-
-/* Winter canvas: falling snow, vote-based snowdrift and fox pawprints that fade after 10 seconds. */
-(() => {
-  const canvas=$("magicCanvas"),ctx=canvas.getContext("2d",{alpha:true});
-  const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let w=0,h=0,dpr=1,raf=0,lastFrame=0,lastPointer=0,lastPaw=null;
-  const flakes=[],pawprints=[];
-  function resize(){dpr=Math.min(window.devicePixelRatio||1,1.5);w=window.innerWidth;h=window.innerHeight;canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);canvas.style.width=w+"px";canvas.style.height=h+"px";ctx.setTransform(dpr,0,0,dpr,0,0);}
-  window.addEventListener("resize",resize,{passive:true});resize();
-  for(let i=0;i<Math.min(115,Math.round(w/7));i++)flakes.push(makeFlake(true));
-  function makeFlake(randomY=false){return{x:Math.random()*w,y:randomY?Math.random()*h:-8,r:1+Math.random()*3.2,vy:.45+Math.random()*1.35,vx:(Math.random()-.5)*.45,phase:Math.random()*Math.PI*2,opacity:.35+Math.random()*.55}}
-  function addPaw(x,y){pawprints.push({x,y,at:performance.now(),angle:Math.random()*.35-.175});if(pawprints.length>90)pawprints.shift();}
-  window.addEventListener("pointermove",e=>{if(reduceMotion)return;const now=performance.now();if(now-lastPointer<85)return;lastPointer=now;if(!lastPaw||Math.hypot(e.clientX-lastPaw.x,e.clientY-lastPaw.y)>24){addPaw(e.clientX,e.clientY);lastPaw={x:e.clientX,y:e.clientY};}startLoop();},{passive:true});
-  function startLoop(){if(!raf)raf=requestAnimationFrame(draw)}
-  function draw(now){raf=0;if(now-lastFrame<28){raf=requestAnimationFrame(draw);return}lastFrame=now;ctx.clearRect(0,0,w,h);
-    if(!reduceMotion){while(flakes.length<Math.min(115,Math.round(w/7)))flakes.push(makeFlake());}
-    for(const f of flakes){f.y+=f.vy;f.x+=f.vx+Math.sin(now/1300+f.phase)*.22;if(f.y>h+8){f.y=-8;f.x=Math.random()*w}if(f.x<-8)f.x=w+8;if(f.x>w+8)f.x=-8;ctx.globalAlpha=f.opacity;ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,Math.PI*2);ctx.fill();}
-    // Snow builds up gradually as this device's vote counter approaches 1,000.
-    const progress=Math.max(0,Math.min(1,(Number(mailCount)||0)/1000));const depth=10+progress*Math.min(105,h*.19);const base=h-depth;
-    ctx.globalAlpha=1;ctx.fillStyle="#fff";ctx.beginPath();ctx.moveTo(0,h);ctx.lineTo(0,base+8);for(let x=0;x<=w+20;x+=20)ctx.lineTo(x,base+Math.sin(x*.012+now*.00018)*5+Math.sin(x*.027)*2);ctx.lineTo(w,h);ctx.closePath();ctx.fill();
-    // Paws are visible for ten seconds, then melt away.
-    for(let i=pawprints.length-1;i>=0;i--){const p=pawprints[i],age=now-p.at;if(age>10000){pawprints.splice(i,1);continue}ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.angle);ctx.globalAlpha=(1-age/10000)*.72;ctx.fillStyle="#8eb6cf";ctx.beginPath();ctx.ellipse(0,3,3.5,4.3,0,0,Math.PI*2);ctx.fill();for(const [dx,dy] of [[-4,-4],[0,-6],[4,-4]]){ctx.beginPath();ctx.arc(dx,dy,1.65,0,Math.PI*2);ctx.fill()}ctx.restore();}
-    ctx.globalAlpha=1;
-    if(!reduceMotion||pawprints.length)raf=requestAnimationFrame(draw);
   }
-  startLoop();
-})();
+
+  throw new Error(lastError ? lastError.message : "Không truy cập được trang.");
+}
+
+function renderTrendTracker(matches, errors, checkedAt) {
+  trendTrackerResults.replaceChildren();
+
+  const sorted = [...matches].sort((a, b) => {
+    if (a.region === "Worldwide" && b.region !== "Worldwide") return -1;
+    if (b.region === "Worldwide" && a.region !== "Worldwide") return 1;
+    const regionOrder = a.region.localeCompare(b.region);
+    if (regionOrder !== 0) return regionOrder;
+    return (a.rank ?? 999) - (b.rank ?? 999);
+  });
+
+  if (!sorted.length) {
+    const empty = document.createElement("div");
+    empty.className = "trend-empty";
+    empty.textContent = "Không tìm thấy từ khóa nào trong danh sách Trending Topics của các trang đọc được.";
+    trendTrackerResults.appendChild(empty);
+  } else {
+    const wrap = document.createElement("div");
+    wrap.className = "trend-table-wrap";
+    const table = document.createElement("table");
+    table.className = "trend-table";
+    const thead = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    ["KHU VỰC", "TỪ KHÓA ĐANG TREND", "HẠNG"].forEach(label => {
+      const th = document.createElement("th");
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    for (const match of sorted) {
+      const tr = document.createElement("tr");
+      const regionTd = document.createElement("td");
+      const regionLink = document.createElement("a");
+      regionLink.href = match.url;
+      regionLink.target = "_blank";
+      regionLink.rel = "noopener noreferrer";
+      regionLink.textContent = match.region;
+      regionTd.appendChild(regionLink);
+
+      const keywordTd = document.createElement("td");
+      keywordTd.className = "trend-keyword";
+      keywordTd.textContent = match.keyword;
+
+      const rankTd = document.createElement("td");
+      rankTd.className = "trend-rank";
+      rankTd.textContent = match.rank ? "#" + match.rank : "Không đọc được";
+
+      tr.append(regionTd, keywordTd, rankTd);
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+    trendTrackerResults.appendChild(wrap);
+  }
+
+  trendTrackerCheckedAt.textContent =
+    "Thời điểm kiểm tra: " + checkedAt.toLocaleString() +
+    " · Chỉ hiển thị kết quả đọc được từ trang công khai; không có dữ liệu nào được tự tạo.";
+
+  const failedNames = errors.map(item => item.name + " (" + item.message + ")");
+  if (failedNames.length) {
+    trendTrackerStatus.textContent =
+      "Đã kiểm tra " + TREND_LOCATIONS.length + " trang; tìm thấy " + sorted.length +
+      " kết quả. Không đọc được " + failedNames.length + " trang: " +
+      failedNames.join("; ") + ". Có thể do CORS/proxy, giới hạn truy cập hoặc thay đổi cấu trúc trang.";
+  } else {
+    trendTrackerStatus.textContent =
+      "Đã kiểm tra " + TREND_LOCATIONS.length + " trang; tìm thấy " + sorted.length +
+      " kết quả khớp trong danh sách Trending Topics mới nhất.";
+  }
+}
+
+async function refreshTrendTracker() {
+  if (trendTrackerBusy) return;
+  trendTrackerBusy = true;
+  trendRefreshBtn.disabled = true;
+  trendRefreshBtn.textContent = "Checking…";
+  trendTrackerStatus.textContent =
+    "Đang đọc các trang Trends24 công khai qua proxy. Chỉ kết quả xác minh được mới xuất hiện.";
+  trendTrackerResults.replaceChildren();
+  const startedAt = new Date();
+  const results = new Array(TREND_LOCATIONS.length);
+  let nextIndex = 0;
+  let completed = 0;
+
+  async function worker() {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= TREND_LOCATIONS.length) return;
+      const location = TREND_LOCATIONS[index];
+      try {
+        results[index] = {
+          location,
+          ...(await fetchTrendPage(location)),
+          error: null
+        };
+      } catch (error) {
+        results[index] = {
+          location,
+          matches: [],
+          error: error instanceof Error ? error.message : String(error)
+        };
+      }
+      completed++;
+      trendTrackerStatus.textContent =
+        "Đang kiểm tra trang " + completed + "/" + TREND_LOCATIONS.length + "…";
+    }
+  }
+
+  try {
+    await Promise.all(Array.from({ length: 4 }, () => worker()));
+    const matches = results.flatMap(result => result && result.matches ? result.matches : []);
+    const errors = results
+      .filter(result => result && result.error)
+      .map(result => ({ name: result.location.name, message: result.error }));
+    const checkedAt = new Date();
+    renderTrendTracker(matches, errors, checkedAt);
+    saveTrendSnapshot(matches, checkedAt);
+  } finally {
+    trendTrackerBusy = false;
+    trendRefreshBtn.disabled = false;
+    trendRefreshBtn.textContent = "↻ Refresh";
+  }
+}
+
+trendRefreshBtn.addEventListener("click", () => {
+  void refreshTrendTracker();
+});
+
+
+function initializeMassX() {
+  loadMassXComments();
+  refreshMassXCount();
+  void refreshTrendTracker();
+}
 </script>
 </body>
 </html>
