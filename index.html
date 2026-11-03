@@ -97,7 +97,24 @@ h1{color:#9f4d75;letter-spacing:.15px}
 
 .event-link { margin: 10px 0 18px; text-align: center; }
 .event-link a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
-\n</style>
+\n
+
+/* Visible feedback whenever a comment is copied. */
+.primary.copy-celebrate{animation:copyButtonPop .58s cubic-bezier(.2,1.5,.4,1);box-shadow:0 0 0 5px #ffd2e8,0 0 30px #ff68b3,0 8px 24px #c34d8666}
+.copy-burst-piece{position:fixed;z-index:10001;pointer-events:none;font-size:clamp(18px,3vw,27px);animation:copyBurstFly 1.15s cubic-bezier(.12,.7,.25,1) forwards;filter:drop-shadow(0 3px 5px #d84d9166)}
+@keyframes copyButtonPop{0%{transform:scale(1)}35%{transform:scale(1.07)}70%{transform:scale(.98)}100%{transform:scale(1)}}
+@keyframes copyBurstFly{0%{opacity:0;transform:translate(0,0) scale(.35) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.25) rotate(var(--rot))}}
+
+/* MASS IG milestone celebration */
+.milestone-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;background:radial-gradient(circle at center,#fff5fbdd 0%,#ffdeef99 48%,transparent 78%);animation:milestoneFade 5.2s ease forwards}
+.milestone-message{position:relative;z-index:2;width:min(90vw,680px);padding:30px 20px;text-align:center;font-weight:900;color:#b52e75;font-size:clamp(25px,6vw,48px);line-height:1.35;text-shadow:0 3px 0 #fff,0 8px 25px #d84d91aa;animation:milestonePop .65s cubic-bezier(.15,1.5,.4,1) both}
+.milestone-message small{display:block;margin-top:12px;font-size:clamp(13px,2.8vw,19px);letter-spacing:2px;color:#743052}
+.milestone-particle{position:absolute;left:var(--x);top:var(--y);font-size:var(--size);animation:milestoneFly var(--duration) ease-out forwards;filter:drop-shadow(0 2px 3px #c34d8655)}
+@keyframes milestonePop{from{transform:scale(.25) rotate(-8deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+@keyframes milestoneFly{0%{transform:translate(0,0) rotate(0) scale(.3);opacity:0}12%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1.2);opacity:0}}
+@keyframes milestoneFade{0%,75%{opacity:1}100%{opacity:0;visibility:hidden}}
+
+</style>
 </head>
 <body>
 <div class="petal-layer" id="petalLayer" aria-hidden="true"></div>
@@ -279,7 +296,30 @@ document.addEventListener("pointermove", event => {
 function bloomAtButton(button) {
   if (!button) return;
   const rect = button.getBoundingClientRect();
-  sprinklePetals(rect.left + rect.width / 2, rect.top + rect.height / 2, 13, true);
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  // Keep the original button response and add a visible flower/confetti burst.
+  button.classList.remove("copy-celebrate");
+  void button.offsetWidth;
+  button.classList.add("copy-celebrate");
+  setTimeout(() => button.classList.remove("copy-celebrate"), 650);
+  sprinklePetals(cx, cy, 28, true);
+  if (reduceMotion.matches || !petalLayer) return;
+  const burst = ["💖","🌸","✨","⭐","🎉","🎊","💕","🌷","✿","🎀"];
+  for (let i = 0; i < 22; i++) {
+    const el = document.createElement("span");
+    el.className = "copy-burst-piece";
+    el.textContent = burst[Math.floor(Math.random() * burst.length)];
+    const a = Math.random() * Math.PI * 2;
+    const d = 65 + Math.random() * 115;
+    el.style.left = cx + "px"; el.style.top = cy + "px";
+    el.style.setProperty("--dx", Math.cos(a) * d + "px");
+    el.style.setProperty("--dy", Math.sin(a) * d + "px");
+    el.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+    petalLayer.appendChild(el);
+    el.addEventListener("animationend", () => el.remove(), { once: true });
+    setTimeout(() => el.remove(), 1500);
+  }
 }
 
 /* Gentle, legato princess piano loop. Schedule notes ahead to avoid timer jitter. */
@@ -466,6 +506,36 @@ document.querySelectorAll("[data-go-home]").forEach(button => {
   });
 });
 
+/* MASS IG: celebratory full-screen fireworks at each 1,000-copy milestone. */
+const cheerLines = ["Chị giỏi lắm!", "Lúm yêu Xị!", "Xị ơi cố lên!", "Cùng nhau tiếp tục vì Seonghyeon nhé!", "Mỗi lượt support đều đáng quý!", "Fan mình tuyệt vời lắm!", "Tự hào vì chúng ta luôn đồng hành!", "Seonghyeon deserves all this love!", "Lúm ơi, mình làm được rồi!", "Cùng nhau đưa tình yêu đến Seonghyeon!", "You did amazing, everyone!", "Xị à, luôn rực rỡ nhé!"];
+function celebrateMassIgMilestone(total) {
+  const overlay = document.createElement("div");
+  overlay.className = "milestone-overlay";
+  overlay.setAttribute("role", "status");
+  const message = document.createElement("div");
+  message.className = "milestone-message";
+  message.textContent = cheerLines[Math.floor(Math.random() * cheerLines.length)];
+  const sub = document.createElement("small");
+  sub.textContent = total.toLocaleString("en-US") + " COMMENTS COPIED · KEEP SUPPORTING SEONGHYEON";
+  message.appendChild(sub); overlay.appendChild(message);
+  const pieces = ["🎉","🎊","🎆","✨","💖","🌸","⭐","🥳","🎇","💕","✿"];
+  for (let i = 0; i < 115; i++) {
+    const piece = document.createElement("span");
+    piece.className = "milestone-particle";
+    piece.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+    piece.style.setProperty("--x", (Math.random()*100)+"vw");
+    piece.style.setProperty("--y", (Math.random()*100)+"vh");
+    piece.style.setProperty("--dx", ((Math.random()-.5)*110)+"vw");
+    piece.style.setProperty("--dy", ((Math.random()-.5)*110)+"vh");
+    piece.style.setProperty("--rot", ((Math.random()-.5)*900)+"deg");
+    piece.style.setProperty("--size", (18+Math.random()*28)+"px");
+    piece.style.setProperty("--duration", (2.2+Math.random()*2.5)+"s");
+    overlay.appendChild(piece);
+  }
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 5400);
+}
+
 /* MASS IG: keeps the former LV/VOGUE Supabase comment table, stats table and RPC. */
 let massIgComments = [];
 let massIgDeck = [];
@@ -500,8 +570,12 @@ async function refreshMassIgCount() {
 }
 async function incrementMassIgCount() {
   const result = await fetchJSON(API + "/rest/v1/rpc/increment_vogue_copy_count", {method:"POST", body:"{}"});
-  if (typeof result === "number") massIgCount.textContent = result.toLocaleString("en-US");
-  else await refreshMassIgCount();
+  let total = typeof result === "number" ? result : null;
+  if (total === null) {
+    await refreshMassIgCount();
+    total = Number(String(massIgCount.textContent).replace(/,/g, ""));
+  } else massIgCount.textContent = total.toLocaleString("en-US");
+  if (Number.isFinite(total) && total > 0 && total % 1000 === 0) celebrateMassIgMilestone(total);
 }
 async function loadMassIgComments() {
   massIgCopyBtn.disabled = true;
